@@ -185,7 +185,7 @@ describe('broadcast', () => {
     await pending;
     expect(service.getSnapshot().broadcast!.recipients[0]).toMatchObject({
       status: 'error',
-      reason: 'Authentication expired',
+      reason: expect.stringContaining('Authentication expired') as unknown,
     });
     await vi.waitFor(() => expect(callbacks).toHaveLength(2));
     callbacks[1]!({ type: 'done', text: 'Normal success', isError: false });

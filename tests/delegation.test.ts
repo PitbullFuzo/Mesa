@@ -402,3 +402,21 @@ describe('delegation through ChatService', () => {
     expect(service.getSnapshot().tasks).toHaveLength(2);
   });
 });
+
+describe('delegated task that wrote nothing', () => {
+  it('ends needs-you with an Inbox item instead of passed', async () => {
+    const { service, store, lead } = await setup((request) =>
+      reply(
+        request.prompt === 'Plan'
+          ? delegate([{ to: 'Coder', task: 'Create a note about cats' }])
+          : 'Done, all written.',
+      ),
+    );
+    await service.send(lead, 'Plan');
+    const task = (await store.loadTasks())[0]!;
+    expect(task.frontmatter).toMatchObject({ status: 'needs-you' });
+    expect(
+      service.getSnapshot().inbox?.some((i) => i.kind === 'task-incomplete'),
+    ).toBe(true);
+  });
+});

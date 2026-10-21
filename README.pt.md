@@ -1,4 +1,4 @@
-# Mesa
+# Mesa AI
 
 [![Latest release](https://img.shields.io/github/v/release/PitbullFuzo/Mesa?label=release&color=7c3aed)](https://github.com/PitbullFuzo/Mesa/releases/latest) [![Downloads](https://img.shields.io/github/downloads/PitbullFuzo/Mesa/total?color=7c3aed)](https://github.com/PitbullFuzo/Mesa/releases) [![Licence: MIT](https://img.shields.io/badge/licence-MIT-7c3aed)](LICENSE) ![Desktop only](https://img.shields.io/badge/Obsidian-desktop-7c3aed) ![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20OpenCode%20%C2%B7%20Hermes-555)
 
@@ -13,6 +13,17 @@ O Mesa funciona com as ferramentas de IA que já tem: **Claude Code, Codex, Open
 Hermes**, com as suas próprias contas e planos. Nada passa por um servidor do Mesa, porque não existe nenhum.
 
 Feito por Marcio Vieira — guias, tutoriais, transferências e feedback em [trabalhoia.com](https://trabalhoia.com).
+
+## Capturas de ecrã
+
+![A sua equipa de IA em grafo](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/team-graph.png)
+*A sua equipa de IA em grafo: grupos, chefias e a ferramenta de cada agente.*
+
+![Quadro de projetos](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/projects-board.png)
+*Quadro de projetos, com o Obi, o seu assistente, ao lado.*
+
+![Visão geral do cofre](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/vault-overview.png)
+*Um mapa vivo do cofre: grupos, ligações e notas órfãs.*
 
 ## O que pode fazer com ele
 

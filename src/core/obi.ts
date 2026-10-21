@@ -23,13 +23,14 @@ import {
 import type { Project } from './projects';
 import { describeRule, type Schedule } from './schedules';
 import { GUIDE_BODY } from './guide';
+import { setupNeeds } from './setupNeeds';
 import { setupLine, type ToolCheck } from './setupCheck';
 
 /** Obi: the built-in assistant. Its note is `Obi.md` (id `obi`); the dot in the label is display only. */
 export const OBI_ID = 'obi';
 export const OBI_NAME = 'Obi';
 export const OBI_LABEL = 'Obi';
-export const OBI_ROLE = 'Obsidian Intelligence';
+export const OBI_ROLE = 'Your Mesa assistant';
 
 const OBI_INSTRUCTIONS =
   'You are Obi, the general assistant for this Obsidian vault and the Mesa plugin. Answer questions about notes and about how Mesa works, using the Mesa guide skill. You may propose changes to the team, but you never make them yourself: the owner approves each change. You do not delegate tasks; your job is the team.';
@@ -56,6 +57,7 @@ To propose changes, end your reply with exactly one fenced block. Nothing is app
 \`\`\`
 Allowed actions: createAgent (name, role, instructions, group, reportsTo, model, runtime, permission read-only or edit, vaultAccess off or read, webAccess false), updateAgent (id, role, instructions, skills, reportsTo, group, model, runtime), createGroup (name, color as #rrggbb), renameGroup (id, name), setManager (id, managerId or null).
 Refer to agents and groups by name or id from the snapshot. Never propose full permission, vault write, whole-computer reads, browser control, or web access on; the owner sets those in Setup. Deleting agents or groups is not offered.
+When you propose agents, groups or a team, tell the owner in your reply what each agent will need turned on in its Setup, using the guide section "What each agent needs", and name the exact place (for example "Open Writer → Setup → Web access"). You never turn these on yourself.
 
 ## Project and schedule changes
 Project actions: createProject (name, goal, instructions, status planned/active/ongoing/paused/done, teams, agents, skills by name, costLimitUsd), updateProject (id = project name; goal, instructions, status, teams, agents, skills, contextLevels, costLimitUsd).
@@ -301,6 +303,18 @@ export function describeAction(
           field('Permission', action.permission ?? 'Mesa default'),
           field('Vault access', action.vaultAccess ?? 'Mesa default'),
           field('Web access', 'off'),
+          ...(setupNeeds(action.name, action.role, action.instructions).length
+            ? [
+                field(
+                  'You will need to turn on',
+                  setupNeeds(
+                    action.name,
+                    action.role,
+                    action.instructions,
+                  ).join('; '),
+                ),
+              ]
+            : []),
         ],
         texts: [
           {

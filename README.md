@@ -1,4 +1,4 @@
-# Mesa
+# Mesa AI
 
 [![Latest release](https://img.shields.io/github/v/release/PitbullFuzo/Mesa?label=release&color=7c3aed)](https://github.com/PitbullFuzo/Mesa/releases/latest) [![Downloads](https://img.shields.io/github/downloads/PitbullFuzo/Mesa/total?color=7c3aed)](https://github.com/PitbullFuzo/Mesa/releases) [![Licence: MIT](https://img.shields.io/badge/licence-MIT-7c3aed)](LICENSE) ![Desktop only](https://img.shields.io/badge/Obsidian-desktop-7c3aed) ![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20OpenCode%20%C2%B7%20Hermes-555)
 
@@ -13,6 +13,17 @@ Mesa works with the AI tools you already have: **Claude Code, Codex, OpenCode (i
 using your own accounts and plans. Nothing goes through a Mesa server, because there isn't one.
 
 Made by Marcio Vieira — guides, how-tos, downloads and feedback at [trabalhoia.com](https://trabalhoia.com).
+
+## Screenshots
+
+![Your AI team as a graph](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/team-graph.png)
+*Your AI team as a graph: groups, managers and who runs on which tool.*
+
+![Projects board](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/projects-board.png)
+*A projects board with Obi, your assistant, beside it.*
+
+![Vault overview](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/vault-overview.png)
+*A live map of your vault: clusters, links and orphan notes.*
 
 ## What you can do with it
 

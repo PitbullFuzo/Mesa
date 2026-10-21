@@ -32,7 +32,7 @@ import {
   slashMatches,
   takeNamed,
 } from '../../core/slash';
-import { isAtBottom } from '../../core/scroll';
+import { isAtBottom, scrollToLatest } from '../../core/scroll';
 import { MarkdownContent } from './markdownContent';
 import { useImageInput, AttachmentPreviews } from './imageInput';
 import { ProjectMenu, projectPickerState } from './projectMenu';
@@ -109,8 +109,32 @@ export function ChatContent({
   }, []);
   useLayoutEffect(() => {
     const panel = scroller();
-    if (panel && followRef.current) panel.scrollTop = panel.scrollHeight;
+    if (panel && followRef.current) scrollToLatest(panel);
   }, [chat?.messages]);
+  // A chat that is opened, switched to or re-shown lands on the newest message, then follows only at the bottom.
+  const sessionKey = chat?.session?.path ?? chat?.session?.sessionId ?? '';
+  useLayoutEffect(() => {
+    const jump = () => {
+      const panel = scroller();
+      if (!panel) return;
+      followRef.current = true;
+      scrollToLatest(panel);
+      (panel.ownerDocument.defaultView ?? window).requestAnimationFrame(() => {
+        if (followRef.current) scrollToLatest(panel);
+      });
+    };
+    jump();
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === 'undefined') return;
+    let seen = false;
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.some((entry) => entry.isIntersecting);
+      if (visible && !seen) jump();
+      seen = visible;
+    });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [id, sessionKey]);
   const enterToSend = useSyncExternalStore(
     workspace.subscribe,
     () => workspace.getSnapshot().enterToSend !== false,
@@ -809,8 +833,8 @@ export function JumpToBottom() {
         <button
           type="button"
           className="agenthq-jump-bottom"
-          aria-label="Jump to bottom"
-          title="Jump to bottom"
+          aria-label="Jump to latest"
+          title="Jump to latest"
           onClick={() =>
             marker.current
               ?.closest<HTMLElement>('.agenthq-panel')

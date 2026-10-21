@@ -20,3 +20,12 @@ describe('chat auto-scroll', () => {
     ).toBe(true);
   });
 });
+
+describe('opening a chat', () => {
+  it('jumps straight to the newest message', async () => {
+    const { scrollToLatest } = await import('../src/core/scroll');
+    const panel = { scrollTop: 0, scrollHeight: 4000 };
+    scrollToLatest(panel);
+    expect(panel.scrollTop).toBe(4000);
+  });
+});

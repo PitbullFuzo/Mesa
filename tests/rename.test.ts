@@ -22,7 +22,7 @@ describe('the new name', () => {
       id: string;
       name: string;
     };
-    expect(manifest).toMatchObject({ id: 'obi-i', name: 'Mesa' });
+    expect(manifest).toMatchObject({ id: 'obi-i', name: 'Mesa AI' });
     const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as {
       name: string;
     };

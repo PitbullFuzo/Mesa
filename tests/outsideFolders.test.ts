@@ -170,7 +170,7 @@ describe('Hide Mesa from search & graph', () => {
 
 describe('the guide', () => {
   it('describes the outside folders, the Output folder and the hide setting, and is at version 4', () => {
-    expect(GUIDE_VERSION).toBe(26);
+    expect(GUIDE_VERSION).toBe(28);
     expect(GUIDE_BODY).toContain('outside folders you tick for that agent');
     expect(GUIDE_BODY).toContain('Output folder');
     expect(GUIDE_BODY).toContain('hide Mesa from search and the graph');

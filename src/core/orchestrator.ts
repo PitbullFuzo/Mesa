@@ -4,12 +4,15 @@ import { taskSchema, type Agent } from './model';
 import type { NoteDocument } from './notes';
 import type { Store } from './store';
 import { parseDelegation, parseVerdict, type DelegatedTask } from './protocol';
+import { changedFiles, taskProblem, type TurnTool } from './taskOutcome';
 
 export interface OrchestrationTurn {
   status: string;
   text?: string;
   reason?: string;
   error?: Error;
+  /** Tool events of this turn, used to see which files a task changed. */
+  tools?: TurnTool[];
 }
 export interface TaskNote extends NoteDocument {
   frontmatter: Record<string, unknown>;
@@ -27,6 +30,7 @@ export const inboxItemSchema = z.object({
     'workdir-not-allowed',
     'schedule-held',
     'command-approval',
+    'task-incomplete',
   ]),
   message: z.string(),
   created: z.string(),
@@ -289,9 +293,20 @@ Resume the task and address this feedback.`
           : answer.status === 'cancelled'
             ? 'cancelled'
             : 'failed';
+        if (fm.status === 'failed' && answer.reason)
+          note.body += `\n\n### Failed\n\n${answer.reason}`;
         break;
       }
+      const problem = taskProblem(
+        String(fm.taskText),
+        answer.text ?? '',
+        answer.tools ?? [],
+      );
       if (!fm.verifierId) {
+        if (problem) {
+          await this.incomplete(note, worker, request, problem.message);
+          return;
+        }
         fm.status = 'passed';
         break;
       }
@@ -306,6 +321,9 @@ ${String(fm.taskText)}
 
 Worker answer:
 ${answer.text ?? ''}
+
+Files the worker actually changed: ${changedFiles(answer.tools ?? []).join(', ') || 'none'}
+If the task asked for something to be written and no file was changed, the verdict must be fail.
 
 Working folder: ${String(fm.workerWorkdir)}
 Attempt: ${String(fm.attempt)}
@@ -331,6 +349,10 @@ ${verdict.feedback}`;
         break;
       }
       if (verdict.verdict === 'pass') {
+        if (problem) {
+          await this.incomplete(note, worker, request, problem.message);
+          return;
+        }
         fm.status = 'passed';
         break;
       }
@@ -354,6 +376,29 @@ Resume the task and address this feedback.`;
     if (request.stopped)
       fm.status = request.limitHit ? 'needs-you' : 'cancelled';
     await this.saveTask(note);
+  }
+
+  /** The worker answered but did not do the work: "needs you" with the reason, never "passed". */
+  private async incomplete(
+    note: TaskNote,
+    worker: Agent,
+    request: RequestContext,
+    message: string,
+  ): Promise<void> {
+    note.frontmatter.status = 'needs-you';
+    note.body += `
+
+### Needs you
+
+${message}`;
+    await this.saveTask(note);
+    await this.addInbox(
+      request,
+      worker.id,
+      'task-incomplete',
+      message,
+      note.path,
+    );
   }
 
   private async createTask(

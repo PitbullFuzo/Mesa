@@ -30,7 +30,7 @@ describe('the store rules for the manifest', () => {
 
   it('is called Mesa with the id obi-i, and never mentions Obsidian or part of it', () => {
     expect(manifest.id).toBe('obi-i');
-    expect(manifest.name).toBe('Mesa');
+    expect(manifest.name).toBe('Mesa AI');
     expect(PLUGIN_ID).toBe('obi-i');
     for (const text of [manifest.name!, manifest.description!])
       expect(text).not.toMatch(/obsidian|\bob/i);

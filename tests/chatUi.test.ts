@@ -577,7 +577,7 @@ describe('History and navigation', () => {
         id: chat.agent.id,
       }),
     );
-    expect(html).not.toContain('aria-label="Jump to bottom"');
+    expect(html).not.toContain('aria-label="Jump to latest"');
   });
 
   it('keeps Pin out of the header; the side panel offers Close and Full screen', async () => {

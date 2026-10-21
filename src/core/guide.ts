@@ -1,3 +1,4 @@
+import { WHAT_EACH_AGENT_NEEDS } from './setupNeeds';
 import type { Store } from './store';
 
 /**
@@ -5,7 +6,7 @@ import type { Store } from './store';
  * Rule for every later step: a feature that changes what agents can do updates these sections in the same step.
  * Bump GUIDE_VERSION when the text changes, so Guide.md is refreshed in existing vaults.
  */
-export const GUIDE_VERSION = 26;
+export const GUIDE_VERSION = 28;
 
 /** The owner's site: how-tos and feedback. A plain link, nothing is sent from the plugin. */
 export const HELP_URL = 'https://trabalhoia.com';
@@ -68,6 +69,7 @@ export const GUIDE_SECTIONS: { title: string; body: string }[] = [
       '- Earlier chats: an agent keeps its conversation going in the same chat; a new chat starts with a short summary of the last one; History lets you open an old chat and continue it; project memory keeps decisions for a project. Chat recall adds to these: when your message looks back ("last time", "we discussed", "remember when", "da última vez", "falámos"), Mesa searches that agent’s own past chats (never other agents’, never the current chat) with plain keyword search, no AI and no cost, and gives it the best matching passages with the chat title and date. Messages that don’t look back add nothing. Obi recalls its own chats the same way.',
       '- Chat extras: above the messages a small bar shows how much of the model’s context the chat uses (a tip suggests a new chat or Fork above about 80%; it says unknown, or shows only tokens, when the runtime does not report the window). For Claude Code agents it also shows your plan’s usage (for example “5h 11% · week 42%”); click it for the reset times. It updates after each reply. The 📎 button attaches the note you have open: a chip shows it and can be removed, and an agent without vault access sees that note only because you attached it. In the message box, type / for commands: /new, /compact (a new chat that starts with a short summary of this one), /fork (a new chat from the last message), /skill <name> <message> (use a skill for that one message), /project <name> and /help. /side <question> (or /btw) asks the same agent a side question in a fresh session that only sees the end of this chat; the answer appears in a box under the chat, and “Add to main chat” puts it, quoted, in your message box. Type @ to attach a note, a folder (its list of notes) or another agent’s chat: it becomes a chip you can remove, and an agent without vault access sees it only because you chose it. Anything else you type with a / is sent as ordinary text.',
       '- Edit selection with an agent: select text in a note (or put the cursor in a paragraph) and run the command Edit selection with an agent from the command palette, or right-click and choose Edit with an agent… (no hotkey is set; you can give the command one). Choose an agent and say what should change; the agent works read-only and sees only that text and a little around it. You get a preview with the cost: changed phrases show the old words faded and struck through next to the new words, and when most of the text changed (a rewrite or a translation) the preview shows Before and After instead, with a button to switch that is remembered. and nothing is written until you press Accept. Accept replaces exactly that text, and Ctrl+Z undoes it; Reject and Try again change nothing.',
+      '- When an agent cannot read or write a folder, it tells you the Mesa step (for example “Open Coder → Setup → Note destinations → tick Wiki”, or “Setup → Permission → Edit”), never a command-line flag. A delegated task that wrote nothing shows as Needs you, not Passed.',
       '- Anything else: change it in Setup. Obi can propose changes, and you approve each one.',
     ].join('\n'),
   },
@@ -106,10 +108,15 @@ const GRAPH_AND_SEARCH = {
   ].join('\n'),
 };
 
+const AGENT_NEEDS = {
+  title: 'What each agent needs',
+  body: `Obi lists these when it proposes an agent, and never turns them on itself. You switch them on in the agent’s Setup.\n\n${WHAT_EACH_AGENT_NEEDS}`,
+};
+
 /** The guide as Markdown, without frontmatter. Obi's prompt and Guide.md both use it. */
 export const GUIDE_BODY = [
   '# Mesa guide',
-  ...[...GUIDE_SECTIONS, GRAPH_AND_SEARCH, HELP_AND_FEEDBACK].map(
+  ...[...GUIDE_SECTIONS, AGENT_NEEDS, GRAPH_AND_SEARCH, HELP_AND_FEEDBACK].map(
     (section) => `## ${section.title}\n\n${section.body}`,
   ),
 ].join('\n\n');

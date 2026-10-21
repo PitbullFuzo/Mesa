@@ -1,4 +1,9 @@
 /* eslint obsidianmd/prefer-window-timers: off -- Core runs in plain Node tests, where there is no window; the timers only debounce memory work. */
+import {
+  explainError,
+  explanationLine,
+  formatExplanation,
+} from './explainError';
 import { randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -217,6 +222,7 @@ interface TurnResult {
   reason?: string;
   error?: Error;
   text?: string;
+  tools?: { name: string; summary: string }[];
 }
 
 function localTime(timestamp: string): string {
@@ -1099,7 +1105,11 @@ export class ChatService {
             !signal.aborted
           ) {
             assistant.streaming = false;
-            assistant.content = done.text;
+            assistant.content = done.isError
+              ? formatExplanation(
+                  explainError(done.text || state.hint || '', agent.name),
+                )
+              : done.text;
             assistant.costUsd = done.costUsd;
             assistant.tokens = totalTokens(done.tokens);
             state.session.costUsd += done.costUsd ?? 0;
@@ -1180,8 +1190,17 @@ export class ChatService {
           await this.persist(state);
           outcome = done
             ? done.isError
-              ? { status: 'error', reason: done.text || state.hint }
-              : { status: 'replied', text: done.text }
+              ? {
+                  status: 'error',
+                  reason: formatExplanation(
+                    explainError(done.text || state.hint || '', agent.name),
+                  ),
+                }
+              : {
+                  status: 'replied',
+                  text: done.text,
+                  tools: [...assistant.tools],
+                }
             : { status: 'cancelled', reason: 'Run cancelled' };
           if (
             done?.isError &&
@@ -1193,7 +1212,7 @@ export class ChatService {
               context,
               agentId,
               'runtime-auth',
-              state.hint ?? done.text,
+              explanationLine(explainError(done.text, agent.name)),
               task?.path ?? state.session?.path,
             );
           }
