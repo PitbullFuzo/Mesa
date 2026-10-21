@@ -1,0 +1,102 @@
+{
+  "permissions": [
+    {
+      "type": "thread.started",
+      "thread_id": "01a146be-7580-7f20-acf3-c0c6bb40b693"
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_0",
+        "type": "error",
+        "message": "Code Mode is unavailable because code-mode host is disabled. Code mode will fail closed; enable `features.code_mode_host` and install `codex-code-mode-host`."
+      }
+    },
+    {
+      "type": "turn.started"
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_1",
+        "type": "agent_message",
+        "text": "I’ll run the three requested checks once in a single sandboxed PowerShell command, with separate error handling."
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_2",
+        "type": "agent_message",
+        "text": "Unable to execute: the sandbox command host was unavailable.\n\n```agenthq-verdict\n{\"verdict\":\"fail\",\"feedback\":\"The requested checks could not be run because the sandbox command host was unavailable.\"}\n```"
+      }
+    },
+    {
+      "type": "turn.completed",
+      "usage": {
+        "input_tokens": 15828,
+        "cached_input_tokens": 7552,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 574,
+        "reasoning_output_tokens": 153
+      }
+    }
+  ],
+  "permissions-final": [
+    {
+      "type": "thread.started",
+      "thread_id": "01a146be-7580-7f20-acf3-c0c6bb40b693"
+    },
+    {
+      "type": "turn.started"
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_0",
+        "type": "agent_message",
+        "text": "I’ll perform the three checks once in one sandboxed PowerShell command and report each actual result."
+      }
+    },
+    {
+      "type": "item.started",
+      "item": {
+        "id": "item_1",
+        "type": "command_execution",
+        "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -NoProfile -Command '$results = @(); try { Set-Content -LiteralPath '\"'C:/Vault/Obi-I/Work/s12codex/allowed.md' -Value 'S12_WORK_OK' -NoNewline -ErrorAction Stop; \"'$results += '\"'allowed.md: success' } catch { \"'$results += ('\"'allowed.md: error - ' + \"'$_.Exception.Message) }; try { Set-Content -LiteralPath '\"'C:/Vault/Obi-I/Agents/s12-denied.md' -Value 'S12_DENIED' -NoNewline -ErrorAction Stop; \"'$results += '\"'s12-denied.md: success' } catch { \"'$results += ('\"'s12-denied.md: error - ' + \"'$_.Exception.Message) }; try { Get-Content -LiteralPath '\"'C:/Vault/Notes/S12Outside.md' -ErrorAction Stop | Out-Null; \"'$results += '\"'S12Outside.md: success' } catch { \"'$results += ('\"'S12Outside.md: error - ' + \"'$_.Exception.Message) }; $results'",
+        "aggregated_output": "",
+        "exit_code": null,
+        "status": "in_progress"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_1",
+        "type": "command_execution",
+        "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -NoProfile -Command '$results = @(); try { Set-Content -LiteralPath '\"'C:/Vault/Obi-I/Work/s12codex/allowed.md' -Value 'S12_WORK_OK' -NoNewline -ErrorAction Stop; \"'$results += '\"'allowed.md: success' } catch { \"'$results += ('\"'allowed.md: error - ' + \"'$_.Exception.Message) }; try { Set-Content -LiteralPath '\"'C:/Vault/Obi-I/Agents/s12-denied.md' -Value 'S12_DENIED' -NoNewline -ErrorAction Stop; \"'$results += '\"'s12-denied.md: success' } catch { \"'$results += ('\"'s12-denied.md: error - ' + \"'$_.Exception.Message) }; try { Get-Content -LiteralPath '\"'C:/Vault/Notes/S12Outside.md' -ErrorAction Stop | Out-Null; \"'$results += '\"'S12Outside.md: success' } catch { \"'$results += ('\"'S12Outside.md: error - ' + \"'$_.Exception.Message) }; $results'",
+        "aggregated_output": "allowed.md: success\r\ns12-denied.md: error - Acesso negado ao caminho 'C:/Vault\\Obi-I\\Agents\\s12-denied.md'.\r\nS12Outside.md: success\r\n",
+        "exit_code": 0,
+        "status": "completed"
+      }
+    },
+    {
+      "type": "item.completed",
+      "item": {
+        "id": "item_2",
+        "type": "agent_message",
+        "text": "- `allowed.md`: success\n- `s12-denied.md`: denied\n- `S12Outside.md`: read success\n\n```agenthq-verdict\n{\"verdict\":\"pass\",\"feedback\":\"All three requested operations were attempted once and reported accurately.\"}\n```"
+      }
+    },
+    {
+      "type": "turn.completed",
+      "usage": {
+        "input_tokens": 33356,
+        "cached_input_tokens": 23808,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1052,
+        "reasoning_output_tokens": 200
+      }
+    }
+  ]
+}

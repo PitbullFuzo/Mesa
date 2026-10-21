@@ -1,0 +1,15 @@
+node_modules/
+coverage/
+test-vault/AgentHQ/
+test-vault/Obi-I/
+test-vault/.obsidian/plugins/agenthq/*
+!test-vault/.obsidian/plugins/agenthq/.gitkeep
+test-vault/.obsidian/plugins/obi-i/*
+!test-vault/.obsidian/plugins/obi-i/.gitkeep
+test-vault/.obsidian/workspace*.json
+test-vault/.obsidian/*.json
+!test-vault/.obsidian/app.json
+!test-vault/.obsidian/community-plugins.json
+!test-vault/.obsidian/core-plugins.json
+.DS_Store
+release/

@@ -1,0 +1,675 @@
+{
+  "source": "OpenCode CLI 1.19.1: actual test-vault Chat permission and resumed-read runs. Vault prefix sanitized; thoughts/auth/inventories omitted. No inference during replay.",
+  "frames": [
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call",
+          "toolCallId": "call_03b7e05a342e4974b916d26c",
+          "title": "write",
+          "kind": "edit",
+          "status": "pending",
+          "locations": [],
+          "rawInput": {}
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_03b7e05a342e4974b916d26c",
+          "status": "in_progress",
+          "kind": "edit",
+          "title": "write",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+            "content": "S11_WORK_OK\n"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call",
+          "toolCallId": "call_749ba491195a42c7803fc52a",
+          "title": "write",
+          "kind": "edit",
+          "status": "pending",
+          "locations": [],
+          "rawInput": {}
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 0,
+      "method": "session/request_permission",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "toolCall": {
+          "toolCallId": "call_03b7e05a342e4974b916d26c",
+          "title": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+          "kind": "edit",
+          "status": "pending",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+            }
+          ],
+          "rawInput": {
+            "filepath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+            "diff": "Index: C:/Vault/Obi-I/Work/s11opencode/allowed.md\n===================================================================\n--- C:/Vault/Obi-I/Work/s11opencode/allowed.md\n+++ C:/Vault/Obi-I/Work/s11opencode/allowed.md\n@@ -0,0 +1,1 @@\n+S11_WORK_OK\n"
+          },
+          "content": [
+            {
+              "type": "diff",
+              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+              "oldText": "",
+              "newText": "S11_WORK_OK\n"
+            }
+          ]
+        },
+        "options": [
+          {
+            "optionId": "once",
+            "kind": "allow_once",
+            "name": "Allow once"
+          },
+          {
+            "optionId": "always",
+            "kind": "allow_always",
+            "name": "Always allow"
+          },
+          {
+            "optionId": "reject",
+            "kind": "reject_once",
+            "name": "Reject"
+          }
+        ]
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_03b7e05a342e4974b916d26c",
+          "status": "completed",
+          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "content": [
+            {
+              "type": "content",
+              "content": {
+                "type": "text",
+                "text": "Wrote file successfully."
+              }
+            }
+          ],
+          "rawOutput": {
+            "output": "Wrote file successfully.",
+            "metadata": {
+              "diagnostics": {},
+              "filepath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+              "exists": false,
+              "truncated": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_749ba491195a42c7803fc52a",
+          "status": "in_progress",
+          "kind": "edit",
+          "title": "write",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "content": "SHOULD_NOT_WRITE\n"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call",
+          "toolCallId": "call_f86772b82dac415bbcfb77b8",
+          "title": "read",
+          "kind": "read",
+          "status": "pending",
+          "locations": [],
+          "rawInput": {}
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "session/request_permission",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "toolCall": {
+          "toolCallId": "call_749ba491195a42c7803fc52a",
+          "title": "C:/Vault/Obi-I/Agents/s11-denied.md",
+          "kind": "edit",
+          "status": "pending",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+            }
+          ],
+          "rawInput": {
+            "filepath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "diff": "Index: C:/Vault/Obi-I/Agents/s11-denied.md\n===================================================================\n--- C:/Vault/Obi-I/Agents/s11-denied.md\n+++ C:/Vault/Obi-I/Agents/s11-denied.md\n@@ -0,0 +1,1 @@\n+SHOULD_NOT_WRITE\n"
+          },
+          "content": [
+            {
+              "type": "diff",
+              "path": "C:/Vault/Obi-I/Agents/s11-denied.md",
+              "oldText": "",
+              "newText": "SHOULD_NOT_WRITE\n"
+            }
+          ]
+        },
+        "options": [
+          {
+            "optionId": "once",
+            "kind": "allow_once",
+            "name": "Allow once"
+          },
+          {
+            "optionId": "always",
+            "kind": "allow_always",
+            "name": "Always allow"
+          },
+          {
+            "optionId": "reject",
+            "kind": "reject_once",
+            "name": "Reject"
+          }
+        ]
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_749ba491195a42c7803fc52a",
+          "status": "failed",
+          "kind": "edit",
+          "title": "write",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "content": "SHOULD_NOT_WRITE\n"
+          },
+          "content": [
+            {
+              "type": "content",
+              "content": {
+                "type": "text",
+                "text": "The user rejected permission to use this specific tool call."
+              }
+            }
+          ],
+          "rawOutput": {
+            "error": "The user rejected permission to use this specific tool call."
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_f86772b82dac415bbcfb77b8",
+          "status": "in_progress",
+          "kind": "read",
+          "title": "read",
+          "locations": [
+            {
+              "path": "C:/Vault/Notes/S11Outside.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Notes/S11Outside.md"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "session/request_permission",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "toolCall": {
+          "toolCallId": "call_f86772b82dac415bbcfb77b8",
+          "title": "read",
+          "kind": "read",
+          "status": "pending",
+          "locations": [],
+          "rawInput": {}
+        },
+        "options": [
+          {
+            "optionId": "once",
+            "kind": "allow_once",
+            "name": "Allow once"
+          },
+          {
+            "optionId": "always",
+            "kind": "allow_always",
+            "name": "Always allow"
+          },
+          {
+            "optionId": "reject",
+            "kind": "reject_once",
+            "name": "Reject"
+          }
+        ]
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_f86772b82dac415bbcfb77b8",
+          "status": "failed",
+          "kind": "read",
+          "title": "read",
+          "locations": [
+            {
+              "path": "C:/Vault/Notes/S11Outside.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Notes/S11Outside.md"
+          },
+          "content": [
+            {
+              "type": "content",
+              "content": {
+                "type": "text",
+                "text": "The user rejected permission to use this specific tool call."
+              }
+            }
+          ],
+          "rawOutput": {
+            "error": "The user rejected permission to use this specific tool call."
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "usage_update",
+          "used": 3410,
+          "size": 200000,
+          "cost": {
+            "amount": 0,
+            "currency": "USD"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call",
+          "toolCallId": "call_03b7e05a342e4974b916d26c",
+          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "kind": "edit",
+          "status": "pending",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+            "content": "S11_WORK_OK\n"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_03b7e05a342e4974b916d26c",
+          "status": "completed",
+          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "content": [
+            {
+              "type": "content",
+              "content": {
+                "type": "text",
+                "text": "Wrote file successfully."
+              }
+            }
+          ],
+          "rawOutput": {
+            "output": "Wrote file successfully.",
+            "metadata": {
+              "diagnostics": {},
+              "filepath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+              "exists": false,
+              "truncated": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call",
+          "toolCallId": "call_749ba491195a42c7803fc52a",
+          "title": "write",
+          "kind": "edit",
+          "status": "pending",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "content": "SHOULD_NOT_WRITE\n"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_749ba491195a42c7803fc52a",
+          "status": "failed",
+          "kind": "edit",
+          "title": "write",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "content": "SHOULD_NOT_WRITE\n"
+          },
+          "content": [
+            {
+              "type": "content",
+              "content": {
+                "type": "text",
+                "text": "The user rejected permission to use this specific tool call."
+              }
+            }
+          ],
+          "rawOutput": {
+            "error": "The user rejected permission to use this specific tool call."
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call",
+          "toolCallId": "call_f86772b82dac415bbcfb77b8",
+          "title": "read",
+          "kind": "read",
+          "status": "pending",
+          "locations": [
+            {
+              "path": "C:/Vault/Notes/S11Outside.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Notes/S11Outside.md"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_f86772b82dac415bbcfb77b8",
+          "status": "failed",
+          "kind": "read",
+          "title": "read",
+          "locations": [
+            {
+              "path": "C:/Vault/Notes/S11Outside.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Notes/S11Outside.md"
+          },
+          "content": [
+            {
+              "type": "content",
+              "content": {
+                "type": "text",
+                "text": "The user rejected permission to use this specific tool call."
+              }
+            }
+          ],
+          "rawOutput": {
+            "error": "The user rejected permission to use this specific tool call."
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call",
+          "toolCallId": "call_8d342822ed97433c843c3f11",
+          "title": "read",
+          "kind": "read",
+          "status": "pending",
+          "locations": [],
+          "rawInput": {}
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_8d342822ed97433c843c3f11",
+          "status": "in_progress",
+          "kind": "read",
+          "title": "read",
+          "locations": [
+            {
+              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+            }
+          ],
+          "rawInput": {
+            "filePath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "id": 0,
+      "method": "session/request_permission",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "toolCall": {
+          "toolCallId": "call_8d342822ed97433c843c3f11",
+          "title": "read",
+          "kind": "read",
+          "status": "pending",
+          "locations": [],
+          "rawInput": {}
+        },
+        "options": [
+          {
+            "optionId": "once",
+            "kind": "allow_once",
+            "name": "Allow once"
+          },
+          {
+            "optionId": "always",
+            "kind": "allow_always",
+            "name": "Always allow"
+          },
+          {
+            "optionId": "reject",
+            "kind": "reject_once",
+            "name": "Reject"
+          }
+        ]
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "tool_call_update",
+          "toolCallId": "call_8d342822ed97433c843c3f11",
+          "status": "completed",
+          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "content": [
+            {
+              "type": "content",
+              "content": {
+                "type": "text",
+                "text": "S11_WORK_OK"
+              }
+            }
+          ],
+          "rawOutput": {
+            "output": "<path>C:\\Vault\\Obi-I\\Work\\s11opencode\\allowed.md</path>\n<type>file</type>\n<content>\n1: S11_WORK_OK\n\n(End of file - total 1 lines)\n</content>",
+            "metadata": {
+              "preview": "S11_WORK_OK",
+              "truncated": false,
+              "loaded": [],
+              "display": {
+                "type": "file",
+                "path": "C:\\Vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+                "text": "S11_WORK_OK",
+                "lineStart": 1,
+                "lineEnd": 1,
+                "totalLines": 1,
+                "truncated": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "agent_message_chunk",
+          "messageId": "msg_145dee78d001Kb64uhIoalbDPB",
+          "content": {
+            "type": "text",
+            "text": "S11_WORK_OK"
+          }
+        }
+      }
+    },
+    {
+      "jsonrpc": "2.0",
+      "method": "session/update",
+      "params": {
+        "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
+        "update": {
+          "sessionUpdate": "usage_update",
+          "used": 4038,
+          "size": 200000,
+          "cost": {
+            "amount": 0,
+            "currency": "USD"
+          }
+        }
+      }
+    }
+  ]
+}

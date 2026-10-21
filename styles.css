@@ -1,0 +1,648 @@
+/* Plugin surfaces inherit the vault theme. */
+.agenthq-graph {
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  color: var(--text-normal);
+  background: var(--background-primary);
+}
+.agenthq-panel {
+  padding: var(--size-4-3);
+  overflow: auto;
+  color: var(--text-normal);
+  background: var(--background-primary);
+}
+.agenthq-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4-2);
+}
+.agenthq-panel-header h2 {
+  margin: 0;
+  font-size: var(--font-ui-large);
+}
+.agenthq-panel button {
+  cursor: pointer;
+}
+.agenthq-agent-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-bottom: var(--size-4-1);
+  background: var(--background-primary);
+}
+.agenthq-chat-menu {
+  min-width: 2.4em;
+}
+.agenthq-switcher {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  margin: var(--size-4-2) 0;
+}
+.agenthq-switcher select {
+  flex: 1;
+  min-width: 0;
+}
+.agenthq-history-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+.agenthq-jump-bottom {
+  position: sticky;
+  bottom: var(--size-4-2);
+  display: block;
+  margin: var(--size-4-2) 0 0 auto;
+  z-index: 1;
+  width: 2.2em;
+  height: 2.2em;
+  border-radius: 50%;
+}
+.agenthq-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-1);
+  margin: var(--size-4-3) 0;
+}
+.agenthq-tabs button {
+  flex: 1;
+}
+.agenthq-tabs .is-active {
+  color: var(--text-on-accent);
+  background: var(--interactive-accent);
+}
+.agenthq-panel .agenthq-status {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+.agenthq-panel .agenthq-status-idle {
+  background: var(--text-muted);
+}
+.agenthq-panel .agenthq-status-offline {
+  background: transparent;
+  border: 1px solid var(--text-muted);
+}
+.agenthq-help {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+.agenthq-warning {
+  color: var(--text-warning);
+  font-size: var(--font-ui-small);
+  overflow-wrap: anywhere;
+}
+.agenthq-danger {
+  color: var(--text-error);
+}
+.agenthq-team-group {
+  margin-top: var(--size-4-3);
+}
+.agenthq-team-group summary {
+  padding: var(--size-4-2) 0;
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+}
+.agenthq-team-group ul {
+  list-style: none;
+  margin: 0;
+  padding-left: var(--size-4-2);
+}
+.agenthq-team-group li {
+  margin-bottom: var(--size-4-2);
+}
+.agenthq-team-agent {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  height: auto;
+  padding: var(--size-4-2);
+  text-align: left;
+  box-shadow: none;
+  background: transparent;
+  border: 1px solid transparent;
+}
+.agenthq-team-agent small {
+  color: var(--text-muted);
+  padding-top: var(--size-4-1);
+  white-space: normal;
+}
+.agenthq-team-agent.is-selected {
+  border-color: var(--interactive-accent);
+  background: var(--background-modifier-hover);
+}
+.agenthq-invalid {
+  padding: var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  margin-top: var(--size-4-2);
+}
+.agenthq-invalid p {
+  overflow-wrap: anywhere;
+}
+.agenthq-setup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-3);
+}
+.agenthq-setup > label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1);
+  font-size: var(--font-ui-small);
+}
+.agenthq-setup input:not([type='checkbox']),
+.agenthq-setup select,
+.agenthq-setup textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.agenthq-setup textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.agenthq-setup fieldset {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  padding: var(--size-4-2);
+}
+.agenthq-skill {
+  display: flex;
+  gap: var(--size-4-2);
+  align-items: center;
+  margin: var(--size-4-1) 0;
+}
+.agenthq-setup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  padding-bottom: var(--size-4-4);
+}
+.agenthq-chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-3);
+}
+.agenthq-chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-3);
+}
+.agenthq-chat-message,
+.agenthq-chat-message .agenthq-message-markdown {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.agenthq-copy-reply {
+  font-size: var(--font-ui-smaller);
+  height: auto;
+  padding: 2px 6px;
+}
+.agenthq-chat-message {
+  padding: var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  overflow-wrap: anywhere;
+}
+.agenthq-chat-message header {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-4-2);
+}
+.agenthq-chat-message.is-user {
+  background: var(--background-secondary);
+}
+.agenthq-chat-tools {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+.agenthq-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+}
+.agenthq-attachments figure {
+  margin: 0;
+  max-width: 160px;
+  overflow-wrap: anywhere;
+}
+.agenthq-attachments img,
+.agenthq-chat-message .image-embed img {
+  max-width: 160px;
+  max-height: 120px;
+  object-fit: contain;
+}
+.agenthq-attachments figcaption {
+  font-size: var(--font-ui-smaller);
+}
+.agenthq-broadcast .agenthq-attachments {
+  flex-basis: 100%;
+}
+.agenthq-chat-compose textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+}
+.agenthq-chat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  margin-top: var(--size-4-2);
+}
+.agenthq-history {
+  list-style: none;
+  padding: 0;
+}
+.agenthq-history li {
+  margin-bottom: var(--size-4-2);
+}
+.agenthq-history button {
+  white-space: normal;
+  height: auto;
+  text-align: left;
+}
+.agenthq-panel .agenthq-status-working {
+  background: var(--interactive-accent);
+  animation: agenthq-working-pulse 1.2s ease-in-out infinite;
+}
+.agenthq-panel .agenthq-status-queued {
+  border: 1px solid var(--text-muted);
+  background: transparent;
+}
+.agenthq-panel .agenthq-status-needs-you {
+  background: var(--text-warning);
+}
+.agenthq-panel .agenthq-status-error {
+  background: var(--text-error);
+}
+.agenthq-graph .agenthq-status-working .agenthq-status-dot {
+  background: var(--interactive-accent);
+  animation: agenthq-working-pulse 1.2s ease-in-out infinite;
+}
+.agenthq-graph .agenthq-status-queued .agenthq-status-dot {
+  background: transparent;
+}
+.agenthq-graph .agenthq-status-needs-you .agenthq-status-dot {
+  background: var(--text-warning);
+}
+.agenthq-graph .agenthq-status-error .agenthq-status-dot {
+  background: var(--text-error);
+}
+@keyframes agenthq-working-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .agenthq-panel .agenthq-status-working,
+  .agenthq-graph .agenthq-status-working .agenthq-status-dot {
+    animation: none;
+  }
+}
+.agenthq-inbox {
+  margin-top: var(--size-4-4);
+  border-top: 1px solid var(--background-modifier-border);
+}
+.agenthq-inbox-item {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  padding: var(--size-4-2);
+  margin-bottom: var(--size-4-2);
+  overflow-wrap: anywhere;
+}
+.agenthq-inbox-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-1);
+  margin-top: var(--size-4-2);
+}
+.agenthq-inbox-item button {
+  white-space: normal;
+  height: auto;
+  min-height: var(--input-height);
+}
+
+.agenthq-proposal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1);
+  padding: var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+}
+.agenthq-proposal-fields {
+  margin: 0;
+}
+.agenthq-proposal-fields div {
+  display: flex;
+  gap: var(--size-4-2);
+}
+.agenthq-proposal-fields dt {
+  color: var(--text-muted);
+  min-width: 7em;
+}
+.agenthq-proposal-fields dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.agenthq-proposal-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 24em;
+  overflow: auto;
+  margin: 0;
+}
+
+.agenthq-projects-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4-2);
+}
+.agenthq-projects-empty {
+  color: var(--text-muted);
+}
+.agenthq-project-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1);
+}
+.agenthq-project-row {
+  display: flex;
+  height: auto;
+  padding: var(--size-4-2);
+  white-space: normal;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+  gap: var(--size-2-1);
+}
+.agenthq-project-goal {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agenthq-project-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-2-2);
+}
+.agenthq-project-badge {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.agenthq-project-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  z-index: var(--layer-menu);
+  list-style: none;
+  margin: 0;
+  padding: var(--size-4-1);
+  min-width: 12em;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-s);
+}
+.agenthq-project-menu button {
+  width: 100%;
+  text-align: left;
+}
+
+.agenthq-projects-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-4-2);
+}
+.agenthq-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(9em, 1fr));
+  gap: var(--size-4-2);
+  overflow-x: auto;
+  align-items: start;
+}
+.agenthq-board-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+  min-height: 6em;
+  padding: var(--size-4-2);
+  background: var(--background-secondary);
+  border-radius: var(--radius-m);
+}
+.agenthq-board-column h4 {
+  margin: 0;
+}
+.agenthq-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--size-2-2);
+  width: 100%;
+  height: auto;
+  padding: var(--size-4-2);
+  text-align: left;
+  white-space: normal;
+  cursor: grab;
+}
+.agenthq-progress {
+  display: block;
+  width: 100%;
+  height: 0.4em;
+  background: var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+}
+.agenthq-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--interactive-accent);
+}
+.agenthq-project-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.agenthq-project-table th,
+.agenthq-project-table td {
+  text-align: left;
+  padding: var(--size-4-1) var(--size-4-2);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+.agenthq-tabs {
+  display: flex;
+  gap: var(--size-2-2);
+  flex-wrap: wrap;
+}
+.agenthq-tabs button[aria-selected='true'] {
+  font-weight: 600;
+  text-decoration: underline;
+}
+.agenthq-context {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 16em;
+  overflow: auto;
+}
+
+.agenthq-loop-round {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  white-space: nowrap;
+}
+.agenthq-card-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-2);
+}
+
+.agenthq-schedule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+}
+.agenthq-schedule-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-2);
+  padding: var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+}
+.agenthq-schedule-message {
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+.agenthq-schedule-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2-2);
+}
+
+.agenthq-code {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-2);
+}
+.agenthq-code-header {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-2);
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+.agenthq-code-header > span {
+  margin-right: auto;
+}
+.agenthq-code.is-collapsed pre {
+  display: none;
+}
+
+/* Obi's welcome tour (Step 25) */
+.agenthq-tour {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.agenthq-tour h4 {
+  margin: 0 0 6px;
+}
+.agenthq-tour-body {
+  white-space: pre-line;
+}
+.agenthq-tour-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.agenthq-signin-code {
+  font-size: 2.2em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-align: center;
+  padding: 12px 0;
+  user-select: all;
+}
+
+.agenthq-signin-url {
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.agenthq-chat-meters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+.agenthq-context progress {
+  width: 80px;
+  height: 8px;
+  vertical-align: middle;
+}
+
+.agenthq-context progress.is-warn {
+  accent-color: var(--text-error);
+}
+
+.agenthq-meter-resets,
+.agenthq-slash-info {
+  white-space: pre-line;
+}
+
+.agenthq-note-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--background-modifier-hover);
+  font-size: var(--font-ui-small);
+  overflow-wrap: anywhere;
+}
+
+.agenthq-slash-popup {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  background: var(--background-secondary);
+}
+
+.agenthq-slash-popup button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  box-shadow: none;
+}

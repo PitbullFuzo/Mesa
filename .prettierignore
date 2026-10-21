@@ -1,0 +1,11 @@
+node_modules/
+package-lock.json
+test-vault/AgentHQ/
+test-vault/.obsidian/plugins/agenthq/
+test-vault/.obsidian/*.json
+AGENTS.md
+docs/BRIEF.md
+docs/STEPS.md
+docs/DECISIONS.md
+docs/PROGRESS.md
+test-vault/*.md
