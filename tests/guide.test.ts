@@ -36,7 +36,7 @@ describe('the guide text', () => {
 
   it('has the sections in order, with plain safety rules', () => {
     expect(GUIDE_SECTIONS.map((section) => section.title)).toEqual([
-      'What Obi-I is',
+      'What Mesa is',
       'What you need',
       'Agents, groups and the CEO',
       'Projects, memory and costs',
@@ -67,7 +67,7 @@ describe('the guide text', () => {
 
   it('keeps the disclaimer text exact', () => {
     expect(DISCLAIMER).toBe(
-      "Obi-I lets AI agents read and change files you allow. It is provided as-is, without warranty. We aren't responsible for data loss or AI costs. Please back up your vault before giving agents write access or reorganising notes.",
+      "Mesa lets AI agents read and change files you allow. It is provided as-is, without warranty. We aren't responsible for data loss or AI costs. Please back up your vault before giving agents write access or reorganising notes.",
     );
   });
 
@@ -80,27 +80,27 @@ describe('the guide text', () => {
 
 describe('Guide.md', () => {
   it('is created with the guide version, and left alone when the version matches', async () => {
-    const store = new MemoryStore('Obi-I');
-    await syncGuideNote(store, 'Obi-I');
-    const created = store.notes.get('Obi-I/Guide.md')!;
+    const store = new MemoryStore('Mesa');
+    await syncGuideNote(store, 'Mesa');
+    const created = store.notes.get('Mesa/Guide.md')!;
     expect(created.frontmatter).toMatchObject({ guideVersion: GUIDE_VERSION });
     expect(created.body).toBe(GUIDE_BODY);
     created.body = 'Owner edit that matches the version.';
-    await syncGuideNote(store, 'Obi-I');
-    expect(store.notes.get('Obi-I/Guide.md')!.body).toBe(
+    await syncGuideNote(store, 'Mesa');
+    expect(store.notes.get('Mesa/Guide.md')!.body).toBe(
       'Owner edit that matches the version.',
     );
   });
 
   it('is refreshed when the guide version changes', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     await store.createNote(
-      'Obi-I/Guide.md',
+      'Mesa/Guide.md',
       { guideVersion: GUIDE_VERSION - 1 },
       'Old text.',
     );
-    await syncGuideNote(store, 'Obi-I');
-    const refreshed = store.notes.get('Obi-I/Guide.md')!;
+    await syncGuideNote(store, 'Mesa');
+    const refreshed = store.notes.get('Mesa/Guide.md')!;
     expect(refreshed.body).toBe(GUIDE_BODY);
     expect(refreshed.frontmatter).toMatchObject({
       guideVersion: GUIDE_VERSION,

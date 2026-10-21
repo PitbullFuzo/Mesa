@@ -62,7 +62,7 @@ describe('Inbox and Stop all controls', () => {
             agentId: 'coder',
             kind: 'verification-exhausted',
             message: 'Review failed',
-            path: 'Obi-I/Tasks/task.md',
+            path: 'Mesa/Tasks/task.md',
           },
           {
             id: 'done',
@@ -92,7 +92,7 @@ describe('Inbox and Stop all controls', () => {
             agentId: 'coder',
             kind: 'runtime-auth',
             message: '<script>Sign in</script>',
-            path: 'Obi-I/Chats/chat.md',
+            path: 'Mesa/Chats/chat.md',
           },
         ]),
       }),

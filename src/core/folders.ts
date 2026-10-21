@@ -21,7 +21,7 @@ const trimSlashes = (path: string) => path.replace(/\/+$/, '');
 
 /**
  * Why a vault folder cannot be a project's Output folder, or undefined when it can. The folder must be inside the
- * vault and must not be the configuration folder or any protected Obi-I folder. Work is allowed.
+ * vault and must not be the configuration folder or any protected Mesa folder. Work is allowed.
  */
 export function outputFolderProblem(
   folder: string,

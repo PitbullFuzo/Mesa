@@ -1,10 +1,10 @@
-# Obi-I for Obsidian
+# Mesa for Obsidian
 
 🇵🇹 [Ler em português](README.pt.md)
 
-## What is Obi-I
+## What is Mesa
 
-Obi-I runs AI agents inside Obsidian. Each agent is a note in the Obi-I folder.
+Mesa runs AI agents inside Obsidian. Each agent is a note in the Mesa folder.
 You talk to them in Chat, and they answer with the AI tool you installed (Claude Code,
 Codex, OpenCode or Hermes), which uses your own account and plan. You can give an
 agent a team with an editable org chart, Tasks, History, broadcasts and a reviewer
@@ -15,11 +15,11 @@ Made by Marcio Vieira — guides, how-tos, downloads and feedback at [trabalhoia
 ## What you need
 
 - Obsidian desktop, on Windows or Mac: https://obsidian.md
-- At least one AI tool, installed and signed in. Claude Code (a Claude plan or an API key): https://code.claude.com/docs/en/setup . Codex CLI (a ChatGPT plan; version 0.160.0 or newer; a newer version is checked once by Obi-I, then used): https://github.com/openai/codex . OpenCode (version 1.19.1 or newer, checked the same way): https://opencode.ai . Hermes: see the Hermes section below.
+- At least one AI tool, installed and signed in. Claude Code (a Claude plan or an API key): https://code.claude.com/docs/en/setup . Codex CLI (a ChatGPT plan; version 0.160.0 or newer; a newer version is checked once by Mesa, then used): https://github.com/openai/codex . OpenCode (version 1.19.1 or newer, checked the same way): https://opencode.ai . Hermes: see the Hermes section below.
 - Node.js, only for browser control: https://nodejs.org
 - Python comes with Hermes; you do not install it yourself.
 - Git is optional, for backups: https://git-scm.com
-- No coding languages are needed to use Obi-I itself.
+- No coding languages are needed to use Mesa itself.
 
 ## Install
 
@@ -27,18 +27,18 @@ This repository is private for now; releases come later.
 
 **a) Community plugin store:** coming soon.
 
-**b) Download from trabalhoia.com:** download the Obi-I zip (it contains the three
+**b) Download from trabalhoia.com:** download the Mesa zip (it contains the three
 files) from [trabalhoia.com](https://trabalhoia.com). Unzip it into
-`<vault>/.obsidian/plugins/obi-i/` (create the folder), then follow the same steps
+`.obsidian/plugins/mesa/` inside your vault folder (create the folder), then follow the same steps
 as the manual route below.
 
-**c) BRAT:** install the BRAT community plugin, then add `PitbullFuzo/obi-i`
+**c) BRAT:** install the BRAT community plugin, then add `PitbullFuzo/Mesa`
 as a beta plugin. BRAT installs from GitHub releases, so this works once the
 repository is public and has a release.
 
 **d) Manual:** download `main.js`, `manifest.json` and `styles.css` from the latest
-GitHub release into `<vault>/.obsidian/plugins/obi-i/` (create the folder). Then
-open Obsidian → Settings → Community plugins and enable **Obi-I**.
+GitHub release into `.obsidian/plugins/mesa/` inside your vault folder (create the folder). Then
+open Obsidian → Settings → Community plugins and enable **Mesa**.
 
 **e) Ask your AI to install it:** give your AI assistant (Claude Code, Codex or
 similar) this link and it will follow the steps: [INSTALL.md](INSTALL.md).
@@ -51,9 +51,9 @@ also be reported as GitHub issues once the repository is public.
 ## Chat extras
 
 - **Context bar:** shows how much of the model's context the chat uses (a tip suggests a new chat or Fork above about 80%); "unknown" or tokens only when the runtime does not report the window.
-- **Plan usage (Claude Code):** "5h 11% · week 42%" from the usage Claude Code itself reports in its output; click for the reset times. Obi-I never reads your Claude sign-in.
+- **Plan usage (Claude Code):** "5h 11% · week 42%" from the usage Claude Code itself reports in its output; click for the reset times. Mesa never reads your Claude sign-in.
 - **📎 Attach current note:** adds the open note to your message, with a chip you can remove. Long notes are cut.
-- **Slash commands:** type `/` for `/new`, `/compact`, `/fork`, `/skill <name> <message>`, `/project <name>` and `/help`.
+- **Slash commands:** type `/` for `/new`, `/compact`, `/fork`, `/skill Research summarise this` and `/project Website` and `/help`.
 
 ## Windows and macOS
 
@@ -64,18 +64,22 @@ also be reported as GitHub issues once the repository is public.
   is checked on PATH, the Windows desktop bin, Windows npm packages, `~/.local/bin`,
   `~/.npm-global/bin`, Homebrew and `/usr/local/bin`. OpenCode is checked in npm's
   Windows location, `~/.opencode/bin`, `~/.local/bin`, Homebrew and `/usr/local/bin`.
-  Hermes is checked on PATH, `%LOCALAPPDATA%/hermes/bin`, its install venv and common
+  Hermes is checked on PATH, `AppData/Local/hermes/bin`, its install venv and common
   macOS/home locations.
-- If detection misses a tool, Settings → Obi-I → Runtime path override accepts the
+- If detection misses a tool, Settings → Mesa → Runtime path override accepts the
   full path to its program.
+
+## Releases are built by GitHub Actions
+
+Every release is built from its tag by the workflow in `.github/workflows/release.yml`, not on a developer's computer. The workflow checks that the tag equals the version in `manifest.json`, runs the tests, builds the plugin, signs `main.js`, `styles.css` and `manifest.json` with build provenance attestations (GitHub's proof of which source and workflow produced them), attaches them to a draft release and then publishes it. You can check a downloaded file with `gh attestation verify main.js --repo PitbullFuzo/Mesa`.
 
 ## Privacy & network
 
-- **Obi-I itself sends nothing to its author.** There is no telemetry, no analytics, no account and no update check.
-- **AI tools talk to their own providers.** Claude Code, Codex, OpenCode and Hermes are separate programs on your computer. Obi-I starts them
+- **Mesa itself sends nothing to its author.** There is no telemetry, no analytics, no account and no update check.
+- **AI tools talk to their own providers.** Claude Code, Codex, OpenCode and Hermes are separate programs on your computer. Mesa starts them
   with your message and the notes you allow; they send that to the provider you signed in with, under that provider's terms. Web access and
   browser control are off until you switch them on for an agent.
-- **Microsoft 365 only when connected.** When you press Sign in under Settings → Connectors (with the app that comes with Obi-I, or your own app registration if you paste its ID), Obi-I contacts
+- **Microsoft 365 only when connected.** When you press Sign in under Settings → Connectors (with the app that comes with Mesa, or your own app registration if you paste its ID), Mesa contacts
   `login.microsoftonline.com` (sign-in) and `graph.microsoft.com` (mail, calendar, OneDrive), through Obsidian's `requestUrl`. Nothing is sent
   before you connect, and every send, delete or write waits for your Approve card.
 - **Browser only when enabled.** The browser helper starts a browser on your computer only for an agent with Can use browser switched on.
@@ -83,8 +87,9 @@ also be reported as GitHub issues once the repository is public.
 - **Files outside your vault.** Run folders with temporary files (including the Microsoft 365 sign-in while connected) are created in your
   system temp folder and removed when the run ends. The Microsoft sign-in is kept in a file outside the vault, not encrypted.
 - **Helper files next to `main.js`.** When the plugin loads it writes `browser_mcp.cjs`, `m365_mcp.cjs` and `hermes_acp.py` into its own folder
-  (`<vault>/.obsidian/plugins/obi-i/`) if they are missing or changed. They are small programs the AI tools run for browser control,
+  (`.obsidian/plugins/mesa/` inside your vault folder) if they are missing or changed. They are small programs the AI tools run for browser control,
   Microsoft 365 and Hermes; they are built from this repository's source.
+- **Why Mesa lists your vault files.** The vault map, the graph map, the vault overview, vault search and the organiser need the list of your notes and their links. It is read on your computer and kept in files in the Mesa folder; nothing about it is sent anywhere by Mesa. An agent sees it only when you give that agent vault access.
 - **Agents run programs and edit files** only where Setup allows (see Safety above). Source code is open (MIT).
 
 ## Safety in plain words
@@ -92,7 +97,7 @@ also be reported as GitHub issues once the repository is public.
 - Note destinations (Settings) let an agent you tick write notes into specific folders of your vault (Meetings/, Research/, Wiki/, Permanent/ by default), and only those. Off for every agent until you tick it.
 - Agents write only to their Work folder, plus the outside folders you tick for that agent in its Setup. Settings lists the folders you allow; an agent with none ticked has no outside folders.
 - A project can have an Output folder for its finished work. Only that project’s runs may write there; drafts stay in Work.
-- Settings can hide Obi-I from search and the graph (Obsidian’s Excluded files). Show again undoes it.
+- Settings can hide Mesa from search and the graph (Obsidian’s Excluded files). Show again undoes it.
 - "Read & write vault" lets an agent change your notes. Turn it on only when you need it.
 - Vault access together with web access could let a bad web page trick an agent into sending your notes out. Use web access only when you need it.
 - Codex can read the whole computer, not only the vault.
@@ -115,23 +120,23 @@ npm test
 npm run build
 ```
 
-Build output: `test-vault/.obsidian/plugins/obi-i/{main.js,manifest.json,styles.css}` plus the helper files
+Build output: `main.js`, `manifest.json` and `styles.css` in `test-vault/.obsidian/plugins/mesa/`, plus the helper files
 (`hermes_acp.py`, `browser_mcp.cjs`, `m365_mcp.cjs`).
 
 **Release:** `npm run version:bump 0.2.0` updates `manifest.json`, `package.json` and `versions.json` together;
-`npm run package` then builds for production and writes `release/obi-i-<version>.zip` holding exactly `main.js`,
+`npm run package` then builds for production and writes `release/mesa-1.0.2.zip` (the number is the version) holding exactly `main.js`,
 `manifest.json` and `styles.css`. In a production build the helper files are inside `main.js`, and the plugin writes them
 beside it when it loads, so a three-file install is complete.
 Open **only this repository's test-vault** for development; do not put experimental
-builds in a personal vault. Enable community plugins and Obi-I. **After every
-code build, switch Obi-I off/on in Community plugins (or restart Obsidian)**;
+builds in a personal vault. Enable community plugins and Mesa. **After every
+code build, switch Mesa off/on in Community plugins (or restart Obsidian)**;
 otherwise Obsidian keeps old JavaScript in memory. `npm run dev` watches source;
 static-only asset changes require a build or watcher restart.
 
 Install **Claude Code CLI** and sign in separately (`claude` in a terminal).
-Obi-I uses its existing account, not API keys entered in the plugin. Detection
+Mesa uses its existing account, not API keys entered in the plugin. Detection
 checks PATH and known Windows/macOS locations. Chat shows install/sign-in guidance.
-Settings → Obi-I → Runtime path override accepts a native executable path;
+Settings → Mesa → Runtime path override accepts a native executable path;
 edits are saved immediately and detection refreshes after typing pauses. Hermes,
 OpenCode and Codex are also supported (below). macOS branches have unit
 tests, not a complete real-Mac acceptance pass.
@@ -150,8 +155,8 @@ account and may cost money; finished replies show reported costs.
   the note path and full content; the previous conversation gets a best-effort
   summary. Cancelling the picker sends nothing. Note contents go to the selected
   AI provider; choose deliberately for private notes.
-- Settings → Obi-I → **Import my Claude skills** → Import skills copies immediate
-  `~/.claude/skills/<folder>/SKILL.md` files into `Obi-I/Skills/<folder>.md`
+- Settings → Mesa → **Import my Claude skills** → Import skills copies immediate
+  each skill's `SKILL.md` file under `~/.claude/skills/` into a note in `Mesa/Skills/`
   through the Vault API. The source is read-only. Existing notes, unsafe names,
   symlinks and unreadable/missing files are skipped; a Notice reports counts.
   Choose imported skills in agent Setup to use them. Import does not assign them.
@@ -161,7 +166,7 @@ account and may cost money; finished replies show reported costs.
 
 ## Browser control
 
-Settings → Obi-I → **Set up browser tools** asks permission for up to 500 MB
+Settings → Mesa → **Set up browser tools** asks permission for up to 500 MB
 (typically 200–300 MB; existing cache is reused), then installs pinned Playwright
 MCP 0.0.83 and Chromium outside the vault. Node.js with npm/npx must already be
 installed. Only the Playwright MCP server is supplied to an opted-in Claude Code
@@ -188,7 +193,7 @@ Windows detection uses PATH/native Node plus home install locations; `.cmd` file
 are never spawned as shell commands. macOS Finder launches also search
 `/opt/homebrew/bin`, `/usr/local/bin`, `~/.local/bin`, `~/.npm-global/bin` and
 `~/.nvm/versions/node/*/bin` for Node/npm/npx; Hermes retains its existing macOS
-native discovery. Browser caches: Windows `%LOCALAPPDATA%/ms-playwright`, macOS
+native discovery. Browser caches: Windows `AppData/Local/ms-playwright`, macOS
 `~/Library/Caches/ms-playwright`. No macOS permission prompts are expected; no real
 Mac has been tested yet. Do not infer macOS acceptance from the fake-filesystem tests.
 
@@ -197,18 +202,18 @@ Mac has been tested yet. Do not infer macOS acceptance from the fake-filesystem 
 Setup → Runtime → **Hermes** uses the installed Hermes ACP server through a bundled
 policy bootstrap (`hermes_acp.py`, shipped beside main.js). Install Hermes with ACP
 support and configure its provider in Hermes first; `hermes acp --check` verifies
-that installation. Detection checks PATH, Windows `%LOCALAPPDATA%/hermes/bin` and
+that installation. Detection checks PATH, Windows `AppData/Local/hermes/bin` and
 its install venv, plus common macOS/home locations. The existing Runtime path
 override remains for Claude Code; it does not override Hermes.
 
 In Model, use Hermes's ACP `provider:model` syntax, e.g.
 `openrouter:google/gemini-2.5-flash-lite`. Empty uses your configured Hermes model.
-Credentials are resolved by Hermes; Obi-I never saves provider keys. Choose a
+Credentials are resolved by Hermes; Mesa never saves provider keys. Choose a
 cheap model deliberately: your configured default may be expensive.
 
 The subprocess policy uses only read/search, file edits and web search/extraction.
 Shell, code execution, native delegation, browser, skills and MCP tools are disabled.
-Every edit requires Obi-I's approval: read-only denies all writes, edit accepts
+Every edit requires Mesa's approval: read-only denies all writes, edit accepts
 only canonical allowed work folders and rejects config/Agents/Tasks/Activity/
 Attachments. Unknown or multi-file opaque proposals fail closed; full is unavailable.
 web_extract can fetch any URL; reads are confined to the agent's folders.
@@ -260,8 +265,8 @@ update. Other CLI versions fail closed until their policy is verified.
 Setup → Runtime → **OpenCode**, then Model = `provider/model`. Empty uses
 `opencode/nemotron-3.5-lightning-free`; the real release checks used
 `opencode/mimo-v2.6-flash-free`. Free-provider availability/latency can vary.
-Obi-I isolates OpenCode's config, sessions and cache under
-`%LOCALAPPDATA%/Obi-I/opencode` (or `~/.local/share/Obi-I/opencode` on macOS).
+Mesa isolates OpenCode's config, sessions and cache under
+`AppData/Local/Mesa/opencode` (or `~/.local/share/Mesa/opencode` on macOS).
 It does not reuse the desktop server or normal CLI login/config. Provider keys,
 if needed, must come from the inherited environment, never plugin settings.
 The tested OpenCode free models need no saved provider key.
@@ -282,7 +287,7 @@ not an OS sandbox; externally changing symlinks during a check remains a race.
 ## Codex runtime
 
 Install **Codex CLI 0.160.0**, including its bundled Code Mode host, and run
-`codex login` separately. Obi-I uses that existing ChatGPT login, not keys in
+`codex login` separately. Mesa uses that existing ChatGPT login, not keys in
 plugin settings. Detection checks native PATH executables, the Windows desktop
 bin, Windows npm native packages, `~/.local/bin`, `~/.npm-global/bin`, Homebrew
 and `/usr/local/bin`. It never executes a `.cmd` through a shell. Other CLI
@@ -290,7 +295,7 @@ versions are unavailable until their policy is reviewed.
 
 **Codex can read your whole computer.** Unlike Hermes/OpenCode, its native
 Windows unelevated sandbox does not confine reads to allowed folders. A narrower
-read profile requires the elevated Windows backend, which Obi-I does not set
+read profile requires the elevated Windows backend, which Mesa does not set
 up or elevate. Every Codex agent is blocked until you tick **Allow whole-computer
 reads** in Setup and confirm the separate warning. Consent defaults off, can be
 revoked, and the agent panel keeps a visible warning. This is saved as
@@ -317,16 +322,16 @@ low-cost **`gpt-5.6-luna`** with low reasoning; empty uses the native CLI defaul
 not the model in the ignored user config. Chat displays native message/tool events
 (message-granular, not guaranteed token-by-token), preserves the server UUID for
 resume, and stops the process tree. Codex keeps its own session files for resume;
-Obi-I never uses `--ephemeral`. Native Usage lines are **cumulative per thread**,
+Mesa never uses `--ephemeral`. Native Usage lines are **cumulative per thread**,
 including cached tokens. Codex does not report a USD charge: missing cost is
 unknown, never shown as a fabricated $0. Paid reviewers report their own cost.
 
 ## Images in chat
 
 Paste an image or drop a PNG/JPEG/GIF/WebP file into Chat or the broadcast composer.
-Each file (maximum 10 MiB) is saved with a unique name in `Obi-I/Attachments/`.
+Each file (maximum 10 MiB) is saved with a unique name in `Mesa/Attachments/`.
 A thumbnail appears before sending and in the chat; transcripts use ordinary
-`![[...]]` embeds. Absolute Read-tool hints are inference-only: they do not appear
+image embeds such as `![[photo.png]]`. Absolute Read-tool hints are inference-only: they do not appear
 in your chat bubbles, chat notes or broadcast summary.
 Attachments are always readable by agents but explicitly protected from edits,
 even for edit agents. Remove detaches a draft image; it does not delete the saved
@@ -334,9 +339,9 @@ file. Unsent images are retained in the vault. Text-only messages still work as 
 
 ## Where files live
 
-Under the configured `Obi-I/` folder: `Agents/` (instructions/frontmatter),
+Under the configured `Mesa/` folder: `Agents/` (instructions/frontmatter),
 `Groups.md`, `Skills/`, `Chats/` (finished messages, sessions, summaries), `Tasks/`
-(answers/attempts/verdicts), `Activity/YYYY-MM.md`, `Work/<agent-id>/`, `Attachments/`,
+(answers/attempts/verdicts), `Activity/YYYY-MM.md`, `Work/` (one folder per agent), `Attachments/`,
 and `Welcome.md`.
 Settings, stable-ID graph positions and Inbox state live in plugin `data.json`.
 Task/activity links use Obsidian's link text; old notes are not rewritten.
@@ -372,7 +377,7 @@ Build setup follows the official [Obsidian sample plugin](https://github.com/obs
 
 ## Disclaimer
 
-Obi-I lets AI agents read and change files you allow. It is provided as-is, without warranty. We aren't responsible for data loss or AI costs. Please back up your vault before giving agents write access or reorganising notes.
+Mesa lets AI agents read and change files you allow. It is provided as-is, without warranty. We aren't responsible for data loss or AI costs. Please back up your vault before giving agents write access or reorganising notes.
 
 ## Licence
 

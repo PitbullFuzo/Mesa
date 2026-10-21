@@ -21,9 +21,9 @@ async function setup(maxParallelRuns = 2) {
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     onChange: (snapshot) => snapshots.push(snapshot),
   });
   await service.initialize();
@@ -288,7 +288,7 @@ describe('broadcast', () => {
     await store.patchAgent(ids[2]!, { permission: 'full' });
     await store.patchAgent(ids[3]!, { workdir: '/outside' });
     await store.createNote(
-      'Obi-I/Agents/Broken.md',
+      'Mesa/Agents/Broken.md',
       { agenthq: 'agent', id: [] },
       '',
     );
@@ -318,7 +318,7 @@ describe('broadcast', () => {
     expect(
       result.recipients.find((entry) => entry.name === 'Broken'),
     ).toMatchObject({
-      key: 'Obi-I/Agents/Broken.md',
+      key: 'Mesa/Agents/Broken.md',
       status: 'skipped',
       reason: current.invalidAgents[0]!.reason,
     });

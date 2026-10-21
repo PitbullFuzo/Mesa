@@ -47,7 +47,7 @@ async function listOpenCode(): Promise<ModelChoice[]> {
   // The same isolated state directory as the OpenCode runtime, so the owner's own config is not read.
   const state = join(
     process.env.LOCALAPPDATA ?? join(homedir(), '.local', 'share'),
-    'Obi-I',
+    'Mesa',
     'opencode',
   );
   await mkdir(state, { recursive: true });

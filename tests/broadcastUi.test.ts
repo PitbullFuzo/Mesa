@@ -17,7 +17,7 @@ vi.mock('react', async (original) => ({
 
 async function fixture() {
   const store = new MemoryStore();
-  await initializeStarterTeam(store, 'Obi-I');
+  await initializeStarterTeam(store, 'Mesa');
   const state: WorkspaceSnapshot = {
     ...(await store.loadAgents()),
     groups: await store.loadGroups(),

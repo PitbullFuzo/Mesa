@@ -122,7 +122,7 @@ it('allows listed outside projects, refuses ancestors and confines unlisted outs
 it('defaults legacy agents to vault off/web on and persists explicit per-agent access settings', async () => {
   const store = new MemoryStore();
   const id = await store.createAgent('Access');
-  const frontmatter = store.notes.get('Obi-I/Agents/Access.md')!
+  const frontmatter = store.notes.get('Mesa/Agents/Access.md')!
     .frontmatter as Record<string, unknown>;
   delete frontmatter.vaultAccess;
   delete frontmatter.webAccess;
@@ -162,7 +162,7 @@ it('forwards saved access settings to chat and conversation-summary turns', asyn
     adapters: [runtime],
     settings: () => ({ allowedFolders: [], maxParallelRuns: 1 }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
   });
   await service.initialize();
   await service.send(id, 'hello');

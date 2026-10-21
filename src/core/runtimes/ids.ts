@@ -13,7 +13,7 @@ export const COMMAND_RUNTIMES: readonly string[] = [
 ];
 
 /**
- * Runtimes that can ask before every command. Only where nothing runs without an approved Obi-I card: OpenCode (ACP
+ * Runtimes that can ask before every command. Only where nothing runs without an approved Mesa card: OpenCode (ACP
  * permission request) and Hermes (the shim asks before each command tool). Claude Code and Codex have no safe channel.
  */
 export const ASK_RUNTIMES: readonly string[] = ['opencode', 'hermes'];
@@ -42,9 +42,9 @@ export function runtimeModelHint(runtime: string): string {
   if (runtime === 'codex')
     return 'Requires Codex CLI 0.160.0 or newer and your existing codex login. Use a model ID supported by your ChatGPT plan; empty uses the CLI default. Codex reports tokens, not dollar cost: replies show a token count, never a guessed price, and Codex runs do not count toward dollar cost caps. Read-only blocks writes; Edit uses workspace-write, refusing writable roots containing protected folders. Shell network is disabled unless Run commands is Allow freely; Web access controls hosted search. Whole-computer read access requires separate confirmation.';
   if (runtime === 'opencode')
-    return 'Use provider/model; empty uses opencode/nemotron-3.5-lightning-free. Requires the OpenCode 1.19.1 CLI, not its desktop server. Obi-I isolates its CLI state/config; provider credentials can come from the environment, never Obi-I settings. Read/edit permissions are enforced per file; shell, native delegation, glob/grep, and custom tools are disabled. Web access enables search only: URL fetch is disabled because OpenCode cannot safely confine private-network redirects.';
+    return 'Use provider/model; empty uses opencode/nemotron-3.5-lightning-free. Requires the OpenCode 1.19.1 CLI, not its desktop server. Mesa isolates its CLI state/config; provider credentials can come from the environment, never Mesa settings. Read/edit permissions are enforced per file; shell, native delegation, glob/grep, and custom tools are disabled. Web access enables search only: URL fetch is disabled because OpenCode cannot safely confine private-network redirects.';
   return runtime === 'hermes'
-    ? 'Use provider:model, for example openrouter:google/gemini-2.5-flash-lite. Empty uses your Hermes configuration. Credentials stay in Hermes. Read-only denies all edits; edit asks Obi-I for every file change.'
+    ? 'Use provider:model, for example openrouter:google/gemini-2.5-flash-lite. Empty uses your Hermes configuration. Credentials stay in Hermes. Read-only denies all edits; edit asks Mesa for every file change.'
     : '';
 }
 

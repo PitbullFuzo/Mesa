@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import { approveOpenCode } from '../src/core/runtimes/openCode';
 import type { RunRequest } from '../src/core/runtimes/types';
 
-/** The same path as the model may write it on Windows: every slash a backslash. The folders Obi-I allows use slashes. */
+/** The same path as the model may write it on Windows: every slash a backslash. The folders Mesa allows use slashes. */
 const bs = (path: string) => path.replace(/\//g, '\\');
 
 const req: RunRequest = {

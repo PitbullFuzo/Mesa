@@ -9,7 +9,7 @@ export const BROWSER_WARNING =
 /** Shown instead of the usual warning when a Codex agent (which can read the whole computer) gets the browser. */
 export const BROWSER_CODEX_WARNING =
   'This agent can read files anywhere on this computer and use a browser: a bad web page could trick it into sending your files out.';
-/** Runtimes that can load exactly Obi-I's browser server for one run (see DECISIONS.md, Step 28c research). */
+/** Runtimes that can load exactly Mesa's browser server for one run (see DECISIONS.md, Step 28c research). */
 const BROWSER_RUNTIMES = ['claude-code', 'opencode', 'hermes', 'codex'];
 export function browserUnavailableReason(
   runtime: string,
@@ -27,6 +27,6 @@ export function browserUnavailableReason(
   if (engine === 'hermes')
     return 'Hermes browser is unavailable: isolated profile, confined browser_exec code and Stop cleanup are not verified for the installed backend. Real-profile browsing is never used.';
   if (!BROWSER_RUNTIMES.includes(runtime))
-    return 'This runtime cannot load exactly Obi-I’s isolated browser, so browser control is refused.';
+    return 'This runtime cannot load exactly Mesa’s isolated browser, so browser control is refused.';
   return '';
 }

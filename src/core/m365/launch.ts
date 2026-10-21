@@ -34,9 +34,9 @@ export function m365UnavailableReason(
   if (runtime === 'codex')
     return 'Codex can read the whole computer, including the folder that keeps the Microsoft sign-in, and starts tools outside its sandbox; Microsoft 365 is refused for it.';
   if (!M365_RUNTIMES.includes(runtime))
-    return 'This runtime cannot load exactly Obi-I’s Microsoft 365 tools, so they are refused.';
+    return 'This runtime cannot load exactly Mesa’s Microsoft 365 tools, so they are refused.';
   if (!connected)
-    return 'Connect Microsoft 365 first (Settings → Obi-I → Connectors).';
+    return 'Connect Microsoft 365 first (Settings → Mesa → Connectors).';
   return '';
 }
 

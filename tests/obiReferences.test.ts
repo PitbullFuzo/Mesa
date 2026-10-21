@@ -21,7 +21,7 @@ const agent = (id: string, name: string) =>
 const groups: Group[] = [{ id: 'core', name: 'Core team', color: '#7c3aed' }];
 const skills: Skill[] = [
   {
-    path: 'Obi-I/Skills/karpathy-guidelines.md',
+    path: 'Mesa/Skills/karpathy-guidelines.md',
     name: 'karpathy-guidelines',
     body: '',
   },

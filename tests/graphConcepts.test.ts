@@ -19,7 +19,7 @@ const files: VaultFile[] = [
   { path: 'Misc/other.md', mtime: 4, incomingLinks: 0 },
 ];
 const analysis = analyseLinkGraph(
-  buildLinkGraph(files, {}, 'Obi-I', '.obsidian'),
+  buildLinkGraph(files, {}, 'Mesa', '.obsidian'),
 );
 const mtimes = new Map(files.map((file) => [file.path, file.mtime]));
 
@@ -51,12 +51,12 @@ describe('keeping results across restarts', () => {
   });
 
   it('survives a reload: a note is not read again while its modified time is unchanged', async () => {
-    const store = new MemoryStore('Obi-I');
-    await saveGraphConcepts(store, 'Obi-I', {
+    const store = new MemoryStore('Mesa');
+    await saveGraphConcepts(store, 'Mesa', {
       totalCostUsd: 0.5,
       results: kept(),
     });
-    const loaded = await loadGraphConcepts(store, 'Obi-I');
+    const loaded = await loadGraphConcepts(store, 'Mesa');
     expect(loaded.totalCostUsd).toBe(0.5);
 
     // The restart: only the note that was never read is a candidate.
@@ -84,23 +84,23 @@ describe('keeping results across restarts', () => {
   });
 
   it('writes the kept file only when its text changed', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const file = { totalCostUsd: 0.1, results: kept() };
-    await saveGraphConcepts(store, 'Obi-I', file);
+    await saveGraphConcepts(store, 'Mesa', file);
     const write = vi.spyOn(store, 'writeText');
-    await saveGraphConcepts(store, 'Obi-I', file);
+    await saveGraphConcepts(store, 'Mesa', file);
     expect(write).not.toHaveBeenCalled();
   });
 });
 
 describe('the spend in the Activity log', () => {
   it('writes one line per pass run with the notes read, the cost and the running total', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const line = graphActivityLine(
       { checked: 2, failed: 0, dropped: 0, costUsd: 0.004, skipped: '' },
       0.0123,
     );
-    await appendActivityLine(store, 'Obi-I', line, new Date(2026, 9, 21, 9, 5));
+    await appendActivityLine(store, 'Mesa', line, new Date(2026, 9, 21, 9, 5));
     const text = [...store.notes.values()].map((note) => note.body).join('\n');
     expect(text).toContain(
       '- 09:05 Graph map AI concepts: 2 notes read, $0.0040 this rebuild, $0.0123 in total',

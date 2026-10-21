@@ -94,7 +94,7 @@ class ProgressModal extends Modal {
   }
 }
 
-/** The newest plan note in Obi-I/Activity: the one the owner reviews. */
+/** The newest plan note in Mesa/Activity: the one the owner reviews. */
 async function latestPlan(store: Store, root: string) {
   const plans = (await store.loadNotesUnder(`${root}/Activity`))
     .filter((note) => note.name.startsWith('Reorganisation plan'))
@@ -116,7 +116,7 @@ async function latestUndoLog(store: Store, root: string) {
 
 /**
  * Asks the chosen agent for a plan through a one-off read-only run (ChatService.planReply) and writes the plan to
- * Obi-I/Activity, where agents cannot change it before it is applied.
+ * Mesa/Activity, where agents cannot change it before it is applied.
  */
 async function askForPlan(deps: ReorganiseDeps, agent: Agent): Promise<void> {
   const files = deps.app.vault

@@ -53,7 +53,7 @@ export function planPrompt(files: string[]): string {
     '```agenthq-reorg',
     '{"structure":["Folder/Subfolder"],"moves":[{"from":"Exact/Current/path.md","to":"New/path.md","reason":"short reason"}],"merges":[{"keep":"Exact/path.md","merge":"Exact/duplicate.md","reason":"same content"}]}',
     '```',
-    'Rules: copy paths exactly from the list. Never propose anything inside Obi-I or the vault configuration folder. Put duplicates only in merges; never delete.',
+    'Rules: copy paths exactly from the list. Never propose anything inside Mesa or the vault configuration folder. Put duplicates only in merges; never delete.',
     '',
     'Files:',
     ...files.slice(0, MAX_MOVES * 2),
@@ -146,7 +146,7 @@ function plainVaultPath(path: string): boolean {
 
 /**
  * Checks each move against the vault as it is now. A move is refused (and reported) when its source does not exist,
- * its target is taken, either side is inside Obi-I or the configuration folder, a path is not a plain vault path,
+ * its target is taken, either side is inside Mesa or the configuration folder, a path is not a plain vault path,
  * or two moves share a target. Nothing is deleted, ever: a move is only a rename.
  */
 export function validateMoves(
@@ -169,11 +169,11 @@ export function validateMoves(
       problems.push(`Source not found: ${move.from}`);
     else if (!isVaultSearchable(move.from, managedRoot, configDir))
       problems.push(
-        `Source is inside Obi-I or the configuration folder: ${move.from}`,
+        `Source is inside Mesa or the configuration folder: ${move.from}`,
       );
     else if (!isVaultSearchable(move.to, managedRoot, configDir))
       problems.push(
-        `Target is inside Obi-I or the configuration folder: ${move.to}`,
+        `Target is inside Mesa or the configuration folder: ${move.to}`,
       );
     else if (move.from === move.to)
       problems.push(`Source and target are the same: ${move.from}`);

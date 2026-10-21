@@ -77,13 +77,13 @@ describe('the setup check', () => {
         adapter('codex', 'Codex', {
           available: true,
           version: 'codex-cli 0.163.0',
-          hint: 'Checked by Obi-I, not yet verified by the developer (codex 0.163.0).',
+          hint: 'Checked by Mesa, not yet verified by the developer (codex 0.163.0).',
         }),
       ],
       async () => undefined,
     );
     expect(codex!.status).toBe('ready');
-    expect(setupLine(codex!)).toContain('codex-cli 0.163.0; Checked by Obi-I');
+    expect(setupLine(codex!)).toContain('codex-cli 0.163.0; Checked by Mesa');
   });
 
   it('calls a found but not ready tool unavailable, never a wrong version', async () => {

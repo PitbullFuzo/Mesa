@@ -12,7 +12,7 @@ export function agent(id: string, reportsTo: string | null = null): Agent {
   return {
     id,
     name: id,
-    path: `Obi-I/Agents/${id}.md`,
+    path: `Mesa/Agents/${id}.md`,
     role: '',
     reportsTo,
     group: null,

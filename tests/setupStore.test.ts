@@ -39,9 +39,9 @@ describe('field-only agent persistence', () => {
       (await store.loadAgents()).agents.find((agent) => agent.id === child)
         ?.reportsTo,
     ).toBe(lead);
-    expect(store.notes.get('Obi-I/Agents/Child.md')?.frontmatter).toMatchObject(
-      { reportsTo: '[[Safe lead]]' },
-    );
+    expect(store.notes.get('Mesa/Agents/Child.md')?.frontmatter).toMatchObject({
+      reportsTo: '[[Safe lead]]',
+    });
   });
   it('creates unique safe names and stable slugs without overwriting invalid notes', async () => {
     const store = new MemoryStore('Team');
@@ -80,17 +80,17 @@ describe('field-only agent persistence', () => {
   it('connects and disconnects only manager fields and rejects direct runtime cycles', async () => {
     const store = new MemoryStore();
     await store.createNote(
-      'Obi-I/Agents/Coder.md',
+      'Mesa/Agents/Coder.md',
       { ...raw, verifier: '[[Missing]]' },
       'Coder',
     );
     await store.createNote(
-      'Obi-I/Agents/Lead.md',
+      'Mesa/Agents/Lead.md',
       { ...raw, id: 'lead' },
       'Lead',
     );
     await store.setManager('coder', 'lead');
-    expect(store.notes.get('Obi-I/Agents/Coder.md')).toMatchObject({
+    expect(store.notes.get('Mesa/Agents/Coder.md')).toMatchObject({
       frontmatter: { reportsTo: '[[Lead]]', verifier: '[[Missing]]' },
       body: 'Coder',
     });
@@ -100,35 +100,35 @@ describe('field-only agent persistence', () => {
       /unknown/i,
     );
     await store.setManager('coder', null);
-    expect(store.notes.get('Obi-I/Agents/Coder.md')?.frontmatter).toMatchObject(
-      { reportsTo: null },
-    );
+    expect(store.notes.get('Mesa/Agents/Coder.md')?.frontmatter).toMatchObject({
+      reportsTo: null,
+    });
   });
   it('deletes a manager, reparents direct reports, leaves verifier links and raw broken lineage intact', async () => {
     const store = new MemoryStore();
     await store.createNote(
-      'Obi-I/Agents/CEO.md',
+      'Mesa/Agents/CEO.md',
       { ...raw, id: 'ceo', permission: 'broken' },
       'Broken CEO',
     );
     await store.createNote(
-      'Obi-I/Agents/Lead.md',
+      'Mesa/Agents/Lead.md',
       { ...raw, id: 'lead', reportsTo: '[[CEO]]' },
       'Lead',
     );
     await store.createNote(
-      'Obi-I/Agents/Coder.md',
+      'Mesa/Agents/Coder.md',
       { ...raw, reportsTo: '[[Lead]]', verifier: '[[Lead]]', custom: 'keep' },
       'Coder',
     );
     await store.createNote(
-      'Obi-I/Agents/Intern.md',
+      'Mesa/Agents/Intern.md',
       { ...raw, id: 'intern', reportsTo: '[[Coder]]' },
       'Intern',
     );
     await store.deleteAgent('lead');
-    expect(store.notes.has('Obi-I/Agents/Lead.md')).toBe(false);
-    expect(store.notes.get('Obi-I/Agents/Coder.md')).toMatchObject({
+    expect(store.notes.has('Mesa/Agents/Lead.md')).toBe(false);
+    expect(store.notes.get('Mesa/Agents/Coder.md')).toMatchObject({
       frontmatter: {
         reportsTo: '[[CEO]]',
         verifier: '[[Lead]]',
@@ -136,16 +136,16 @@ describe('field-only agent persistence', () => {
       },
       body: 'Coder',
     });
-    expect(
-      store.notes.get('Obi-I/Agents/Intern.md')?.frontmatter,
-    ).toMatchObject({ reportsTo: '[[Coder]]' });
+    expect(store.notes.get('Mesa/Agents/Intern.md')?.frontmatter).toMatchObject(
+      { reportsTo: '[[Coder]]' },
+    );
     expect(
       (await store.loadAgents()).agents.find((a) => a.id === 'coder')?.warnings,
     ).toHaveLength(2);
     await store.deleteAgent('coder');
-    expect(
-      store.notes.get('Obi-I/Agents/Intern.md')?.frontmatter,
-    ).toMatchObject({ reportsTo: '[[CEO]]' });
+    expect(store.notes.get('Mesa/Agents/Intern.md')?.frontmatter).toMatchObject(
+      { reportsTo: '[[CEO]]' },
+    );
     await expect(store.deleteAgent('missing')).rejects.toThrow(/unknown/i);
   });
   it('reparents reports to a valid grandparent or null when deleting a top-level manager', async () => {
@@ -156,7 +156,7 @@ describe('field-only agent persistence', () => {
       ['coder', 'Coder', '[[Lead]]'],
     ] as const)
       await store.createNote(
-        `Obi-I/Agents/${name}.md`,
+        `Mesa/Agents/${name}.md`,
         { ...raw, id, reportsTo },
         name,
       );
@@ -166,18 +166,18 @@ describe('field-only agent persistence', () => {
         ?.reportsTo,
     ).toBe('ceo');
     await store.deleteAgent('ceo');
-    expect(store.notes.get('Obi-I/Agents/Coder.md')?.frontmatter).toMatchObject(
-      { reportsTo: null },
-    );
+    expect(store.notes.get('Mesa/Agents/Coder.md')?.frontmatter).toMatchObject({
+      reportsTo: null,
+    });
   });
   it('broken CEO -> change Coder role -> raw reportsTo [[CEO]] remains intact', async () => {
     const store = new MemoryStore();
     await store.createNote(
-      'Obi-I/Agents/CEO.md',
+      'Mesa/Agents/CEO.md',
       { ...raw, id: 'ceo', permission: 'broken' },
       'CEO',
     );
-    const path = 'Obi-I/Agents/Coder.md';
+    const path = 'Mesa/Agents/Coder.md';
     const fm = {
       ...raw,
       reportsTo: '[[CEO]]',
@@ -196,19 +196,19 @@ describe('field-only agent persistence', () => {
   it('patches each Setup field, renames wikilinks, and preserves stable ids/layout', async () => {
     const store = new MemoryStore();
     await store.createNote(
-      'Obi-I/Agents/Coder.md',
+      'Mesa/Agents/Coder.md',
       { ...raw, custom: 'keep' },
       'Old',
     );
     await store.createNote(
-      'Obi-I/Agents/Reviewer.md',
+      'Mesa/Agents/Reviewer.md',
       { ...raw, id: 'reviewer', reportsTo: '[[Coder]]', verifier: '[[Coder]]' },
       'Review [[Coder]]',
     );
-    await store.createNote('Obi-I/Skills/rules.md', {}, 'Rules');
+    await store.createNote('Mesa/Skills/rules.md', {}, 'Rules');
     await store.createNote(
-      'Obi-I/Chats/Chat.md',
-      { agent: '[[Obi-I/Agents/Coder|Worker]]' },
+      'Mesa/Chats/Chat.md',
+      { agent: '[[Mesa/Agents/Coder|Worker]]' },
       'See [[Coder#Heading|worker]]',
     );
     await store.saveLayout({ coder: { x: 10, y: 20 } });
@@ -221,10 +221,10 @@ describe('field-only agent persistence', () => {
       workdir: 'Projects',
       verifier: 'reviewer',
       group: 'team',
-      skills: ['Obi-I/Skills/rules.md'],
+      skills: ['Mesa/Skills/rules.md'],
       instructions: 'New',
     });
-    expect(store.notes.has('Obi-I/Agents/Coder.md')).toBe(false);
+    expect(store.notes.has('Mesa/Agents/Coder.md')).toBe(false);
     expect(
       (await store.loadAgents()).agents.find((a) => a.id === 'coder'),
     ).toMatchObject({
@@ -236,18 +236,18 @@ describe('field-only agent persistence', () => {
       workdir: 'Projects',
       verifier: 'reviewer',
       group: 'team',
-      skills: ['Obi-I/Skills/rules.md'],
+      skills: ['Mesa/Skills/rules.md'],
       instructions: 'New',
     });
     expect(
-      store.notes.get('Obi-I/Agents/Engineer.md')?.frontmatter,
+      store.notes.get('Mesa/Agents/Engineer.md')?.frontmatter,
     ).toMatchObject({ id: 'coder', custom: 'keep' });
-    expect(store.notes.get('Obi-I/Agents/Reviewer.md')).toMatchObject({
+    expect(store.notes.get('Mesa/Agents/Reviewer.md')).toMatchObject({
       frontmatter: { reportsTo: '[[Engineer]]', verifier: '[[Engineer]]' },
       body: 'Review [[Engineer]]',
     });
-    expect(store.notes.get('Obi-I/Chats/Chat.md')).toMatchObject({
-      frontmatter: { agent: '[[Obi-I/Agents/Engineer|Worker]]' },
+    expect(store.notes.get('Mesa/Chats/Chat.md')).toMatchObject({
+      frontmatter: { agent: '[[Mesa/Agents/Engineer|Worker]]' },
       body: 'See [[Engineer#Heading|worker]]',
     });
     expect(await store.loadLayout()).toEqual({ coder: { x: 10, y: 20 } });
@@ -259,7 +259,7 @@ describe('field-only agent persistence', () => {
       skills: [],
       instructions: '',
     });
-    expect(store.notes.get('Obi-I/Agents/Engineer.md')).toMatchObject({
+    expect(store.notes.get('Mesa/Agents/Engineer.md')).toMatchObject({
       frontmatter: {
         model: '',
         workdir: '',

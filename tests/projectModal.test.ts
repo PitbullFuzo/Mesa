@@ -53,7 +53,7 @@ describe('project form', () => {
     const project = {
       id: 'p1',
       name: 'Sales',
-      path: 'Obi-I/Projects/Sales.md',
+      path: 'Mesa/Projects/Sales.md',
       status: 'active',
       goal: '',
       teams: [],

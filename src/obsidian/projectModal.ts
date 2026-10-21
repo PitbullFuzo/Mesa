@@ -197,7 +197,7 @@ export function openProjectForm(
         );
       new Setting(this.contentEl)
         .setName('Memory model')
-        .setDesc('Inherit uses the vault setting in Obi-I settings.')
+        .setDesc('Inherit uses the vault setting in Mesa settings.')
         .addDropdown((drop) => {
           drop.addOption('', 'Inherit vault setting');
           for (const choice of MEMORY_CHOICES)

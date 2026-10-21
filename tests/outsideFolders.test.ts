@@ -37,9 +37,9 @@ describe('per-agent outside folders', () => {
   });
 
   it('an upgraded vault keeps all outside folders: a legacy agent note loads with no list, and so keeps them', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     await store.createNote(
-      'Obi-I/Agents/Legacy.md',
+      'Mesa/Agents/Legacy.md',
       {
         agenthq: 'agent',
         id: 'legacy',
@@ -71,7 +71,7 @@ describe('per-agent outside folders', () => {
       agentId: 'coder',
       workdir: 'Reference/notes',
       vaultBasePath: 'C:\\Vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       allowedFolders: [] as string[],
     };
     await expect(resolveWorkdir(base)).rejects.toThrow(
@@ -85,32 +85,32 @@ describe('per-agent outside folders', () => {
 
 describe('project Output folder', () => {
   it('is optional, and must be a plain folder inside the vault that is not protected', () => {
-    expect(outputFolderProblem('', 'Obi-I', '.obsidian')).toBeUndefined();
+    expect(outputFolderProblem('', 'Mesa', '.obsidian')).toBeUndefined();
     expect(
-      outputFolderProblem('Projects/Sales output', 'Obi-I', '.obsidian'),
+      outputFolderProblem('Projects/Sales output', 'Mesa', '.obsidian'),
     ).toBeUndefined();
     expect(
-      outputFolderProblem('Obi-I/Work/coder/out', 'Obi-I', '.obsidian'),
+      outputFolderProblem('Mesa/Work/coder/out', 'Mesa', '.obsidian'),
     ).toBeUndefined();
-    expect(outputFolderProblem('../outside', 'Obi-I', '.obsidian')).toContain(
+    expect(outputFolderProblem('../outside', 'Mesa', '.obsidian')).toContain(
       'plain folder',
     );
-    expect(outputFolderProblem('C:/Users/x', 'Obi-I', '.obsidian')).toContain(
+    expect(outputFolderProblem('C:/Users/x', 'Mesa', '.obsidian')).toContain(
       'inside the vault',
     );
     expect(
-      outputFolderProblem('.obsidian/plugins', 'Obi-I', '.obsidian'),
+      outputFolderProblem('.obsidian/plugins', 'Mesa', '.obsidian'),
     ).toContain('configuration');
-    expect(outputFolderProblem('Obi-I', 'Obi-I', '.obsidian')).toContain(
+    expect(outputFolderProblem('Mesa', 'Mesa', '.obsidian')).toContain(
       'protected',
     );
-    expect(
-      outputFolderProblem('Obi-I/Agents/x', 'Obi-I', '.obsidian'),
-    ).toContain('protected');
+    expect(outputFolderProblem('Mesa/Agents/x', 'Mesa', '.obsidian')).toContain(
+      'protected',
+    );
   });
 
   it('a run writes to the output folder only for an agent assigned to that project', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const fake = new FakeRuntime(
       (request) => [
         {
@@ -127,7 +127,7 @@ describe('project Output folder', () => {
     const other = await store.createAgent('Other');
     await store.patchAgent(assigned, { runtime: 'fake' });
     await store.patchAgent(other, { runtime: 'fake' });
-    const path = await createProjectNote(store, 'Obi-I', { name: 'Sales' });
+    const path = await createProjectNote(store, 'Mesa', { name: 'Sales' });
     const project = loadValidProjects(await store.loadProjects()).find(
       (entry) => entry.path === path,
     )!;
@@ -141,7 +141,7 @@ describe('project Output folder', () => {
       adapters: [adapter],
       settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       memoryDelayMs: 60_000,
     });
     await service.initialize();
@@ -156,24 +156,24 @@ describe('project Output folder', () => {
   });
 });
 
-describe('Hide Obi-I from search & graph', () => {
+describe('Hide Mesa from search & graph', () => {
   it('adds the folder to Excluded files, keeps the other entries, and removes it again', () => {
-    const added = excludedFilesWith(['Old/'], 'Obi-I', true);
-    expect(added).toEqual(['Old/', 'Obi-I/']);
-    expect(isExcluded(added, 'Obi-I')).toBe(true);
-    expect(excludedFilesWith(added, 'Obi-I', true)).toEqual(added);
-    const shown = excludedFilesWith(added, 'Obi-I', false);
+    const added = excludedFilesWith(['Old/'], 'Mesa', true);
+    expect(added).toEqual(['Old/', 'Mesa/']);
+    expect(isExcluded(added, 'Mesa')).toBe(true);
+    expect(excludedFilesWith(added, 'Mesa', true)).toEqual(added);
+    const shown = excludedFilesWith(added, 'Mesa', false);
     expect(shown).toEqual(['Old/']);
-    expect(isExcluded(shown, 'Obi-I')).toBe(false);
+    expect(isExcluded(shown, 'Mesa')).toBe(false);
   });
 });
 
 describe('the guide', () => {
   it('describes the outside folders, the Output folder and the hide setting, and is at version 4', () => {
-    expect(GUIDE_VERSION).toBe(23);
+    expect(GUIDE_VERSION).toBe(24);
     expect(GUIDE_BODY).toContain('outside folders you tick for that agent');
     expect(GUIDE_BODY).toContain('Output folder');
-    expect(GUIDE_BODY).toContain('hide Obi-I from search and the graph');
+    expect(GUIDE_BODY).toContain('hide Mesa from search and the graph');
   });
 });
 
@@ -189,20 +189,20 @@ describe('the tour hide choice', () => {
 
   it('"Hide it" adds the folder to Excluded files and keeps the other entries', () => {
     const config = fakeConfig(['Old/']);
-    expect(isFolderHidden(config, 'Obi-I/')).toBe(false);
-    setFolderHidden(config, 'Obi-I/', true);
-    expect(config.store.get('userIgnoreFilters')).toEqual(['Old/', 'Obi-I/']);
-    expect(isFolderHidden(config, 'Obi-I/')).toBe(true);
+    expect(isFolderHidden(config, 'Mesa/')).toBe(false);
+    setFolderHidden(config, 'Mesa/', true);
+    expect(config.store.get('userIgnoreFilters')).toEqual(['Old/', 'Mesa/']);
+    expect(isFolderHidden(config, 'Mesa/')).toBe(true);
   });
 
   it('is not added twice, and "Show again" takes it out; "Keep it visible" changes nothing', () => {
-    const config = fakeConfig(['Obi-I/']);
-    setFolderHidden(config, 'Obi-I/', true);
-    expect(config.store.get('userIgnoreFilters')).toEqual(['Obi-I/']);
-    setFolderHidden(config, 'Obi-I/', false);
-    expect(isFolderHidden(config, 'Obi-I/')).toBe(false);
+    const config = fakeConfig(['Mesa/']);
+    setFolderHidden(config, 'Mesa/', true);
+    expect(config.store.get('userIgnoreFilters')).toEqual(['Mesa/']);
+    setFolderHidden(config, 'Mesa/', false);
+    expect(isFolderHidden(config, 'Mesa/')).toBe(false);
     const untouched = fakeConfig(undefined);
-    expect(isFolderHidden(untouched, 'Obi-I/')).toBe(false);
+    expect(isFolderHidden(untouched, 'Mesa/')).toBe(false);
     expect(untouched.store.get('userIgnoreFilters')).toBeUndefined();
   });
 });

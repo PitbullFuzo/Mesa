@@ -6,7 +6,7 @@ import { DEFAULT_OVERVIEW } from '../src/core/overviewForce';
 describe('settings', () => {
   it('provides all v1 defaults for a fresh install', () => {
     expect(loadSettings(null)).toEqual({
-      agenthqFolder: 'Obi-I',
+      agenthqFolder: 'Mesa',
       allowedFolders: [],
       maxParallelRuns: 3,
       maxDelegationDepth: 3,

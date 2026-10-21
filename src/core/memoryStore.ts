@@ -25,7 +25,7 @@ export class MemoryStore implements Store {
   public readonly folders = new Set<string>();
   public readonly texts = new Map<string, string>();
 
-  constructor(readonly root = 'Obi-I') {
+  constructor(readonly root = 'Mesa') {
     managedPath(root, root);
   }
 

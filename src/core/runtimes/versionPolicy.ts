@@ -1,5 +1,5 @@
 /**
- * The version rule for CLIs Obi-I has a sandbox policy for. The verified version is the one the policy was
+ * The version rule for CLIs Mesa has a sandbox policy for. The verified version is the one the policy was
  * written and tested against. Older versions are blocked. A newer version must pass the free self-test
  * (runtimes/selfTest.ts) once before it is allowed.
  */

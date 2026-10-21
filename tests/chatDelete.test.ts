@@ -43,9 +43,9 @@ async function setup() {
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     agentLink: async () => '[[Coder]]',
   });
   await service.initialize();
@@ -98,12 +98,12 @@ describe('chat history deletion', () => {
     await converse(service, runtime, coder, 'open one');
     const session = service.getSnapshot().agents[coder]!.session!;
     await store.createNote(
-      'Obi-I/Chats/old.md',
+      'Mesa/Chats/old.md',
       { agenthq: 'chat', agentId: coder, started: '2026-10-01T00:00:00Z' },
       '',
     );
 
-    expect(await service.deleteChats(coder, ['Obi-I/Chats/old.md'])).toBe(1);
+    expect(await service.deleteChats(coder, ['Mesa/Chats/old.md'])).toBe(1);
 
     const remaining = await store.loadChats();
     expect(remaining.map((note) => note.path)).toEqual([session.path]);
@@ -152,9 +152,7 @@ describe('chat history deletion', () => {
     await converse(service, runtime, coder, 'keep me');
     const session = service.getSnapshot().agents[coder]!.session!;
 
-    expect(await service.deleteChats(coder, ['Obi-I/Chats/missing.md'])).toBe(
-      0,
-    );
+    expect(await service.deleteChats(coder, ['Mesa/Chats/missing.md'])).toBe(0);
     expect(await store.loadChats()).toHaveLength(1);
     expect(service.getSnapshot().agents[coder]!.session?.path).toBe(
       session.path,

@@ -38,7 +38,7 @@ export function browserClientMessage(value: unknown): {
     return { forward: { ...message, params: { ...params, capabilities: {} } } };
   if (message.method === 'tools/call') {
     if (!allowed.has(String(params.name)))
-      return { error: 'Browser tool disabled by Obi-I policy.' };
+      return { error: 'Browser tool disabled by Mesa policy.' };
     const args = { ...record(params.arguments) };
     delete args._meta;
     if (
@@ -188,7 +188,7 @@ async function main() {
 if (process.argv.includes('--agenthq-browser'))
   void main().catch(() => {
     process.stderr.write(
-      'Obi-I isolated browser could not start. Check browser setup.\n',
+      'Mesa isolated browser could not start. Check browser setup.\n',
     );
     process.exitCode = 1;
   });

@@ -15,7 +15,7 @@ import { incomingLinkCounts, type VaultFile } from '../src/core/vaultMap';
 
 describe('short note titles', () => {
   it('drops the folder, the extension and a leading date and time', () => {
-    expect(shortTitle('Obi-I/Chats/2026-10-16 0731 Plan the launch.md')).toBe(
+    expect(shortTitle('Mesa/Chats/2026-10-16 0731 Plan the launch.md')).toBe(
       'Plan the launch',
     );
     expect(shortTitle('Notes/2026-10-16 Weekly review.md')).toBe(
@@ -48,10 +48,10 @@ describe('short note titles', () => {
 describe('cluster names', () => {
   it('uses the shared folder when most of the cluster is in it', () => {
     expect(
-      clusterName('Obi-I/Chats/2026-10-16 0731 x.md', [
-        'Obi-I/Chats/a.md',
-        'Obi-I/Chats/b.md',
-        'Obi-I/Chats/c.md',
+      clusterName('Mesa/Chats/2026-10-16 0731 x.md', [
+        'Mesa/Chats/a.md',
+        'Mesa/Chats/b.md',
+        'Mesa/Chats/c.md',
         'Other/d.md',
       ]),
     ).toBe('Chats');
@@ -89,14 +89,14 @@ describe('the cluster list setting', () => {
     const links = {
       'Chats/2026-10-16 0731 a.md': { 'Chats/b.md': 1, 'Chats/c.md': 1 },
     };
-    const incoming = incomingLinkCounts(links, 'Obi-I', '.obsidian');
+    const incoming = incomingLinkCounts(links, 'Mesa', '.obsidian');
     const files: VaultFile[] = paths.map((path, index) => ({
       path,
       mtime: index + 1,
       incomingLinks: incoming.get(path) ?? 0,
     }));
     const analysis: GraphAnalysis = analyseLinkGraph(
-      buildLinkGraph(files, links, 'Obi-I', '.obsidian'),
+      buildLinkGraph(files, links, 'Mesa', '.obsidian'),
     );
     expect(buildForceGraph(analysis).clusters.map((c) => c.name)).toEqual([
       'Chats',

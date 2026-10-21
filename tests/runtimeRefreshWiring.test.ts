@@ -103,7 +103,7 @@ async function fixture() {
     adapters: [runtime],
     settings: () => plugin.settings,
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
   });
   await chat.initialize();
   plugin.chat = chat;
@@ -119,7 +119,7 @@ describe('plugin runtime refresh wiring', () => {
     vi.stubGlobal('window', globalThis);
     for (let batch = 0; batch < 3; batch++) {
       for (const folder of ['Agents', 'Skills', 'Tasks', 'Activity'])
-        handlers.modify!({ path: `Obi-I/${folder}/changed.md` });
+        handlers.modify!({ path: `Mesa/${folder}/changed.md` });
       await vi.advanceTimersByTimeAsync(100);
     }
     expect(mocks.refresh).toHaveBeenCalledTimes(3);

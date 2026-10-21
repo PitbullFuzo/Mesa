@@ -22,7 +22,7 @@ export class M365SignInModal extends Modal {
     this.setTitle('Sign in to Microsoft');
     const { contentEl } = this;
     contentEl.createEl('p', {
-      text: 'Open Microsoft’s page and type this code there. Obi-I never sees your password.',
+      text: 'Open Microsoft’s page and type this code there. Mesa never sees your password.',
     });
     contentEl.createDiv({
       cls: 'agenthq-signin-code',

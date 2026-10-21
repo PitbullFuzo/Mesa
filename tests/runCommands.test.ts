@@ -15,7 +15,7 @@ const SESSION = '11111111-1111-4111-8111-111111111111';
 const claude = (runCommands?: boolean): RunRequest => ({
   prompt: 'continue',
   systemPrompt: 'system',
-  cwd: 'C:/vault/Obi-I/Work/coder',
+  cwd: 'C:/vault/Mesa/Work/coder',
   sessionId: SESSION,
   resume: false,
   permission: 'edit',
@@ -108,15 +108,15 @@ describe('OpenCode: the bash permission only when Allow freely is on', () => {
 
 describe('the setting: off by default, and Obi cannot turn it on', () => {
   it('a new agent is created with commands off; an agent from before this version has no setting', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const id = await store.createAgent('Newcomer');
-    const note = store.notes.get(`Obi-I/Agents/Newcomer.md`);
+    const note = store.notes.get(`Mesa/Agents/Newcomer.md`);
     expect(note?.frontmatter).toMatchObject({ runCommands: 'off' });
     expect(id).toBe('newcomer');
     const legacy = parseAgentNotes(
       [
         {
-          path: 'Obi-I/Agents/Old.md',
+          path: 'Mesa/Agents/Old.md',
           name: 'Old',
           body: '',
           frontmatter: {
@@ -157,7 +157,7 @@ describe('the setting: off by default, and Obi cannot turn it on', () => {
 
 describe('the run request carries the setting', () => {
   async function run(setting: 'off' | 'allow' | undefined) {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const coder = await store.createAgent('Coder');
     // Claude Code is the runtime that can offer Allow freely; the fake runtime answers for it in tests.
     await store.patchAgent(coder, { runtime: 'claude-code' });
@@ -177,7 +177,7 @@ describe('the run request carries the setting', () => {
       adapters: [adapter],
       settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       memoryDelayMs: 60_000,
     });
     await service.initialize();

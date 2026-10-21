@@ -6,7 +6,7 @@ import { graph, txt, type Fetch } from './graph';
 
 /**
  * Microsoft sign-in by the OAuth device-code grant: the owner types a code on Microsoft's own page in their own
- * browser. Obi-I never sees a password. Tokens are kept outside the vault, in a file only this module reads.
+ * browser. Mesa never sees a password. Tokens are kept outside the vault, in a file only this module reads.
  */
 export const M365_SCOPES =
   'offline_access User.Read Mail.Read Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite';
@@ -30,7 +30,7 @@ interface Tokens {
 export function m365Home(): string {
   return join(
     process.env.LOCALAPPDATA ?? join(homedir(), '.local', 'share'),
-    'Obi-I',
+    'Mesa',
     'connectors',
   );
 }

@@ -37,7 +37,7 @@ async function setup(verdicts: string[], settings = {}) {
     store,
     adapters: [runtime],
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     settings: () => ({ maxParallelRuns: 1, allowedFolders: [], ...settings }),
     loadInbox: async () => saved,
     saveInbox: async (items) => {

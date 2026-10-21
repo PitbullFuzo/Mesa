@@ -28,8 +28,8 @@ vi.mock('../src/obsidian/views/markdownContent', () => ({
 }));
 
 async function fixture() {
-  const store = new MemoryStore('Obi-I');
-  await initializeStarterTeam(store, 'Obi-I');
+  const store = new MemoryStore('Mesa');
+  await initializeStarterTeam(store, 'Mesa');
   const agent = (await store.loadAgents()).agents.find(
     (entry) => entry.id === 'coder',
   )!;
@@ -508,7 +508,7 @@ describe('History and navigation', () => {
     const withHistory = {
       ...chat,
       history: [
-        { path: 'Obi-I/Chats/x.md', name: 'x', frontmatter: {}, body: '' },
+        { path: 'Mesa/Chats/x.md', name: 'x', frontmatter: {}, body: '' },
       ],
     };
     const html = renderToStaticMarkup(
@@ -531,7 +531,7 @@ describe('History and navigation', () => {
     const withHistory = {
       ...chat,
       history: [
-        { path: 'Obi-I/Chats/x.md', name: 'x', frontmatter: {}, body: '' },
+        { path: 'Mesa/Chats/x.md', name: 'x', frontmatter: {}, body: '' },
       ],
     };
     const html = renderToStaticMarkup(

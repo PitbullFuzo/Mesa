@@ -3,9 +3,9 @@ import { managedPath, vaultRoot } from '../src/core/paths';
 
 describe('managed vault paths', () => {
   it('accepts vault-relative nested folders', () => {
-    expect(vaultRoot('Teams\\Obi-I/', '.obsidian')).toBe('Teams/Obi-I');
-    expect(managedPath('Teams/Obi-I', 'Teams/Obi-I/Agents/CEO.md')).toBe(
-      'Teams/Obi-I/Agents/CEO.md',
+    expect(vaultRoot('Teams\\Mesa/', '.obsidian')).toBe('Teams/Mesa');
+    expect(managedPath('Teams/Mesa', 'Teams/Mesa/Agents/CEO.md')).toBe(
+      'Teams/Mesa/Agents/CEO.md',
     );
   });
 
@@ -15,7 +15,7 @@ describe('managed vault paths', () => {
     '.',
     '..',
     '../Notes',
-    'Obi-I/../Notes',
+    'Mesa/../Notes',
     'C:/Notes',
     '\\\\server\\share',
     '.obsidian',
@@ -31,10 +31,10 @@ describe('managed vault paths', () => {
 
   it.each([
     'Notes/CEO.md',
-    'Obi-I-other/CEO.md',
-    'Obi-I/../Notes/CEO.md',
-    '/Obi-I/CEO.md',
+    'Mesa-other/CEO.md',
+    'Mesa/../Notes/CEO.md',
+    '/Mesa/CEO.md',
   ])('refuses writes outside the managed root: %s', (path) => {
-    expect(() => managedPath('Obi-I', path)).toThrow();
+    expect(() => managedPath('Mesa', path)).toThrow();
   });
 });

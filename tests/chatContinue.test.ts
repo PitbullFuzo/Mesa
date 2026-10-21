@@ -41,9 +41,9 @@ async function setup() {
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     agentLink: async () => '[[Coder]]',
   });
   await service.initialize();

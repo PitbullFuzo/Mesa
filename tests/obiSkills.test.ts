@@ -30,7 +30,7 @@ const longInstructions = Array.from(
 ).join('\n');
 const skills: Skill[] = [
   {
-    path: 'Obi-I/Skills/sales-follow-up.md',
+    path: 'Mesa/Skills/sales-follow-up.md',
     name: 'sales-follow-up',
     body: 'Send the recap.',
     description: 'Follow up leads.',
@@ -55,7 +55,7 @@ describe('Obi skill actions: schema', () => {
         name: 'A',
         description: '',
         instructions: 'Do it.',
-        path: 'Obi-I/Skills/A.md',
+        path: 'Mesa/Skills/A.md',
       }).success,
     ).toBe(false);
   });
@@ -174,7 +174,7 @@ describe('Obi skill actions: applying', () => {
     const skills: SkillOps = {
       createSkill: async (input) => {
         record('createSkill', input);
-        return 'Obi-I/Skills/quote-follow-up.md';
+        return 'Mesa/Skills/quote-follow-up.md';
       },
       updateSkill: async (path, patch) => {
         record('updateSkill', { path, patch });
@@ -231,13 +231,13 @@ describe('Obi skill actions: applying', () => {
     ]);
     expect(o.skillCalls.updateSkill).toEqual([
       {
-        path: 'Obi-I/Skills/sales-follow-up.md',
+        path: 'Mesa/Skills/sales-follow-up.md',
         patch: { instructions: 'Only this now.' },
       },
     ]);
     expect(o.skillCalls.assignSkill).toEqual([
       {
-        path: 'Obi-I/Skills/sales-follow-up.md',
+        path: 'Mesa/Skills/sales-follow-up.md',
         change: { agentIds: ['coder'], projectIds: [], add: true },
       },
     ]);

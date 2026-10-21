@@ -54,8 +54,8 @@ describe('workdir policy', () => {
       managedRoot: settings.agenthqFolder,
       allowedFolders: settings.allowedFolders,
     };
-    expect((await resolveWorkdir(options)).cwd).toBe('/vault/Obi-I/Work/coder');
-    for (const workdir of ['Notes', 'Obi-I/Work-other', '../outside'])
+    expect((await resolveWorkdir(options)).cwd).toBe('/vault/Mesa/Work/coder');
+    for (const workdir of ['Notes', 'Mesa/Work-other', '../outside'])
       await expect(resolveWorkdir({ ...options, workdir })).rejects.toThrow(
         'allowed',
       );
@@ -234,49 +234,49 @@ describe('workdir policy', () => {
       agentId: 'coder',
       workdir: '',
       vaultBasePath: 'C:\\Vault',
-      managedRoot: 'Obi-I',
-      allowedFolders: ['Obi-I/Work'],
+      managedRoot: 'Mesa',
+      allowedFolders: ['Mesa/Work'],
     });
-    expect(result.cwd).toBe('C:/Vault/Obi-I/Work/coder');
+    expect(result.cwd).toBe('C:/Vault/Mesa/Work/coder');
     expect(result.protectedPaths).toEqual([
       'C:/Vault/.obsidian',
-      'C:/Vault/Obi-I/Agents',
-      'C:/Vault/Obi-I/Skills',
-      'C:/Vault/Obi-I/Chats',
-      'C:/Vault/Obi-I/Tasks',
-      'C:/Vault/Obi-I/Activity',
-      'C:/Vault/Obi-I/Projects',
-      'C:/Vault/Obi-I/Schedules',
-      'C:/Vault/Obi-I/Attachments',
-      'C:/Vault/Obi-I/Groups.md',
-      'C:/Vault/Obi-I/Welcome.md',
-      'C:/Vault/Obi-I/Guide.md',
-      'C:/Vault/Obi-I/Vault map.md',
-      'C:/Vault/Obi-I/Graph map.md',
-      'C:/Vault/Obi-I/Graph overview.canvas',
+      'C:/Vault/Mesa/Agents',
+      'C:/Vault/Mesa/Skills',
+      'C:/Vault/Mesa/Chats',
+      'C:/Vault/Mesa/Tasks',
+      'C:/Vault/Mesa/Activity',
+      'C:/Vault/Mesa/Projects',
+      'C:/Vault/Mesa/Schedules',
+      'C:/Vault/Mesa/Attachments',
+      'C:/Vault/Mesa/Groups.md',
+      'C:/Vault/Mesa/Welcome.md',
+      'C:/Vault/Mesa/Guide.md',
+      'C:/Vault/Mesa/Vault map.md',
+      'C:/Vault/Mesa/Graph map.md',
+      'C:/Vault/Mesa/Graph overview.canvas',
     ]);
-    expect(result.protectedPaths).not.toContain('C:/Vault/Obi-I/Work');
+    expect(result.protectedPaths).not.toContain('C:/Vault/Mesa/Work');
   });
 
   it('refuses a work folder inside Skills, Chats or a root note, and allows Work', async () => {
-    for (const workdir of ['Obi-I/Skills/x', 'Obi-I/Chats', 'Obi-I/Groups.md'])
+    for (const workdir of ['Mesa/Skills/x', 'Mesa/Chats', 'Mesa/Groups.md'])
       await expect(
         resolveWorkdir({
           agentId: 'coder',
           workdir,
           vaultBasePath: 'C:\\Vault',
-          managedRoot: 'Obi-I',
+          managedRoot: 'Mesa',
           allowedFolders: [],
         }),
       ).rejects.toThrow('protected');
     await expect(
       resolveWorkdir({
         agentId: 'coder',
-        workdir: 'Obi-I/Work/coder/notes',
+        workdir: 'Mesa/Work/coder/notes',
         vaultBasePath: 'C:\\Vault',
-        managedRoot: 'Obi-I',
+        managedRoot: 'Mesa',
         allowedFolders: [],
       }),
-    ).resolves.toMatchObject({ cwd: 'C:/Vault/Obi-I/Work/coder/notes' });
+    ).resolves.toMatchObject({ cwd: 'C:/Vault/Mesa/Work/coder/notes' });
   });
 });

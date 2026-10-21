@@ -60,10 +60,11 @@ import {
   installBrowserTools,
 } from './core/runtimes/browserTools';
 import { browserUnavailableReason } from './core/browser';
-import { LEGACY_PLUGIN_ID, migrateAppData, PLUGIN_ID } from './core/appData';
+import { LEGACY_PLUGIN_IDS, migrateAppData, PLUGIN_ID } from './core/appData';
 import { DEFAULT_M365_CLIENT_ID } from './core/m365/auth';
 import {
   decideTeamFolder,
+  LEGACY_TEAM_FOLDERS,
   rebuildMapAfterRemoval,
   TeamFolderGuard,
 } from './core/teamFolder';
@@ -331,7 +332,7 @@ export default class AgentHQPlugin extends Plugin {
     this.addRibbonIcon('folder-kanban', 'Projects', () => {
       void this.openView(PROJECTS_VIEW);
     });
-    this.addRibbonIcon('message-circle', 'Obi-I chat', (event) => {
+    this.addRibbonIcon('message-circle', 'Mesa chat', (event) => {
       this.openQuickChat(event);
     });
     this.addCommand({
@@ -427,7 +428,7 @@ export default class AgentHQPlugin extends Plugin {
 
   private async requestAskAboutNote(file: TFile): Promise<void> {
     if (!this.chat || !this.store)
-      throw new Error('Obi-I is still loading. Try again in a moment.');
+      throw new Error('Mesa is still loading. Try again in a moment.');
     const { agents } = await this.store.loadAgents();
     if (!agents.length)
       throw new Error(
@@ -446,10 +447,10 @@ export default class AgentHQPlugin extends Plugin {
     );
   }
 
-  /** What the reorganiser needs, or null (with a notice) while Obi-I is still loading. */
+  /** What the reorganiser needs, or null (with a notice) while Mesa is still loading. */
   private reorganiseDeps(): ReorganiseDeps | null {
     if (!this.store || !this.chat) {
-      new Notice('Obi-I is still loading. Try again in a moment.');
+      new Notice('Mesa is still loading. Try again in a moment.');
       return null;
     }
     return {
@@ -513,7 +514,7 @@ export default class AgentHQPlugin extends Plugin {
 
   async importInstalledSkills(): Promise<void> {
     if (!this.store || !this.active)
-      throw new Error('Obi-I is still loading. Try again in a moment.');
+      throw new Error('Mesa is still loading. Try again in a moment.');
     const source = await readInstalledSkills();
     const result = await importSkills(
       this.store,
@@ -651,34 +652,37 @@ export default class AgentHQPlugin extends Plugin {
   /**
    * This plugin's saved settings. A test vault that used the plugin under its earlier id has them in the old plugin
    * folder: they are copied over once (the old folder is never touched). A vault that already has the earlier
-   * AgentHQ folder and no choice saved keeps using it; the folder is never moved by itself.
+   * Obi-I or AgentHQ folder and no choice saved keeps using it; the folder is never moved by itself.
    */
   private async startingSettings(): Promise<AgentHQSettings> {
     let data: unknown = await this.loadData();
     const adapter = this.app.vault.adapter;
     let copied = false;
     if (data === null || data === undefined) {
-      try {
-        data = JSON.parse(
-          await adapter.read(
-            `${this.app.vault.configDir}/plugins/${LEGACY_PLUGIN_ID}/data.json`,
-          ),
-        ) as unknown;
-        copied = true;
-      } catch {
-        data = null;
+      for (const id of LEGACY_PLUGIN_IDS) {
+        try {
+          data = JSON.parse(
+            await adapter.read(
+              `${this.app.vault.configDir}/plugins/${id}/data.json`,
+            ),
+          ) as unknown;
+          copied = true;
+          break;
+        } catch {
+          data = null;
+        }
       }
     }
     const settings = loadSettings(data);
     const chosen =
       data !== null && typeof data === 'object' && 'agenthqFolder' in data;
     try {
-      if (
-        !chosen &&
-        (await adapter.exists('AgentHQ')) &&
-        !(await adapter.exists(settings.agenthqFolder))
-      )
-        settings.agenthqFolder = 'AgentHQ';
+      if (!chosen && !(await adapter.exists(settings.agenthqFolder)))
+        for (const folder of LEGACY_TEAM_FOLDERS)
+          if (await adapter.exists(folder)) {
+            settings.agenthqFolder = folder;
+            break;
+          }
     } catch {
       // Cannot look: use the default.
     }
@@ -699,7 +703,7 @@ export default class AgentHQPlugin extends Plugin {
       });
     } catch (error) {
       new Notice(
-        `Obi-I could not write its helper files: ${error instanceof Error ? error.message : 'unknown error'}`,
+        `Mesa could not write its helper files: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
     }
   }
@@ -1172,7 +1176,7 @@ export default class AgentHQPlugin extends Plugin {
     }).catch((error: unknown) => this.workspace.reportError(error));
   }
 
-  /** Rebuilds the vault map a few minutes after the vault last changed; Obi-I's own files do not count. */
+  /** Rebuilds the vault map a few minutes after the vault last changed; Mesa's own files do not count. */
   private vaultChanged(path: string): void {
     if (
       this.teamFolderGuard.active ||

@@ -21,7 +21,7 @@ function sampleVault(): Map<string, string> {
     ['Notes/beta.md', 'Beta.'],
     ['Inbox/gamma.md', 'Gamma links [[alpha]].'],
     ['Inbox/delta.md', 'Delta, a copy of beta.'],
-    ['Obi-I/Agents/CEO.md', 'The CEO links [[alpha]].'],
+    ['Mesa/Agents/CEO.md', 'The CEO links [[alpha]].'],
   ]);
 }
 
@@ -150,8 +150,8 @@ describe('reviewing the plan', () => {
       [
         { from: 'Inbox/missing.md', to: 'Notes/x.md', reason: '' },
         { from: 'Inbox/gamma.md', to: 'Notes/beta.md', reason: '' },
-        { from: 'Obi-I/Agents/CEO.md', to: 'Notes/CEO.md', reason: '' },
-        { from: 'Inbox/gamma.md', to: 'Obi-I/Gamma.md', reason: '' },
+        { from: 'Mesa/Agents/CEO.md', to: 'Notes/CEO.md', reason: '' },
+        { from: 'Inbox/gamma.md', to: 'Mesa/Gamma.md', reason: '' },
         { from: 'Inbox/gamma.md', to: '../outside.md', reason: '' },
         { from: 'Inbox/delta.md', to: 'Notes/Same.md', reason: '' },
         { from: 'Inbox/delta.md', to: 'Notes/Same.md', reason: '' },
@@ -159,7 +159,7 @@ describe('reviewing the plan', () => {
         ...MOVES,
       ],
       new Set(vault.keys()),
-      'Obi-I',
+      'Mesa',
       '.obsidian',
     );
     // Only the first of two moves to the same target survives, and the two good MOVES pass.
@@ -172,8 +172,8 @@ describe('reviewing the plan', () => {
     expect(problems.join('\n')).toContain(
       'Target already exists: Notes/beta.md',
     );
-    expect(problems.join('\n')).toContain('Source is inside Obi-I');
-    expect(problems.join('\n')).toContain('Target is inside Obi-I');
+    expect(problems.join('\n')).toContain('Source is inside Mesa');
+    expect(problems.join('\n')).toContain('Target is inside Mesa');
     expect(problems.join('\n')).toContain('Not a plain vault path');
     expect(problems.join('\n')).toContain(
       'Two moves share the target: Notes/Same.md',
@@ -194,7 +194,7 @@ describe('applying and undoing on a sample vault with links', () => {
     expect(vault.size).toBe(before);
     expect(vault.has('Notes/Gamma.md')).toBe(true);
     expect(vault.get('Notes/alpha.md')).toContain('[[beta]]');
-    expect(vault.get('Obi-I/Agents/CEO.md')).toBe('The CEO links [[alpha]].');
+    expect(vault.get('Mesa/Agents/CEO.md')).toBe('The CEO links [[alpha]].');
     expect(linksResolve(vault)).toBe(true);
   });
 

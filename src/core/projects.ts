@@ -83,7 +83,7 @@ export function projectSlug(name: string): string {
   return cleaned || 'Project';
 }
 
-/** Creates a project note under Obi-I/Projects, never overwriting an existing one. */
+/** Creates a project note under Mesa/Projects, never overwriting an existing one. */
 export async function createProjectNote(
   store: Store,
   root: string,

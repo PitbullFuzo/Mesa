@@ -1,6 +1,7 @@
 /* eslint obsidianmd/prefer-window-timers: off -- Pure core runs in Node (tests, the helper process) where there is no window. */
+/* eslint no-restricted-globals: off -- This helper is its own Node process, not the plugin: Node's fetch is the right one here. */
 /**
- * Obi-I's own Microsoft 365 MCP helper (a small stdio server, bundled as m365_mcp.cjs). It reads mail, calendar and
+ * Mesa's own Microsoft 365 MCP helper (a small stdio server, bundled as m365_mcp.cjs). It reads mail, calendar and
  * OneDrive and can create a draft. Every other tool only writes a request into the run's outbox and waits: the plugin
  * shows the owner an Approve card and, only after Approve, does the action itself. This process never sends, deletes,
  * shares or overwrites anything.
@@ -156,7 +157,7 @@ async function main() {
       throw new Error('No Microsoft access token for this run.');
     return parsed.accessToken;
   };
-  const api = reads(token);
+  const api = reads(token, fetch);
 
   /** Writes a request and waits for the plugin's answer. */
   async function ask(tool: string, args: unknown): Promise<string> {
@@ -290,7 +291,7 @@ async function main() {
 if (process.argv.includes('--agenthq-m365'))
   void main().catch((error: unknown) => {
     process.stderr.write(
-      'Obi-I Microsoft 365 helper could not start: ' +
+      'Mesa Microsoft 365 helper could not start: ' +
         (error instanceof Error ? error.message : 'error') +
         '\n',
     );

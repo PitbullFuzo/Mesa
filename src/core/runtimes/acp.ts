@@ -43,7 +43,7 @@ interface AcpOptions {
     canonical: (path: string) => Promise<string>,
   ) => Promise<boolean>;
   env?: NodeJS.ProcessEnv;
-  /** Where Obi-I's browser helper is installed; browser runs are refused without it. */
+  /** Where Mesa's browser helper is installed; browser runs are refused without it. */
   browserHelper?: string;
   /**
    * Set for runtimes that take the browser server in ACP `session/new` (Hermes): the value the shim must report
@@ -476,7 +476,7 @@ export class AcpRuntime implements RuntimeAdapter {
         record(init._meta).agenthqM365 !== 'm365-v1'
       )
         throw Error('The Microsoft 365 policy of this runtime is unavailable.');
-      // Hermes takes Obi-I's own servers here (the browser and Microsoft 365, when switched on); others get none.
+      // Hermes takes Mesa's own servers here (the browser and Microsoft 365, when switched on); others get none.
       const mcpServers = this.options.browserPolicy
         ? [
             ...(request.browserLaunch
@@ -536,7 +536,7 @@ export class AcpRuntime implements RuntimeAdapter {
             prompt: [
               {
                 type: 'text',
-                text: `Obi-I instructions:\n${request.systemPrompt}\n\nUser message:\n${request.prompt}`,
+                text: `Mesa instructions:\n${request.systemPrompt}\n\nUser message:\n${request.prompt}`,
               },
             ],
           },

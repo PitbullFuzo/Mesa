@@ -15,7 +15,7 @@ const request: RunRequest = {
   protectedPaths: [],
 };
 
-/** The effective config OpenCode prints when Obi-I's settings are in force. */
+/** The effective config OpenCode prints when Mesa's settings are in force. */
 function effective(
   env: NodeJS.ProcessEnv,
   overrides: Record<string, unknown> = {},
@@ -39,17 +39,17 @@ function effective(
 describe('OpenCode effective policy', () => {
   const env = openCodeEnvironment(request, 'C:/state');
 
-  it('matches Obi-I when OpenCode prints the expected policy', () => {
+  it('matches Mesa when OpenCode prints the expected policy', () => {
     expect(openCodePolicyProblem(effective(env), env)).toBeUndefined();
   });
 
   it('refuses when a formatter or an MCP server is enabled', () => {
     expect(
       openCodePolicyProblem(effective(env, { formatter: true }), env),
-    ).toContain('differs from Obi-I');
+    ).toContain('differs from Mesa');
     expect(
       openCodePolicyProblem(effective(env, { mcp: { github: {} } }), env),
-    ).toContain('differs from Obi-I');
+    ).toContain('differs from Mesa');
   });
 });
 
@@ -70,7 +70,7 @@ describe('OpenCode browser policy', () => {
     mcp: Record<string, { command: string[] }>;
   };
 
-  it('loads exactly Obi-I’s helper as the one server and allows only its tools', () => {
+  it('loads exactly Mesa’s helper as the one server and allows only its tools', () => {
     expect(Object.keys(config.mcp)).toEqual(['playwright']);
     expect(config.mcp.playwright!.command.slice(0, 3)).toEqual([
       'C:/node/node.exe',

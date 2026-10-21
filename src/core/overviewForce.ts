@@ -79,7 +79,7 @@ export interface ForceGraph {
 }
 
 /**
- * The overview's data, from the same analysis as the graph map. Every note outside Obi-I is a node; links are edges.
+ * The overview's data, from the same analysis as the graph map. Every note outside Mesa is a node; links are edges.
  * Past the cap, the most linked notes are kept (ties by path), so hubs are always shown.
  */
 export function buildForceGraph(

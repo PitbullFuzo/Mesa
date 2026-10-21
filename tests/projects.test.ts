@@ -37,17 +37,17 @@ async function loadAll(store: MemoryStore): Promise<Project[]> {
 
 describe('project notes', () => {
   it('creates a note that parses as a project, and never overwrites a name', async () => {
-    const store = new MemoryStore('Obi-I');
-    const first = await createProjectNote(store, 'Obi-I', {
+    const store = new MemoryStore('Mesa');
+    const first = await createProjectNote(store, 'Mesa', {
       name: 'Sales X',
       goal: 'Win Q4',
       instructions: 'Be direct.',
     });
-    const second = await createProjectNote(store, 'Obi-I', {
+    const second = await createProjectNote(store, 'Mesa', {
       name: 'Sales X',
     });
-    expect(first).toBe('Obi-I/Projects/Sales X.md');
-    expect(second).toBe('Obi-I/Projects/Sales X (2).md');
+    expect(first).toBe('Mesa/Projects/Sales X.md');
+    expect(second).toBe('Mesa/Projects/Sales X (2).md');
     const [project] = (await loadAll(store)).filter(
       (entry) => entry.name === 'Sales X',
     );
@@ -60,8 +60,8 @@ describe('project notes', () => {
   });
 
   it('edits fields and keeps the instructions unless they are changed', async () => {
-    const store = new MemoryStore('Obi-I');
-    await createProjectNote(store, 'Obi-I', {
+    const store = new MemoryStore('Mesa');
+    await createProjectNote(store, 'Mesa', {
       name: 'P',
       instructions: 'Keep me.',
     });
@@ -79,8 +79,8 @@ describe('project notes', () => {
   });
 
   it('archives a project so the picker no longer offers it', async () => {
-    const store = new MemoryStore('Obi-I');
-    await createProjectNote(store, 'Obi-I', { name: 'Old' });
+    const store = new MemoryStore('Mesa');
+    await createProjectNote(store, 'Mesa', { name: 'Old' });
     const [project] = await loadAll(store);
     await updateProjectNote(store, project!, { teams: ['core'] });
     const [assigned] = await loadAll(store);
@@ -95,7 +95,7 @@ describe('project notes', () => {
 
   it('rejects a note with an unknown status instead of showing a project', () => {
     const problem = parseProject({
-      path: 'Obi-I/Projects/Bad.md',
+      path: 'Mesa/Projects/Bad.md',
       name: 'Bad',
       frontmatter: { agenthq: 'project', id: 'x', status: 'stuck' },
       body: '',
@@ -104,9 +104,9 @@ describe('project notes', () => {
   });
 
   it('is created by the starter team', async () => {
-    const store = new MemoryStore('Obi-I');
-    await initializeStarterTeam(store, 'Obi-I');
-    expect(await store.exists('Obi-I/Projects')).toBe(true);
+    const store = new MemoryStore('Mesa');
+    await initializeStarterTeam(store, 'Mesa');
+    expect(await store.exists('Mesa/Projects')).toBe(true);
   });
 });
 
@@ -227,13 +227,13 @@ describe('project picker sources', () => {
   });
   it('keeps only valid project notes', () => {
     const valid = {
-      path: 'Obi-I/Projects/Ok.md',
+      path: 'Mesa/Projects/Ok.md',
       name: 'Ok',
       frontmatter: { agenthq: 'project', id: 'ok', status: 'planned' },
       body: '',
     };
     const broken = {
-      path: 'Obi-I/Projects/Bad.md',
+      path: 'Mesa/Projects/Bad.md',
       name: 'Bad',
       frontmatter: { agenthq: 'project', id: 'bad', status: 'stuck' },
       body: '',

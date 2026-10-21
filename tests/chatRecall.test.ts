@@ -8,7 +8,7 @@ const chat = (
   started: string,
   body: string,
 ): NoteDocument => ({
-  path: `Obi-I/Chats/${name}.md`,
+  path: `Mesa/Chats/${name}.md`,
   name,
   frontmatter: { agenthq: 'chat', agentId, started, title: name },
   body,
@@ -46,7 +46,7 @@ const recall = (message: string) =>
     message,
     chats,
     'a1',
-    'Obi-I/Chats/Current chat.md',
+    'Mesa/Chats/Current chat.md',
     new Map(),
   );
 

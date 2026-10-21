@@ -19,20 +19,20 @@ const paid = (text: string, costUsd: number) => [
 ];
 
 async function setup(costLimitUsd?: number) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const coder = await store.createAgent('Coder');
   await store.patchAgent(coder, { runtime: 'fake' });
   const runtime = new FakeRuntime(() => paid('ok', 0.6), 0);
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await service.initialize();
-  await createProjectNote(store, 'Obi-I', { name: 'Sales X' });
+  await createProjectNote(store, 'Mesa', { name: 'Sales X' });
   const project = loadValidProjects(await store.loadProjects())[0]!;
   await updateProjectNote(store, project, {
     agents: [coder],
@@ -70,7 +70,7 @@ describe('project cost', () => {
 
 describe('project cost covers every project run', () => {
   it('refuses a delegated task that would start after the limit is reached', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const lead = await store.createAgent('CEO');
     const coder = await store.createAgent('Coder');
     for (const id of [lead, coder])
@@ -95,14 +95,14 @@ describe('project cost covers every project run', () => {
       adapters: [runtime],
       settings: () => ({
         maxParallelRuns: 1,
-        allowedFolders: ['Obi-I/Work'],
+        allowedFolders: ['Mesa/Work'],
       }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       memoryDelayMs: 60_000,
     });
     await service.initialize();
-    await createProjectNote(store, 'Obi-I', { name: 'Sales X' });
+    await createProjectNote(store, 'Mesa', { name: 'Sales X' });
     project = loadValidProjects(await store.loadProjects())[0]!;
     await updateProjectNote(store, project, { agents: [lead, coder] });
     // The coder already spent 0.6 in this project before the request starts.

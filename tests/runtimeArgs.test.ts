@@ -9,7 +9,7 @@ const request: RunRequest = {
   sessionId: 'a05d12f5-5b75-4b92-8296-9c43288d8182',
   resume: false,
   permission: 'edit',
-  protectedPaths: ['C:/vault/.obsidian', 'C:/vault/Obi-I/Agents'],
+  protectedPaths: ['C:/vault/.obsidian', 'C:/vault/Mesa/Agents'],
   extraDirs: ['C:/other'],
   model: 'small',
 };
@@ -78,9 +78,9 @@ it.each([
   { ...request, protectedPaths: [] },
   { ...request, protectedPaths: ['relative'] },
   { ...request, protectedPaths: ['C:/vault/*/Agents'] },
-  { ...request, protectedPaths: ['C:/vault/./Obi-I/Agents'] },
-  { ...request, protectedPaths: ['C:/vault/Obi-I/Agents.'] },
-  { ...request, protectedPaths: ['C:/vault/Obi-I/Agents '] },
+  { ...request, protectedPaths: ['C:/vault/./Mesa/Agents'] },
+  { ...request, protectedPaths: ['C:/vault/Mesa/Agents.'] },
+  { ...request, protectedPaths: ['C:/vault/Mesa/Agents '] },
   { ...request, cwd: 'relative' },
   { ...request, extraDirs: ['relative'] },
   { ...request, sessionId: '--resume' },
@@ -117,8 +117,8 @@ it('builds a scoped, shell-free edit launch with a small tool surface and protec
   expect(args[args.indexOf('--append-system-prompt-file') + 1]).toBe(
     'C:/temp/system.txt',
   );
-  expect(args).toContain('Edit(//c/vault/Obi-I/Agents)');
-  expect(args).toContain('Edit(//c/vault/Obi-I/Agents/**)');
+  expect(args).toContain('Edit(//c/vault/Mesa/Agents)');
+  expect(args).toContain('Edit(//c/vault/Mesa/Agents/**)');
   expect(args.some((arg) => /^(Write|NotebookEdit)\(/.test(arg))).toBe(false);
   expect(args).not.toContain(request.prompt);
   expect(args).not.toContain(request.systemPrompt);

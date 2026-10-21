@@ -17,20 +17,20 @@ import { loadSettings } from '../src/core/settings';
 const temp = () => mkdtempSync(join(tmpdir(), 'obii-rename-'));
 
 describe('the new name', () => {
-  it('names the plugin Obi-I with the id obi-i', () => {
+  it('names the plugin Mesa with the id mesa', () => {
     const manifest = JSON.parse(readFileSync('manifest.json', 'utf8')) as {
       id: string;
       name: string;
     };
-    expect(manifest).toMatchObject({ id: 'obi-i', name: 'Obi-I' });
+    expect(manifest).toMatchObject({ id: 'mesa', name: 'Mesa' });
     const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as {
       name: string;
     };
-    expect(pkg.name).toBe('obi-i');
+    expect(pkg.name).toBe('mesa');
   });
 
-  it('gives a new vault the Obi-I folder, and leaves a saved AgentHQ folder alone', () => {
-    expect(loadSettings(null).agenthqFolder).toBe('Obi-I');
+  it('gives a new vault the Mesa folder, and leaves a saved AgentHQ folder alone', () => {
+    expect(loadSettings(null).agenthqFolder).toBe('Mesa');
     expect(loadSettings({ agenthqFolder: 'AgentHQ' }).agenthqFolder).toBe(
       'AgentHQ',
     );
@@ -70,14 +70,14 @@ describe('carrying the earlier app-data folder over', () => {
     expect(await migrateAppData(base)).toEqual(['connectors', 'browser-tools']);
     expect(
       readFileSync(
-        join(base, 'Obi-I', 'connectors', 'microsoft365.json'),
+        join(base, 'Mesa', 'connectors', 'microsoft365.json'),
         'utf8',
       ),
     ).toBe('T');
     expect(
       existsSync(join(base, 'AgentHQ', 'connectors', 'microsoft365.json')),
     ).toBe(true);
-    expect(existsSync(join(base, 'Obi-I', 'browser-tools', 'x'))).toBe(true);
+    expect(existsSync(join(base, 'Mesa', 'browser-tools', 'x'))).toBe(true);
   });
 
   it('never overwrites what the new folder already has, and does nothing without an old folder', async () => {
@@ -88,15 +88,12 @@ describe('carrying the earlier app-data folder over', () => {
       join(base, 'AgentHQ', 'connectors', 'microsoft365.json'),
       'OLD',
     );
-    mkdirSync(join(base, 'Obi-I', 'connectors'), { recursive: true });
-    writeFileSync(
-      join(base, 'Obi-I', 'connectors', 'microsoft365.json'),
-      'NEW',
-    );
+    mkdirSync(join(base, 'Mesa', 'connectors'), { recursive: true });
+    writeFileSync(join(base, 'Mesa', 'connectors', 'microsoft365.json'), 'NEW');
     expect(await migrateAppData(base)).toEqual([]);
     expect(
       readFileSync(
-        join(base, 'Obi-I', 'connectors', 'microsoft365.json'),
+        join(base, 'Mesa', 'connectors', 'microsoft365.json'),
         'utf8',
       ),
     ).toBe('NEW');

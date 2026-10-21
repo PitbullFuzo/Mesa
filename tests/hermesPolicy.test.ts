@@ -40,7 +40,7 @@ it.skipIf(!installed)(
   35000,
 );
 it.skipIf(!installed)(
-  'Hermes bootstrap allows only the Obi-I browser server and keeps its tools visible (no inference)',
+  'Hermes bootstrap allows only the Mesa browser server and keeps its tools visible (no inference)',
   async () => {
     const code = [
       'import hermes_bootstrap',

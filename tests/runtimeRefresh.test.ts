@@ -16,7 +16,7 @@ async function fixture(initiallyAvailable = true, delayMs = 20) {
     adapters: [runtime],
     settings: () => settings,
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
   });
   await service.initialize();
   return { store, id, runtime, detect, service };
@@ -95,7 +95,7 @@ describe('cached runtime discovery', () => {
       ],
       settings: () => ({ maxParallelRuns: 2, allowedFolders: [] }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
     });
     await service.initialize();
     await service.send(lead, 'delegate');
@@ -149,7 +149,7 @@ describe('cached runtime discovery', () => {
     const { store, id, detect, service } = await fixture();
     expect(detect).toHaveBeenCalledTimes(1);
     for (let i = 0; i < 12; i++) {
-      await store.saveNote(`Obi-I/Tasks/task-${i}.md`, {}, `Update ${i}`);
+      await store.saveNote(`Mesa/Tasks/task-${i}.md`, {}, `Update ${i}`);
       await store.patchAgent(id, { role: `Role ${i}` });
       await service.refreshAgents();
     }

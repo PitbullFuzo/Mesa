@@ -118,7 +118,7 @@ describe('workspace layout persistence', () => {
   it('retains invalid and unknown positions through creation, repair, moves and explicit deletion', async () => {
     const store = new MemoryStore();
     const id = await store.createAgent('Temporarily broken');
-    const path = 'Obi-I/Agents/Temporarily broken.md';
+    const path = 'Mesa/Agents/Temporarily broken.md';
     const note = store.notes.get(path)!;
     note.frontmatter = {
       ...(note.frontmatter as Record<string, unknown>),
@@ -197,9 +197,9 @@ describe('workspace layout persistence', () => {
 
 describe('approved Obi changes keep Obi in its own tab', () => {
   it('opens the changed agent beside Obi and resolves the card without selecting Obi', async () => {
-    const store = new MemoryStore('Obi-I');
-    await initializeStarterTeam(store, 'Obi-I');
-    await ensureObi(store, 'Obi-I');
+    const store = new MemoryStore('Mesa');
+    await initializeStarterTeam(store, 'Mesa');
+    await ensureObi(store, 'Mesa');
     const opened: [string, unknown][] = [];
     const resolveProposal = vi.fn();
     const workspace = new WorkspaceController(
@@ -242,9 +242,9 @@ describe('approved Obi changes keep Obi in its own tab', () => {
 
 describe('deleting a project', () => {
   it('trashes the project note, and refuses while a request in that project runs', async () => {
-    const store = new MemoryStore('Obi-I');
-    await initializeStarterTeam(store, 'Obi-I');
-    const path = await createProjectNote(store, 'Obi-I', { name: 'Launch' });
+    const store = new MemoryStore('Mesa');
+    await initializeStarterTeam(store, 'Mesa');
+    const path = await createProjectNote(store, 'Mesa', { name: 'Launch' });
     const workspace = controller();
     const busy = vi.fn(() => true);
     workspace.attachChat({
@@ -270,9 +270,9 @@ describe('deleting a project', () => {
 
 describe('projects board', () => {
   it('persists a status change from the board and publishes each project Log summary', async () => {
-    const store = new MemoryStore('Obi-I');
-    await initializeStarterTeam(store, 'Obi-I');
-    const path = await createProjectNote(store, 'Obi-I', { name: 'Launch' });
+    const store = new MemoryStore('Mesa');
+    await initializeStarterTeam(store, 'Mesa');
+    const path = await createProjectNote(store, 'Mesa', { name: 'Launch' });
     const workspace = controller();
     await workspace.initialize(store);
     await workspace.setProjectStatus(path, 'done');
@@ -293,9 +293,9 @@ describe('projects board', () => {
 
 describe('archived projects', () => {
   it('unarchives a project and it comes back to the pickers', async () => {
-    const store = new MemoryStore('Obi-I');
-    await initializeStarterTeam(store, 'Obi-I');
-    const path = await createProjectNote(store, 'Obi-I', {
+    const store = new MemoryStore('Mesa');
+    await initializeStarterTeam(store, 'Mesa');
+    const path = await createProjectNote(store, 'Mesa', {
       name: 'Old idea',
     });
     const workspace = controller();

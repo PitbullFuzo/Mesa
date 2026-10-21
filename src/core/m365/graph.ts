@@ -37,9 +37,9 @@ export async function graph(
     body?: unknown;
     text?: string;
     headers?: Record<string, string>;
-    f?: Fetch;
+    f: Fetch;
     raw?: boolean;
-  } = {},
+  },
 ): Promise<unknown> {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${token}`,
@@ -53,8 +53,8 @@ export async function graph(
     headers['Content-Type'] = 'application/json';
     body = JSON.stringify(options.body);
   }
-  // The helper runs in plain Node, where the global fetch is right; the plugin always passes its own `f`.
-  const response = await (options.f ?? globalThis.fetch)(GRAPH + path, {
+  // The caller always passes the fetch to use: the plugin's own (requestUrl), or Node's in the helper process.
+  const response = await options.f(GRAPH + path, {
     method,
     headers,
     body,
@@ -119,11 +119,11 @@ export interface Reads {
 }
 
 /** The read tools (and the harmless "create a draft"), bound to one token source. */
-export function reads(token: () => Promise<string>, f?: Fetch): Reads {
+export function reads(token: () => Promise<string>, f: Fetch): Reads {
   const call = async (
     method: string,
     path: string,
-    options: Parameters<typeof graph>[3] = {},
+    options: Omit<Parameters<typeof graph>[3], 'f'> = {},
   ) => graph(await token(), method, path, { f, ...options });
   return {
     async mailSearch({ query, folder, top }) {

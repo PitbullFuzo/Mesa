@@ -10,7 +10,7 @@ import type { RuntimeAdapter } from '../src/core/runtimes/types';
 
 /** A chat service whose only runtime is a scripted fake; `id` changes what the service thinks the runtime is. */
 async function make(memoryModel: MemoryChoice, id?: string) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const fake = new FakeRuntime(
     () => [
       {
@@ -29,7 +29,7 @@ async function make(memoryModel: MemoryChoice, id?: string) {
     adapters: [adapter],
     settings: () => ({ maxParallelRuns: 1, allowedFolders: [], memoryModel }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await service.initialize();

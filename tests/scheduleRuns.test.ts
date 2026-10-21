@@ -15,16 +15,16 @@ const HOUR = 60 * 60 * 1000;
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function setup(costUsd = 0) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const coder = await store.createAgent('Coder');
   await store.patchAgent(coder, { runtime: 'fake' });
   const runtime = new FakeRuntime(() => paid('done', costUsd), 0);
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await service.initialize();
@@ -32,7 +32,7 @@ async function setup(costUsd = 0) {
 }
 
 async function readSchedule(store: MemoryStore): Promise<Schedule> {
-  return loadValidSchedules(await store.loadNotesUnder('Obi-I/Schedules'))[0]!;
+  return loadValidSchedules(await store.loadNotesUnder('Mesa/Schedules'))[0]!;
 }
 
 describe('schedules run through the queue', () => {
@@ -41,7 +41,7 @@ describe('schedules run through the queue', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -70,7 +70,7 @@ describe('schedules run through the queue', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -92,7 +92,7 @@ describe('schedules run through the queue', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -113,7 +113,7 @@ describe('schedules run through the queue', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,

@@ -14,14 +14,14 @@ const note = (
   frontmatter: Record<string, unknown>,
   body = '',
 ): NoteDocument => ({
-  path: `Obi-I/Tasks/${name}.md`,
+  path: `Mesa/Tasks/${name}.md`,
   name,
   frontmatter,
   body,
 });
 const project = { id: 'p1', name: 'Shop', status: 'active' } as Project;
 const log = (body: string): NoteDocument => ({
-  path: 'Obi-I/Projects/Shop/Log.md',
+  path: 'Mesa/Projects/Shop/Log.md',
   name: 'Log',
   frontmatter: {},
   body,

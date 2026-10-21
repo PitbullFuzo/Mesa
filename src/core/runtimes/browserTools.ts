@@ -95,7 +95,7 @@ export interface BrowserInstallation extends BrowserNode {
 export function browserToolsHome() {
   return join(
     process.env.LOCALAPPDATA ?? join(homedir(), '.local', 'share'),
-    'Obi-I',
+    'Mesa',
     'browser-tools',
   );
 }
@@ -151,7 +151,7 @@ export async function browserToolsStatus(): Promise<BrowserStatus> {
     available,
     hint: available
       ? 'Playwright ready: isolated profiles; no saved logins/cookies.'
-      : 'Install Node.js with npm/npx, then use Settings → Obi-I → Set up browser tools. No shell shim is executed.',
+      : 'Install Node.js with npm/npx, then use Settings → Mesa → Set up browser tools. No shell shim is executed.',
   };
 }
 export function browserInstallArgs(
@@ -221,7 +221,7 @@ export function safeAbsolutePath(path: string): boolean {
   );
 }
 
-/** The one MCP server every runtime gets for a browser run: Obi-I's policy helper around Playwright MCP. */
+/** The one MCP server every runtime gets for a browser run: Mesa's policy helper around Playwright MCP. */
 export function browserServerCommand(launch: BrowserLaunch): {
   command: string;
   args: string[];

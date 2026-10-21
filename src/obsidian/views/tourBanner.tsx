@@ -114,14 +114,14 @@ export function TourBanner({ workspace }: { workspace: WorkspaceActions }) {
           <h4>Keep your graph tidy?</h4>
           {workspace.agentFolderHidden() || choice === 'hidden' ? (
             <p className="agenthq-tour-body">
-              Obi-I is hidden from your graph and search. You can change this
-              any time in Settings.
+              Mesa is hidden from your graph and search. You can change this any
+              time in Settings.
             </p>
           ) : (
             <p className="agenthq-tour-body">
               {choice === 'visible'
-                ? 'Obi-I stays visible in your graph and search. You can change this any time in Settings.'
-                : 'Obi-I keeps its agents, chats and tasks in the Obi-I folder. Hide that folder from Obsidian’s graph and search, so your graph shows only your own notes? You can change this any time in Settings.'}
+                ? 'Mesa stays visible in your graph and search. You can change this any time in Settings.'
+                : 'Mesa keeps its agents, chats and tasks in the Mesa folder. Hide that folder from Obsidian’s graph and search, so your graph shows only your own notes? You can change this any time in Settings.'}
             </p>
           )}
           <div className="agenthq-tour-actions">

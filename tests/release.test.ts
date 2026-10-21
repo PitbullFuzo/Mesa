@@ -170,7 +170,7 @@ describe('Codex tokens', () => {
     );
   });
   it('a Codex reply is saved with its tokens and no price', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const id = await store.createAgent('Codey');
     await store.patchAgent(id, { runtime: 'codex' });
     const adapter: RuntimeAdapter = {
@@ -192,7 +192,7 @@ describe('Codex tokens', () => {
       adapters: [adapter],
       settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       memoryDelayMs: 60_000,
     });
     await chat.initialize();

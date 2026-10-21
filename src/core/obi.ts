@@ -32,19 +32,19 @@ export const OBI_LABEL = 'Obi';
 export const OBI_ROLE = 'Obsidian Intelligence';
 
 const OBI_INSTRUCTIONS =
-  'You are Obi, the general assistant for this Obsidian vault and the Obi-I plugin. Answer questions about notes and about how Obi-I works, using the Obi-I guide skill. You may propose changes to the team, but you never make them yourself: the owner approves each change. You do not delegate tasks; your job is the team.';
+  'You are Obi, the general assistant for this Obsidian vault and the Mesa plugin. Answer questions about notes and about how Mesa works, using the Mesa guide skill. You may propose changes to the team, but you never make them yourself: the owner approves each change. You do not delegate tasks; your job is the team.';
 
-export const OBI_GUIDE = `# Obi-I guide
+export const OBI_GUIDE = `# Mesa guide
 
-Obi-I runs AI agents inside Obsidian. Each agent is a note in the Obi-I folder, and each team member is an agent.
+Mesa runs AI agents inside Obsidian. Each agent is a note in the Mesa folder, and each team member is an agent.
 
-- **Agents** are notes in Obi-I/Agents. Their role, instructions, runtime, model, permission, vault and web access, manager and group live in the note.
+- **Agents** are notes in Mesa/Agents. Their role, instructions, runtime, model, permission, vault and web access, manager and group live in the note.
 - **Groups** organise the team on the AI Graph. Groups have a name and a colour.
 - **Managers** (reportsTo) decide who can delegate work to whom. Only direct reports receive delegated tasks.
 - **Delegation** happens when a manager ends a reply with an agenthq-delegate block. Results come back automatically.
 - **Verify loop**: a verifier checks a worker's answer and returns pass or fail. Failed work goes to the Inbox.
 - **Chat** is per agent. New conversations summarise the old one; past conversations can be continued from History.
-- **Permissions**: read-only and edit are the agent levels. Full permission is not available. Protected folders (Obi-I Agents, Tasks, Activity and the plugin config) cannot be edited by agents.
+- **Permissions**: read-only and edit are the agent levels. Full permission is not available. Protected folders (Mesa Agents, Tasks, Activity and the plugin config) cannot be edited by agents.
 - **Access**: vault access is off, read or write per agent (write is owner-only). Web access and browser control are owner-only in Setup. Whole-computer reads are owner-only and need explicit consent.
 - **Safety**: real replies use your installed runtime account and may cost money. Stop and Stop all cancel running work. Deleting chat history moves notes to the trash.
 `;
@@ -296,10 +296,10 @@ export function describeAction(
               ? 'not set'
               : agentLabel(action.reportsTo),
           ),
-          field('Runtime', action.runtime ?? 'Obi-I default'),
-          field('Model', action.model || 'Obi-I default'),
-          field('Permission', action.permission ?? 'Obi-I default'),
-          field('Vault access', action.vaultAccess ?? 'Obi-I default'),
+          field('Runtime', action.runtime ?? 'Mesa default'),
+          field('Model', action.model || 'Mesa default'),
+          field('Permission', action.permission ?? 'Mesa default'),
+          field('Vault access', action.vaultAccess ?? 'Mesa default'),
           field('Web access', 'off'),
         ],
         texts: [
@@ -643,11 +643,11 @@ async function patchAgent(
 export async function ensureObi(store: Store, root: string): Promise<boolean> {
   const { agents } = await store.loadAgents();
   if (agents.some((agent) => agent.id === OBI_ID)) return false;
-  const guide = `${root}/Skills/Obi-I guide.md`;
+  const guide = `${root}/Skills/Mesa guide.md`;
   if (!(await store.exists(guide)))
     await store.createNote(
       guide,
-      { agenthq: 'skill', name: 'Obi-I guide' },
+      { agenthq: 'skill', name: 'Mesa guide' },
       OBI_GUIDE,
     );
   const path = `${root}/Agents/${OBI_NAME}.md`;
@@ -667,7 +667,7 @@ export async function ensureObi(store: Store, root: string): Promise<boolean> {
       webAccess: false,
       group: null,
       verifier: null,
-      skills: ['[[Obi-I guide]]'],
+      skills: ['[[Mesa guide]]'],
     },
     OBI_INSTRUCTIONS,
   );

@@ -417,7 +417,7 @@ export class ObsidianStore implements Store {
   private notePath(path: string): string {
     const target = managedPath(this.root, path);
     if (!target.endsWith('.md'))
-      throw new Error('Obi-I notes must be Markdown files.');
+      throw new Error('Mesa notes must be Markdown files.');
     return target;
   }
 

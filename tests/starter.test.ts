@@ -86,29 +86,29 @@ describe('starter team', () => {
   });
   it('never overwrites an existing root, even if it is empty or a note', async () => {
     const store = new MemoryStore();
-    await store.createFolder('Obi-I');
-    expect(await initializeStarterTeam(store, 'Obi-I')).toBe(false);
+    await store.createFolder('Mesa');
+    expect(await initializeStarterTeam(store, 'Mesa')).toBe(false);
     expect(store.notes.size).toBe(0);
     const noteStore = new MemoryStore();
-    await noteStore.createNote('Obi-I', {}, 'User note');
-    expect(await initializeStarterTeam(noteStore, 'Obi-I')).toBe(false);
-    expect(noteStore.notes.get('Obi-I')?.body).toBe('User note');
+    await noteStore.createNote('Mesa', {}, 'User note');
+    expect(await initializeStarterTeam(noteStore, 'Mesa')).toBe(false);
+    expect(noteStore.notes.get('Mesa')?.body).toBe('User note');
   });
   it('is idempotent and leaves user-edited starter notes untouched', async () => {
     const store = new MemoryStore();
-    await initializeStarterTeam(store, 'Obi-I');
+    await initializeStarterTeam(store, 'Mesa');
     await store.saveNote(
-      'Obi-I/Agents/CEO.md',
+      'Mesa/Agents/CEO.md',
       { user: 'custom' },
       'My instructions',
     );
     const before = structuredClone([...store.notes]);
-    expect(await initializeStarterTeam(store, 'Obi-I')).toBe(false);
+    expect(await initializeStarterTeam(store, 'Mesa')).toBe(false);
     expect([...store.notes]).toEqual(before);
   });
 });
 
-describe('Obi-I folders on every start', () => {
+describe('Mesa folders on every start', () => {
   it('creates only the missing folders and leaves existing content alone', async () => {
     const store = new MemoryStore('Team');
     await store.createFolder('Team');

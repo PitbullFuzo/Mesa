@@ -29,7 +29,7 @@ it('uses host link text for task fields, results and monthly activity', async ()
     adapters: [runtime],
     settings: () => ({ maxParallelRuns: 2, allowedFolders: [] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     noteLink,
   });
   await service.initialize();
@@ -42,10 +42,10 @@ it('uses host link text for task fields, results and monthly activity', async ()
   const activity = (await store.loadActivity())[0]!;
   expect(activity.body).toContain('[[Lead]] delegated');
   expect(activity.body).toContain('to [[Worker]]');
-  expect(activity.body).not.toContain('[[Obi-I/');
+  expect(activity.body).not.toContain('[[Mesa/');
   expect(
     noteLink.mock.calls.some(([, source]) =>
-      source.startsWith('Obi-I/Activity/'),
+      source.startsWith('Mesa/Activity/'),
     ),
   ).toBe(true);
   expect(runtime.requests.at(-1)!.prompt).toContain(`[[${task.name}]]`);

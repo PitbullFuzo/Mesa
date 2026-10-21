@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { judgeSandboxProbes, type SelfTestOutcome } from './selfTest';
 
 /**
- * The Codex sandbox profile used by the self-test. It mirrors Obi-I's exec settings: the project folder is the
+ * The Codex sandbox profile used by the self-test. It mirrors Mesa's exec settings: the project folder is the
  * only writable place, and network access is off. Verified with the installed CLI (see docs/DECISIONS.md).
  */
 const PROFILE = [

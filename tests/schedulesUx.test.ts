@@ -26,16 +26,16 @@ afterEach(() => {
 });
 
 async function setup(costUsd = 0) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const coder = await store.createAgent('Coder');
   await store.patchAgent(coder, { runtime: 'fake' });
   const runtime = new FakeRuntime(() => paid('done', costUsd), 0);
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await service.initialize();
@@ -43,7 +43,7 @@ async function setup(costUsd = 0) {
 }
 
 async function readSchedule(store: MemoryStore): Promise<Schedule> {
-  return loadValidSchedules(await store.loadNotesUnder('Obi-I/Schedules'))[0]!;
+  return loadValidSchedules(await store.loadNotesUnder('Mesa/Schedules'))[0]!;
 }
 
 describe('schedules page: local time and the live preview', () => {
@@ -108,7 +108,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -119,7 +119,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
       },
       created,
     );
-    const path = 'Obi-I/Schedules/Standup.md';
+    const path = 'Mesa/Schedules/Standup.md';
     await updateScheduleNote(
       store,
       path,
@@ -146,7 +146,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
     const { store, coder } = await setup();
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -157,8 +157,8 @@ describe('schedules page: create, edit, delete, held, run now', () => {
       },
       new Date(),
     );
-    await store.trashNote('Obi-I/Schedules/Standup.md');
-    expect(await store.loadNotesUnder('Obi-I/Schedules')).toEqual([]);
+    await store.trashNote('Mesa/Schedules/Standup.md');
+    expect(await store.loadNotesUnder('Mesa/Schedules')).toEqual([]);
   });
 
   it('holds a schedule whose last run reached its cost cap, adds an Inbox item, and resumes it from the Inbox', async () => {
@@ -166,7 +166,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -208,7 +208,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -220,7 +220,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
       created,
     );
     const before = (await readSchedule(store)).nextRun;
-    await service.runScheduleNow('Obi-I/Schedules/Standup.md');
+    await service.runScheduleNow('Mesa/Schedules/Standup.md');
     await wait(50);
     expect(runtime.requests).toHaveLength(1);
     expect(runtime.requests[0]!.prompt).toBe('Post now.');
@@ -232,7 +232,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,
@@ -244,7 +244,7 @@ describe('schedules page: create, edit, delete, held, run now', () => {
       },
       created,
     );
-    await resumeSchedule(store, 'Obi-I/Schedules/Standup.md', created);
+    await resumeSchedule(store, 'Mesa/Schedules/Standup.md', created);
     const after = await readSchedule(store);
     expect(after.held).toBe(false);
     expect(after.lastCostUsd).toBe(0);
@@ -257,7 +257,7 @@ describe('scheduler tick guard', () => {
     const created = new Date(2026, 9, 19, 8, 0);
     await createScheduleNote(
       store,
-      'Obi-I',
+      'Mesa',
       {
         name: 'Standup',
         agentId: coder,

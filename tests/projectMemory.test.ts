@@ -28,7 +28,7 @@ const memoryBlock = (memories: object[]) =>
 
 /** A project run with a delegated task. The memory delay is long, so extraction runs only when a test calls it. */
 async function setup(script: FakeScripts, memoryModel?: MemoryChoice) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const lead = await store.createAgent('CEO');
   const coder = await store.createAgent('Coder');
   for (const id of [lead, coder])
@@ -38,13 +38,13 @@ async function setup(script: FakeScripts, memoryModel?: MemoryChoice) {
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await service.initialize();
-  await createProjectNote(store, 'Obi-I', {
+  await createProjectNote(store, 'Mesa', {
     name: 'Sales X',
     instructions: 'Sell the product.',
   });
@@ -69,7 +69,7 @@ describe('project memory: the log', () => {
   it('writes one log entry per finished task without any model call', async () => {
     const { service, store, runtime, lead, project } = await setup(planScript);
     await service.send(lead, 'Plan the launch', project.id);
-    const log = await store.loadNote('Obi-I/Projects/Sales X/Log.md');
+    const log = await store.loadNote('Mesa/Projects/Sales X/Log.md');
     expect(logEntries(log)).toHaveLength(1);
     expect(log?.body).toContain('Coder');
     expect(
@@ -122,7 +122,7 @@ describe('project memory: extraction', () => {
     });
     await service.send(lead, 'Plan the launch', project.id);
     await service.extractMemory(project.id);
-    const first = await store.loadNotesUnder('Obi-I/Projects/Sales X/Memory');
+    const first = await store.loadNotesUnder('Mesa/Projects/Sales X/Memory');
     expect(first.map((note) => note.name)).toEqual(['Launch date']);
     expect(first[0]!.frontmatter).toMatchObject({
       agenthq: 'memory',
@@ -132,11 +132,11 @@ describe('project memory: extraction', () => {
 
     await service.send(lead, 'Plan the launch again', project.id);
     await service.extractMemory(project.id);
-    const merged = await store.loadNotesUnder('Obi-I/Projects/Sales X/Memory');
+    const merged = await store.loadNotesUnder('Mesa/Projects/Sales X/Memory');
     expect(merged).toHaveLength(1);
     expect(merged[0]!.body).toContain('The launch is on 1 May.');
     expect(merged[0]!.body).toContain('The launch moved to 2 May.');
-    const log = await store.loadNote('Obi-I/Projects/Sales X/Log.md');
+    const log = await store.loadNote('Mesa/Projects/Sales X/Log.md');
     expect(log?.body).toContain('memory: 1 saved, 0 merged');
     expect(log?.body).toContain('memory: 0 saved, 1 merged');
   });
@@ -153,7 +153,7 @@ describe('project memory: extraction', () => {
         request.prompt.startsWith('Memory extraction'),
       ),
     ).toBe(false);
-    expect(await store.loadNotesUnder('Obi-I/Projects/Sales X/Memory')).toEqual(
+    expect(await store.loadNotesUnder('Mesa/Projects/Sales X/Memory')).toEqual(
       [],
     );
   });
@@ -168,7 +168,7 @@ describe('project memory: extraction', () => {
         request.prompt.startsWith('Memory extraction'),
       ),
     ).toBe(false);
-    const log = await store.loadNote('Obi-I/Projects/Sales X/Log.md');
+    const log = await store.loadNote('Mesa/Projects/Sales X/Log.md');
     expect(log?.body).toContain('memory skipped: project cost limit reached');
   });
 });
@@ -193,9 +193,9 @@ describe('project memory: agent blocks and retrieval', () => {
       ),
     );
     await service.send(coder, 'hi', project.id);
-    const log = await store.loadNote('Obi-I/Projects/Sales X/Log.md');
+    const log = await store.loadNote('Mesa/Projects/Sales X/Log.md');
     expect(log?.body).toContain('decision: Use Lisbon office');
-    const notes = await store.loadNotesUnder('Obi-I/Projects/Sales X/Memory');
+    const notes = await store.loadNotesUnder('Mesa/Projects/Sales X/Memory');
     expect(notes.map((note) => note.name)).toEqual(['Warehouse']);
   });
 
@@ -206,9 +206,9 @@ describe('project memory: agent blocks and retrieval', () => {
       ),
     );
     await service.send(coder, 'hi', project.id);
-    const log = await store.loadNote('Obi-I/Projects/Sales X/Log.md');
+    const log = await store.loadNote('Mesa/Projects/Sales X/Log.md');
     expect(log?.body).toContain('A memory block was refused');
-    expect(await store.loadNotesUnder('Obi-I/Projects/Sales X/Memory')).toEqual(
+    expect(await store.loadNotesUnder('Mesa/Projects/Sales X/Memory')).toEqual(
       [],
     );
   });
@@ -217,9 +217,9 @@ describe('project memory: agent blocks and retrieval', () => {
     const { service, store, runtime, coder, lead, project } = await setup(() =>
       reply('ok'),
     );
-    await store.createFolder('Obi-I/Projects/Sales X/Memory');
+    await store.createFolder('Mesa/Projects/Sales X/Memory');
     await store.createNote(
-      'Obi-I/Projects/Sales X/Memory/Warehouse.md',
+      'Mesa/Projects/Sales X/Memory/Warehouse.md',
       { agenthq: 'memory', type: 'fact' },
       'The warehouse is in Setubal.',
     );

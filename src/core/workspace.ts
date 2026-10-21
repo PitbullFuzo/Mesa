@@ -32,7 +32,7 @@ export interface WorkspaceSnapshot extends AgentCollection {
   projectLogs?: Record<string, ProjectLogSummary>;
   /** Direct chat facts, for project cost. */
   projectChats?: ChatFacts[];
-  /** Schedules from Obi-I/Schedules. */
+  /** Schedules from Mesa/Schedules. */
   schedules?: Schedule[];
   /** Model lists read from OpenCode and Codex, keyed by runtime id. */
   runtimeModels?: Record<string, import('./models').ModelChoice[]>;
@@ -147,9 +147,9 @@ export interface WorkspaceActions {
   finishTour(): Promise<void>;
   /** "Take the tour again". */
   restartTour(): void;
-  /** Whether the Obi-I folder is in Obsidian's Excluded files (hidden from search and the graph). */
+  /** Whether the Mesa folder is in Obsidian's Excluded files (hidden from search and the graph). */
   agentFolderHidden(): boolean;
-  /** The tour's "Hide it" button: adds or removes the Obi-I folder in Excluded files. */
+  /** The tour's "Hide it" button: adds or removes the Mesa folder in Excluded files. */
   setAgentFolderHidden(hide: boolean): void;
   loadRuntimeModels(runtime: string): Promise<void>;
   requestCreateAgent(): void;

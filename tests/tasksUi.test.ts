@@ -24,7 +24,7 @@ describe('Tasks panel', () => {
   it('lists only the selected worker tasks with status, attempt and verdict', () => {
     const html = render([
       {
-        path: 'Obi-I/Tasks/Hello.md',
+        path: 'Mesa/Tasks/Hello.md',
         name: 'Hello',
         frontmatter: {
           agenthq: 'task',
@@ -36,7 +36,7 @@ describe('Tasks panel', () => {
         body: 'hi',
       },
       {
-        path: 'Obi-I/Tasks/Other.md',
+        path: 'Mesa/Tasks/Other.md',
         name: 'Other',
         frontmatter: {
           agenthq: 'task',

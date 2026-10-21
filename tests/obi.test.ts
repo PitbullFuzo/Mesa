@@ -189,9 +189,7 @@ describe('Obi prompt and note', () => {
     expect(obi.vaultAccess).toBe('read');
     expect(obi.webAccess).toBe(false);
     expect(obi.runtime).toBe('claude-code');
-    expect(await store.exists(`${store.root}/Skills/Obi-I guide.md`)).toBe(
-      true,
-    );
+    expect(await store.exists(`${store.root}/Skills/Mesa guide.md`)).toBe(true);
 
     const creates = vi.spyOn(store, 'createNote');
     expect(await ensureObi(store, store.root)).toBe(false);

@@ -6,7 +6,12 @@ import globals from 'globals';
 export default tseslint.config(
   {
     // Hand-written type declarations for the plain .mjs release scripts; typed linting does not cover them.
-    ignores: ['node_modules/**', 'test-vault/**', 'scripts/**/*.d.mts'],
+    ignores: [
+      'node_modules/**',
+      'test-vault/**',
+      'release/**',
+      'scripts/**/*.d.mts',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

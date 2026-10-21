@@ -17,7 +17,7 @@ import { parseObiProposals } from '../src/core/obi';
 import { loadSettings } from '../src/core/settings';
 import type { RunRequest, RuntimeAdapter } from '../src/core/runtimes/types';
 
-const ROOT = 'Obi-I';
+const ROOT = 'Mesa';
 const CONFIG = '.obsidian';
 const meeting = DEFAULT_NOTE_TYPES[0]!;
 
@@ -38,9 +38,9 @@ describe('note destination folders', () => {
     ['a/../b', /plain folder/],
     ['.obsidian', /configuration folder/],
     ['.obsidian/plugins', /configuration folder/],
-    ['Obi-I/Agents', /protected/],
-    ['Obi-I/Skills', /protected/],
-    ['Obi-I', /protected/],
+    ['Mesa/Agents', /protected/],
+    ['Mesa/Skills', /protected/],
+    ['Mesa', /protected/],
   ])('refuses %j', (folder, reason) => {
     expect(noteTypeProblem({ folder }, ROOT, CONFIG)).toMatch(reason);
   });
@@ -59,7 +59,7 @@ describe('note destination folders', () => {
 describe('which destinations an agent gets', () => {
   const types: NoteType[] = [
     ...DEFAULT_NOTE_TYPES.slice(0, 3),
-    { id: 'bad', label: 'Bad', folder: 'Obi-I/Agents', enabled: true },
+    { id: 'bad', label: 'Bad', folder: 'Mesa/Agents', enabled: true },
   ];
   it('none by default', () => {
     expect(agentNoteTypes({}, types, ROOT, CONFIG)).toEqual([]);
@@ -238,7 +238,7 @@ describe('a run for an agent with a note type ticked', () => {
     expect(off.requests[0]!.extraDirs).not.toContain('/vault/Meetings');
     const bad = await service({
       ticked: ['meeting'],
-      noteTypes: [{ ...meeting, folder: 'Obi-I/Agents' }],
+      noteTypes: [{ ...meeting, folder: 'Mesa/Agents' }],
     });
     await bad.chat.send(bad.id, 'go');
     expect((bad.requests[0]!.extraDirs ?? []).join()).not.toContain('Agents');

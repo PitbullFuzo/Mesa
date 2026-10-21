@@ -18,7 +18,7 @@ const schedule = (over: Partial<Schedule>): Schedule =>
     missedRun: 'skip',
     enabled: true,
     name: 'Standup',
-    path: 'Obi-I/Schedules/Standup.md',
+    path: 'Mesa/Schedules/Standup.md',
     message: 'Post the standup.',
     ...over,
   }) as Schedule;
@@ -100,7 +100,7 @@ describe('schedules: due decision and missed runs', () => {
 
 describe('schedules: notes', () => {
   const note = (frontmatter: Record<string, unknown>): NoteDocument => ({
-    path: 'Obi-I/Schedules/Standup.md',
+    path: 'Mesa/Schedules/Standup.md',
     name: 'Standup',
     frontmatter,
     body: 'Post the standup.',

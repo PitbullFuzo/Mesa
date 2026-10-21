@@ -15,7 +15,7 @@ describe('vault powers', () => {
       adapters: [runtime],
       settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
     });
     await chat.initialize();
     await chat.send(id, 'Earlier conversation');
@@ -30,15 +30,15 @@ describe('vault powers', () => {
   });
   it('imports skill bodies through Store without overwriting existing notes', async () => {
     const store = new MemoryStore();
-    await store.createFolder('Obi-I');
-    const result = await importSkills(store, 'Obi-I', [
+    await store.createFolder('Mesa');
+    const result = await importSkills(store, 'Mesa', [
       { name: 'writing', body: '# Write clearly' },
     ]);
-    expect(result.imported).toEqual(['Obi-I/Skills/writing.md']);
+    expect(result.imported).toEqual(['Mesa/Skills/writing.md']);
     expect(await store.loadSkills()).toMatchObject([
       { name: 'writing', body: '# Write clearly' },
     ]);
-    const repeat = await importSkills(store, 'Obi-I', [
+    const repeat = await importSkills(store, 'Mesa', [
       { name: 'writing', body: 'Replace me' },
       { name: '../outside', body: 'unsafe' },
     ]);

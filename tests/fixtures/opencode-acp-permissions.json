@@ -30,11 +30,11 @@
           "title": "write",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+              "path": "C:/Vault/Mesa/Work/s11opencode/allowed.md"
             }
           ],
           "rawInput": {
-            "filePath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+            "filePath": "C:/Vault/Mesa/Work/s11opencode/allowed.md",
             "content": "S11_WORK_OK\n"
           }
         }
@@ -64,22 +64,22 @@
         "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
         "toolCall": {
           "toolCallId": "call_03b7e05a342e4974b916d26c",
-          "title": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+          "title": "C:/Vault/Mesa/Work/s11opencode/allowed.md",
           "kind": "edit",
           "status": "pending",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+              "path": "C:/Vault/Mesa/Work/s11opencode/allowed.md"
             }
           ],
           "rawInput": {
-            "filepath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
-            "diff": "Index: C:/Vault/Obi-I/Work/s11opencode/allowed.md\n===================================================================\n--- C:/Vault/Obi-I/Work/s11opencode/allowed.md\n+++ C:/Vault/Obi-I/Work/s11opencode/allowed.md\n@@ -0,0 +1,1 @@\n+S11_WORK_OK\n"
+            "filepath": "C:/Vault/Mesa/Work/s11opencode/allowed.md",
+            "diff": "Index: C:/Vault/Mesa/Work/s11opencode/allowed.md\n===================================================================\n--- C:/Vault/Mesa/Work/s11opencode/allowed.md\n+++ C:/Vault/Mesa/Work/s11opencode/allowed.md\n@@ -0,0 +1,1 @@\n+S11_WORK_OK\n"
           },
           "content": [
             {
               "type": "diff",
-              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+              "path": "C:/Vault/Mesa/Work/s11opencode/allowed.md",
               "oldText": "",
               "newText": "S11_WORK_OK\n"
             }
@@ -113,7 +113,7 @@
           "sessionUpdate": "tool_call_update",
           "toolCallId": "call_03b7e05a342e4974b916d26c",
           "status": "completed",
-          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "title": "test-vault\\Mesa\\Work\\s11opencode\\allowed.md",
           "content": [
             {
               "type": "content",
@@ -127,7 +127,7 @@
             "output": "Wrote file successfully.",
             "metadata": {
               "diagnostics": {},
-              "filepath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+              "filepath": "C:/Vault/Mesa/Work/s11opencode/allowed.md",
               "exists": false,
               "truncated": false
             }
@@ -148,11 +148,11 @@
           "title": "write",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+              "path": "C:/Vault/Mesa/Agents/s11-denied.md"
             }
           ],
           "rawInput": {
-            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "filePath": "C:/Vault/Mesa/Agents/s11-denied.md",
             "content": "SHOULD_NOT_WRITE\n"
           }
         }
@@ -182,22 +182,22 @@
         "sessionId": "ses_eba224c30ffeirM4K27SZgNIbC",
         "toolCall": {
           "toolCallId": "call_749ba491195a42c7803fc52a",
-          "title": "C:/Vault/Obi-I/Agents/s11-denied.md",
+          "title": "C:/Vault/Mesa/Agents/s11-denied.md",
           "kind": "edit",
           "status": "pending",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+              "path": "C:/Vault/Mesa/Agents/s11-denied.md"
             }
           ],
           "rawInput": {
-            "filepath": "C:/Vault/Obi-I/Agents/s11-denied.md",
-            "diff": "Index: C:/Vault/Obi-I/Agents/s11-denied.md\n===================================================================\n--- C:/Vault/Obi-I/Agents/s11-denied.md\n+++ C:/Vault/Obi-I/Agents/s11-denied.md\n@@ -0,0 +1,1 @@\n+SHOULD_NOT_WRITE\n"
+            "filepath": "C:/Vault/Mesa/Agents/s11-denied.md",
+            "diff": "Index: C:/Vault/Mesa/Agents/s11-denied.md\n===================================================================\n--- C:/Vault/Mesa/Agents/s11-denied.md\n+++ C:/Vault/Mesa/Agents/s11-denied.md\n@@ -0,0 +1,1 @@\n+SHOULD_NOT_WRITE\n"
           },
           "content": [
             {
               "type": "diff",
-              "path": "C:/Vault/Obi-I/Agents/s11-denied.md",
+              "path": "C:/Vault/Mesa/Agents/s11-denied.md",
               "oldText": "",
               "newText": "SHOULD_NOT_WRITE\n"
             }
@@ -235,11 +235,11 @@
           "title": "write",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+              "path": "C:/Vault/Mesa/Agents/s11-denied.md"
             }
           ],
           "rawInput": {
-            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "filePath": "C:/Vault/Mesa/Agents/s11-denied.md",
             "content": "SHOULD_NOT_WRITE\n"
           },
           "content": [
@@ -370,16 +370,16 @@
         "update": {
           "sessionUpdate": "tool_call",
           "toolCallId": "call_03b7e05a342e4974b916d26c",
-          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "title": "test-vault\\Mesa\\Work\\s11opencode\\allowed.md",
           "kind": "edit",
           "status": "pending",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+              "path": "C:/Vault/Mesa/Work/s11opencode/allowed.md"
             }
           ],
           "rawInput": {
-            "filePath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+            "filePath": "C:/Vault/Mesa/Work/s11opencode/allowed.md",
             "content": "S11_WORK_OK\n"
           }
         }
@@ -394,7 +394,7 @@
           "sessionUpdate": "tool_call_update",
           "toolCallId": "call_03b7e05a342e4974b916d26c",
           "status": "completed",
-          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "title": "test-vault\\Mesa\\Work\\s11opencode\\allowed.md",
           "content": [
             {
               "type": "content",
@@ -408,7 +408,7 @@
             "output": "Wrote file successfully.",
             "metadata": {
               "diagnostics": {},
-              "filepath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md",
+              "filepath": "C:/Vault/Mesa/Work/s11opencode/allowed.md",
               "exists": false,
               "truncated": false
             }
@@ -429,11 +429,11 @@
           "status": "pending",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+              "path": "C:/Vault/Mesa/Agents/s11-denied.md"
             }
           ],
           "rawInput": {
-            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "filePath": "C:/Vault/Mesa/Agents/s11-denied.md",
             "content": "SHOULD_NOT_WRITE\n"
           }
         }
@@ -452,11 +452,11 @@
           "title": "write",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Agents/s11-denied.md"
+              "path": "C:/Vault/Mesa/Agents/s11-denied.md"
             }
           ],
           "rawInput": {
-            "filePath": "C:/Vault/Obi-I/Agents/s11-denied.md",
+            "filePath": "C:/Vault/Mesa/Agents/s11-denied.md",
             "content": "SHOULD_NOT_WRITE\n"
           },
           "content": [
@@ -559,11 +559,11 @@
           "title": "read",
           "locations": [
             {
-              "path": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+              "path": "C:/Vault/Mesa/Work/s11opencode/allowed.md"
             }
           ],
           "rawInput": {
-            "filePath": "C:/Vault/Obi-I/Work/s11opencode/allowed.md"
+            "filePath": "C:/Vault/Mesa/Work/s11opencode/allowed.md"
           }
         }
       }
@@ -610,7 +610,7 @@
           "sessionUpdate": "tool_call_update",
           "toolCallId": "call_8d342822ed97433c843c3f11",
           "status": "completed",
-          "title": "test-vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+          "title": "test-vault\\Mesa\\Work\\s11opencode\\allowed.md",
           "content": [
             {
               "type": "content",
@@ -621,14 +621,14 @@
             }
           ],
           "rawOutput": {
-            "output": "<path>C:\\Vault\\Obi-I\\Work\\s11opencode\\allowed.md</path>\n<type>file</type>\n<content>\n1: S11_WORK_OK\n\n(End of file - total 1 lines)\n</content>",
+            "output": "<path>C:\\Vault\\Mesa\\Work\\s11opencode\\allowed.md</path>\n<type>file</type>\n<content>\n1: S11_WORK_OK\n\n(End of file - total 1 lines)\n</content>",
             "metadata": {
               "preview": "S11_WORK_OK",
               "truncated": false,
               "loaded": [],
               "display": {
                 "type": "file",
-                "path": "C:\\Vault\\Obi-I\\Work\\s11opencode\\allowed.md",
+                "path": "C:\\Vault\\Mesa\\Work\\s11opencode\\allowed.md",
                 "text": "S11_WORK_OK",
                 "lineStart": 1,
                 "lineEnd": 1,

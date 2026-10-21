@@ -13,7 +13,7 @@ import type { RuntimeAdapter } from '../src/core/runtimes/types';
 
 describe('the plan run is restricted', () => {
   it('runs read-only with no vault, outside folders, web, browser or whole-computer read, in a fresh session', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const planner = await store.createAgent('Planner');
     await store.patchAgent(planner, {
       runtime: 'fake',
@@ -30,7 +30,7 @@ describe('the plan run is restricted', () => {
       adapters: [adapter],
       settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Reference'] }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       memoryDelayMs: 60_000,
     });
     await service.initialize();
@@ -45,14 +45,14 @@ describe('the plan run is restricted', () => {
     expect(request.canUseBrowser).toBe(false);
     expect(request.wholeComputerReadConfirmed).toBe(false);
     expect(request.resume).toBe(false);
-    expect(request.cwd).toContain('Obi-I/Work/');
+    expect(request.cwd).toContain('Mesa/Work/');
     expect(request.prompt).toBe('the plan prompt');
     // The agent's own chat is not used: no message was added to it.
     expect(service.getSnapshot().agents[planner]?.messages ?? []).toEqual([]);
   });
 
   it('a second plan run gets a new session, not the first one', async () => {
-    const store = new MemoryStore('Obi-I');
+    const store = new MemoryStore('Mesa');
     const planner = await store.createAgent('Planner');
     await store.patchAgent(planner, { runtime: 'fake' });
     const fake = new FakeRuntime(
@@ -64,7 +64,7 @@ describe('the plan run is restricted', () => {
       adapters: [fake],
       settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       memoryDelayMs: 60_000,
     });
     await service.initialize();
@@ -88,9 +88,9 @@ describe('links must update before moving', () => {
 });
 
 describe('where the plan lives and what the owner sees', () => {
-  it('the plan note goes under Obi-I/Activity, where agents cannot edit it', () => {
-    expect(planPath('Obi-I', '2026-10-20 1430')).toBe(
-      'Obi-I/Activity/Reorganisation plan 2026-10-20 1430.md',
+  it('the plan note goes under Mesa/Activity, where agents cannot edit it', () => {
+    expect(planPath('Mesa', '2026-10-20 1430')).toBe(
+      'Mesa/Activity/Reorganisation plan 2026-10-20 1430.md',
     );
   });
 
@@ -115,7 +115,7 @@ describe('where the plan lives and what the owner sees', () => {
         { from: 'Inbox/note.md', to: 'Notes/note.md', reason: '' },
       ],
       new Set(['Inbox/pic.png', 'Inbox/note.md']),
-      'Obi-I',
+      'Mesa',
       '.obsidian',
     );
     expect(valid.map((move) => move.from)).toEqual(['Inbox/note.md']);

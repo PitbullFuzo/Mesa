@@ -23,7 +23,7 @@ const launch = {
 const claude: RunRequest = {
   prompt: 'p',
   systemPrompt: 's',
-  cwd: 'C:/vault/Obi-I/Work/coder',
+  cwd: 'C:/vault/Mesa/Work/coder',
   sessionId: '11111111-1111-4111-8111-111111111111',
   resume: false,
   permission: 'read-only',
@@ -151,7 +151,7 @@ async function service(options: {
   canUseM365: boolean;
   connected: boolean;
 }) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const id = await store.createAgent('Mailer');
   await store.patchAgent(id, {
     runtime: options.runtime,
@@ -181,7 +181,7 @@ async function service(options: {
     adapters: [adapter],
     settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
     m365: {
       helper: 'C:/vault/plugin/m365_mcp.cjs',

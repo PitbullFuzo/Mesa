@@ -7,7 +7,7 @@ it('registers the real runtime and exposes scripted testing only in developer mo
   const options = {
     runtimePathOverride: '',
     vaultBasePath: 'C:/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     developerMode: false,
   };
   const adapters = createRuntimeAdapters(options);

@@ -28,7 +28,7 @@ function agent(id: string, name: string): Agent {
 const groups: Group[] = [{ id: 'core', name: 'Core team', color: '#7c3aed' }];
 const skills: Skill[] = [
   {
-    path: 'Obi-I/Skills/sales.md',
+    path: 'Mesa/Skills/sales.md',
     name: 'sales-playbook',
     body: 'Sell well.',
   },
@@ -37,7 +37,7 @@ const project = (over: Partial<Project> = {}): Project =>
   ({
     id: 'p1',
     name: 'Sales',
-    path: 'Obi-I/Projects/Sales.md',
+    path: 'Mesa/Projects/Sales.md',
     status: 'active',
     goal: '',
     teams: ['core'],
@@ -58,7 +58,7 @@ const schedule = (over: Partial<Schedule> = {}): Schedule =>
     enabled: true,
     costCapUsd: 0.5,
     name: 'Report',
-    path: 'Obi-I/Schedules/Report.md',
+    path: 'Mesa/Schedules/Report.md',
     message: 'Report on Sales.',
     ...over,
   }) as Schedule;
@@ -240,9 +240,7 @@ describe('Obi project actions: cost limits and caps', () => {
 
 describe('Obi project actions: applying', () => {
   it('creates a schedule paused, even if the action asked for it enabled', async () => {
-    const createSchedule = vi.fn(
-      async () => 'Obi-I/Schedules/Weekly report.md',
-    );
+    const createSchedule = vi.fn(async () => 'Mesa/Schedules/Weekly report.md');
     const ops: ObiOps = {
       snapshot,
       createAgent: vi.fn(),
@@ -301,7 +299,7 @@ describe('Obi project actions: applying', () => {
       expect.objectContaining({
         name: 'Sales X',
         teams: ['core'],
-        skills: ['Obi-I/Skills/sales.md'],
+        skills: ['Mesa/Skills/sales.md'],
         status: 'planned',
       }),
     );
@@ -332,7 +330,7 @@ describe('Obi prompt: projects and schedules', () => {
     expect(prompt).toContain(
       '- Report: agent CEO; project Sales; Every day at 09:00; enabled; cost cap per run $0.5',
     );
-    expect(prompt).not.toContain('Obi-I/Projects');
+    expect(prompt).not.toContain('Mesa/Projects');
     expect(prompt).not.toContain('/private/work/tree');
   });
 });

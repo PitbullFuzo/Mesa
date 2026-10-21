@@ -17,7 +17,7 @@ it('persists a server-assigned session ID and resumes it after reload', async ()
     adapters: [runtime],
     settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
   };
   const first = new ChatService(options);
   await first.initialize();
@@ -79,7 +79,7 @@ it.each(['hermes', 'opencode', 'codex'] as const)(
       adapters,
       settings: () => ({ allowedFolders: [], maxParallelRuns: 1 }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
     });
     await service.initialize();
     await service.send(lead, 'delegate');

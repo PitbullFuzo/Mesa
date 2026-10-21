@@ -13,7 +13,7 @@ const verdict = (value: 'pass' | 'fail') =>
 
 /** Coder and reviewer on the fake runtime. The reviewer's verdicts come from the list, in order. */
 async function setup(verdicts: ('pass' | 'fail')[], costUsd = 0, delayMs = 0) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const coder = await store.createAgent('Coder');
   const reviewer = await store.createAgent('Reviewer');
   for (const id of [coder, reviewer])
@@ -27,9 +27,9 @@ async function setup(verdicts: ('pass' | 'fail')[], costUsd = 0, delayMs = 0) {
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await service.initialize();

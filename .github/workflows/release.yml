@@ -1,0 +1,73 @@
+# Builds a release from a pushed version tag, with build provenance, in GitHub's own runner.
+# Release immutability is on, so the three assets are attached while the release is still a draft, then it is published.
+# Usage: push a tag that equals the version in manifest.json (for example 1.0.2, no "v"). See README, "Releases".
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out the tagged commit
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check the tag equals the manifest version
+        run: |
+          version=$(node -p "require('./manifest.json').version")
+          if [ "$GITHUB_REF_NAME" != "$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not equal manifest.json version $version" >&2
+            exit 1
+          fi
+
+      - name: Test
+        run: npm test
+
+      - name: Build and package
+        run: npm run package
+
+      - name: Collect the three release files
+        run: |
+          mkdir release-files
+          cp test-vault/.obsidian/plugins/mesa/main.js release-files/main.js
+          cp test-vault/.obsidian/plugins/mesa/styles.css release-files/styles.css
+          cp manifest.json release-files/manifest.json
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2.4.0
+        with:
+          subject-path: |
+            release-files/main.js
+            release-files/styles.css
+            release-files/manifest.json
+
+      - name: Create the draft release with its assets, then publish it
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --draft \
+            --title "$GITHUB_REF_NAME" \
+            --notes "Built by GitHub Actions from tag $GITHUB_REF_NAME, with build provenance attestations for main.js, styles.css and manifest.json." \
+            release-files/main.js release-files/styles.css release-files/manifest.json
+          gh release edit "$GITHUB_REF_NAME" --draft=false

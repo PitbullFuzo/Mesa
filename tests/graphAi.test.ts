@@ -103,7 +103,7 @@ describe('which notes the pass reads', () => {
     'Notes/spoke.md': { 'Notes/third.md': 1 },
   };
   const analysis = analyseLinkGraph(
-    buildLinkGraph(files, links, 'Obi-I', '.obsidian'),
+    buildLinkGraph(files, links, 'Mesa', '.obsidian'),
   );
   const mtimes = new Map(files.map((file) => [file.path, file.mtime]));
 

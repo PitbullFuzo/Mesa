@@ -66,7 +66,7 @@ function resolveAgentSkills(
   return { paths, unresolved };
 }
 
-/** Creates a skill note in Obi-I/Skills, never overwriting an existing one. */
+/** Creates a skill note in Mesa/Skills, never overwriting an existing one. */
 export async function createSkillNote(
   store: Store,
   root: string,

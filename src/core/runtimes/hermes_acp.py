@@ -1,4 +1,4 @@
-"""Hermes-only policy shim for Obi-I's standard ACP client. No user files patched."""
+"""Hermes-only policy shim for Mesa's standard ACP client. No user files patched."""
 import os
 import sys
 
@@ -54,10 +54,10 @@ original_make = SessionManager._make_agent
 if "enabled_toolsets" not in inspect.signature(original_make).parameters:
     raise RuntimeError("Unsupported Hermes ACP tool policy API")
 original_dispatch = model_tools.handle_function_call
-# A browser run may register exactly one session MCP server, Obi-I's own, named "playwright"; its tools are
+# A browser run may register exactly one session MCP server, Mesa's own, named "playwright"; its tools are
 # mcp__playwright__<tool> (the helper already limits which tools exist and what they accept).
 BROWSER_SERVER = "playwright"
-# Microsoft 365: Obi-I's own helper, a second allowed session server (its write tools only queue requests).
+# Microsoft 365: Mesa's own helper, a second allowed session server (its write tools only queue requests).
 M365_SERVER = "m365"
 SESSION_SERVERS = (BROWSER_SERVER, M365_SERVER)
 SERVER_PREFIXES = tuple("mcp__" + name + "__" for name in SESSION_SERVERS)
@@ -109,20 +109,20 @@ def owner_approves(name, arguments):
         text = arguments.get("command") if name == "terminal" else arguments.get("code") if name == "execute_code" else json.dumps(arguments)
         if not isinstance(text, str) or not text:
             return False
-        return callback(text, "Obi-I: " + name, allow_permanent=False, allow_session=False) == "once"
+        return callback(text, "Mesa: " + name, allow_permanent=False, allow_session=False) == "once"
     except Exception:
         return False
 
 def dispatch(name, *args, **kwargs):
     if not tool_allowed(name):
-        return json.dumps({"error": "Tool disabled by Obi-I policy"})
+        return json.dumps({"error": "Tool disabled by Mesa policy"})
     if ASK_COMMANDS and name in COMMAND_TOOLS and (not args or not owner_approves(name, args[0])):
         return json.dumps({"error": "Command not approved by the owner; it was not run"})
     if name in ("read_file", "search_files") and (not args or not read_path_allowed(name, args[0])):
-        return json.dumps({"error": "Read denied by Obi-I: path is outside this agent's allowed folders or is unsafe"})
+        return json.dumps({"error": "Read denied by Mesa: path is outside this agent's allowed folders or is unsafe"})
     if name in ("write_file", "patch"):
         if _EDIT_APPROVAL_REQUESTER.get() is None or not args or not isinstance(args[0], dict):
-            return json.dumps({"error": "Obi-I edit approval is not bound; edit refused"})
+            return json.dumps({"error": "Mesa edit approval is not bound; edit refused"})
         denial = maybe_require_edit_approval(name, args[0])
         if denial is not None:
             return denial
@@ -139,7 +139,7 @@ def make_agent(self, **kwargs):
     agent.tools = [tool for tool in agent.tools if tool_allowed(tool.get("function", {}).get("name"))]
     agent.valid_tool_names = {tool["function"]["name"] for tool in agent.tools}
     if not {"read_file", "write_file", "patch"} <= agent.valid_tool_names:
-        raise RuntimeError("Hermes required file tools unavailable under Obi-I policy")
+        raise RuntimeError("Hermes required file tools unavailable under Mesa policy")
     return agent
 
 SessionManager._make_agent = make_agent
@@ -151,10 +151,10 @@ native_register = HermesACPAgent._register_session_mcp_servers
 async def register_session_mcp_servers(self, state, mcp_servers):
     if not mcp_servers:
         return
-    # Fail closed: anything but Obi-I's one stdio browser server is refused.
+    # Fail closed: anything but Mesa's one stdio browser server is refused.
     names = [getattr(s, "name", None) for s in mcp_servers]
     if not names or len(set(names)) != len(names) or any(n not in SESSION_SERVERS for n in names) or not all(hasattr(s, "command") for s in mcp_servers):
-        raise RuntimeError("Obi-I allows only its own browser server")
+        raise RuntimeError("Mesa allows only its own browser server")
     await native_register(self, state, mcp_servers)
     agent = state.agent
     # Native registration rebuilt the tool list; apply the policy filter again.

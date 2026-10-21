@@ -8,7 +8,7 @@
         "content": [
           {
             "content": {
-              "text": "Preparing write to C:/Vault/Obi-I/Agents/step10-denied.md. Approval prompt shows the diff.",
+              "text": "Preparing write to C:/Vault/Mesa/Agents/step10-denied.md. Approval prompt shows the diff.",
               "type": "text"
             },
             "type": "content"
@@ -17,10 +17,10 @@
         "kind": "edit",
         "locations": [
           {
-            "path": "C:/Vault/Obi-I/Agents/step10-denied.md"
+            "path": "C:/Vault/Mesa/Agents/step10-denied.md"
           }
         ],
-        "title": "write_file: C:/Vault/Obi-I/Agents/step10-de...",
+        "title": "write_file: C:/Vault/Mesa/Agents/step10-de...",
         "toolCallId": "tc-4c84e07cd25f",
         "sessionUpdate": "tool_call"
       }
@@ -35,7 +35,7 @@
         "content": [
           {
             "content": {
-              "text": "Preparing write to C:/Vault/Obi-I/Work/s10hermes/allowed.md. Approval prompt shows the diff.",
+              "text": "Preparing write to C:/Vault/Mesa/Work/s10hermes/allowed.md. Approval prompt shows the diff.",
               "type": "text"
             },
             "type": "content"
@@ -44,10 +44,10 @@
         "kind": "edit",
         "locations": [
           {
-            "path": "C:/Vault/Obi-I/Work/s10hermes/allowed.md"
+            "path": "C:/Vault/Mesa/Work/s10hermes/allowed.md"
           }
         ],
-        "title": "write_file: C:/Vault/Obi-I/Work/s10hermes/a...",
+        "title": "write_file: C:/Vault/Mesa/Work/s10hermes/a...",
         "toolCallId": "tc-9fe129a9af1e",
         "sessionUpdate": "tool_call"
       }
@@ -75,7 +75,7 @@
         "content": [
           {
             "newText": "DENIED",
-            "path": "C:/Vault/Obi-I/Agents/step10-denied.md",
+            "path": "C:/Vault/Mesa/Agents/step10-denied.md",
             "type": "diff"
           }
         ],
@@ -83,12 +83,12 @@
         "rawInput": {
           "tool": "write_file",
           "arguments": {
-            "path": "C:/Vault/Obi-I/Agents/step10-denied.md",
+            "path": "C:/Vault/Mesa/Agents/step10-denied.md",
             "content": "DENIED"
           }
         },
         "status": "pending",
-        "title": "Approve edit: C:/Vault/Obi-I/Agents/step10-denied.md",
+        "title": "Approve edit: C:/Vault/Mesa/Agents/step10-denied.md",
         "toolCallId": "edit-approval-1"
       }
     }
@@ -115,7 +115,7 @@
         "content": [
           {
             "newText": "STEP10_OK",
-            "path": "C:/Vault/Obi-I/Work/s10hermes/allowed.md",
+            "path": "C:/Vault/Mesa/Work/s10hermes/allowed.md",
             "type": "diff"
           }
         ],
@@ -123,12 +123,12 @@
         "rawInput": {
           "tool": "write_file",
           "arguments": {
-            "path": "C:/Vault/Obi-I/Work/s10hermes/allowed.md",
+            "path": "C:/Vault/Mesa/Work/s10hermes/allowed.md",
             "content": "STEP10_OK"
           }
         },
         "status": "pending",
-        "title": "Approve edit: C:/Vault/Obi-I/Work/s10hermes/allowed.md",
+        "title": "Approve edit: C:/Vault/Mesa/Work/s10hermes/allowed.md",
         "toolCallId": "edit-approval-2"
       }
     }
@@ -155,7 +155,7 @@
         "content": [
           {
             "newText": "STEP10_OK",
-            "path": "C:/Vault/Obi-I/Work/s10hermes/allowed.md",
+            "path": "C:/Vault/Mesa/Work/s10hermes/allowed.md",
             "type": "diff"
           }
         ],
@@ -163,12 +163,12 @@
         "rawInput": {
           "tool": "write_file",
           "arguments": {
-            "path": "C:/Vault/Obi-I/Work/s10hermes/allowed.md",
+            "path": "C:/Vault/Mesa/Work/s10hermes/allowed.md",
             "content": "STEP10_OK"
           }
         },
         "status": "pending",
-        "title": "Approve edit: C:/Vault/Obi-I/Work/s10hermes/allowed.md",
+        "title": "Approve edit: C:/Vault/Mesa/Work/s10hermes/allowed.md",
         "toolCallId": "edit-approval-3"
       }
     }

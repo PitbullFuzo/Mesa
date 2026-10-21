@@ -161,7 +161,7 @@ export function describeAction(action: Action, extra = ''): ActionCard {
 export async function summarizeTarget(
   action: Action,
   token: string,
-  f?: Fetch,
+  f: Fetch,
 ): Promise<string> {
   try {
     if ('id' in action && action.tool.startsWith('mail_')) {
@@ -208,14 +208,14 @@ export async function summarizeTarget(
 export async function executeAction(
   action: Action,
   token: string,
-  f?: Fetch,
+  f: Fetch,
 ): Promise<string> {
   const to = (list: string[]) =>
     list.map((address) => ({ emailAddress: { address } }));
   const call = (
     method: string,
     p: string,
-    options: Parameters<typeof graph>[3] = {},
+    options: Omit<Parameters<typeof graph>[3], 'f'> = {},
   ) => graph(token, method, p, { f, ...options });
   switch (action.tool) {
     case 'mail_send':

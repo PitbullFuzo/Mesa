@@ -167,10 +167,10 @@ describe('the chat service passes them on', () => {
       adapters: [new Reporting()],
       settings: () => ({
         maxParallelRuns: 2,
-        allowedFolders: ['Obi-I/Work'],
+        allowedFolders: ['Mesa/Work'],
       }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
       agentLink: async () => '[[Obi]]',
     });
     await service.initialize();

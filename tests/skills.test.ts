@@ -20,22 +20,22 @@ async function brokenLink(
   store: MemoryStore,
   agentId: string,
 ): Promise<string> {
-  const path = 'Obi-I/Notes/Plain.md';
+  const path = 'Mesa/Notes/Plain.md';
   await store.createNote(path, {}, 'Not a skill.');
   await store.patchAgent(agentId, { skills: [path] });
   return path;
 }
 
 async function setup() {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const coder = await store.createAgent('Coder');
-  const projectPath = await createProjectNote(store, 'Obi-I', {
+  const projectPath = await createProjectNote(store, 'Mesa', {
     name: 'Sales',
   });
   const projectId = loadValidProjects(await store.loadProjects()).find(
     (project) => project.path === projectPath,
   )!.id;
-  const skillPath = await createSkillNote(store, 'Obi-I', {
+  const skillPath = await createSkillNote(store, 'Mesa', {
     name: 'Sales follow-up',
     description: 'Follow up leads after a call.',
     instructions: '## Steps\n1. Send the recap.',
@@ -75,7 +75,7 @@ describe('skill links and sizes', () => {
 describe('skill notes', () => {
   it('never overwrites an existing skill: a second one with the same name gets a suffix', async () => {
     const { store } = await setup();
-    const again = await createSkillNote(store, 'Obi-I', {
+    const again = await createSkillNote(store, 'Mesa', {
       name: 'Sales follow-up',
       description: '',
       instructions: 'Other text.',
@@ -170,7 +170,7 @@ describe('deleting a skill', () => {
 
   it('only trashes skill, chat, project and schedule notes', async () => {
     const { store } = await setup();
-    await expect(store.trashNote('Obi-I/Agents/Coder.md')).rejects.toThrow(
+    await expect(store.trashNote('Mesa/Agents/Coder.md')).rejects.toThrow(
       'can be trashed here',
     );
   });

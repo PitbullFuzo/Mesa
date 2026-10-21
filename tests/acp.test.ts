@@ -197,9 +197,9 @@ it('uses pinned OpenCode mode, correlates streamed read paths, ignores replay an
   runtime.start(
     {
       ...req,
-      cwd: 'C:/Vault/Obi-I/Work/s11opencode',
-      extraDirs: ['C:/Vault/Obi-I/Work'],
-      protectedPaths: ['C:/Vault/Obi-I/Agents'],
+      cwd: 'C:/Vault/Mesa/Work/s11opencode',
+      extraDirs: ['C:/Vault/Mesa/Work'],
+      protectedPaths: ['C:/Vault/Mesa/Agents'],
       resume: true,
       sessionId: session,
       previousCostUsd: 2,
@@ -400,9 +400,9 @@ it('replays sanitized real Hermes permission/tool/text/cost frames without infer
   runtime.start(
     {
       ...req,
-      cwd: 'C:/Vault/Obi-I/Work/s10hermes',
+      cwd: 'C:/Vault/Mesa/Work/s10hermes',
       extraDirs: [],
-      protectedPaths: ['C:/Vault/Obi-I/Agents'],
+      protectedPaths: ['C:/Vault/Mesa/Agents'],
     },
     (e) => events.push(e),
   );
@@ -454,7 +454,7 @@ it('normalizes malformed stream output and tears down the process', async () => 
   );
   expect(runtime.activePids).toEqual([]);
 });
-it('Hermes gets exactly Obi-I’s browser server in session/new for a browser run, none otherwise, and the run folder is removed', async () => {
+it('Hermes gets exactly Mesa’s browser server in session/new for a browser run, none otherwise, and the run folder is removed', async () => {
   const run = async (browser: boolean) => {
     const { runtime, calls } = fixture();
     const events: RunEvent[] = [];
@@ -515,7 +515,7 @@ it('refuses a browser run for the Hermes engine setting, and when the shim does 
     expect(calls.find((c) => c.method === 'session/new')).toBeUndefined();
   }
 });
-it('Hermes gets Obi-I’s Microsoft 365 helper next to the browser, only when the run has it', async () => {
+it('Hermes gets Mesa’s Microsoft 365 helper next to the browser, only when the run has it', async () => {
   const m365Launch = {
     node: 'C:/node/node.exe',
     helper: 'C:/vault/plugin/m365_mcp.cjs',

@@ -16,7 +16,7 @@ const delegate = (tasks: { to: string; task: string }[]) =>
   '```agenthq-delegate\n' + JSON.stringify({ tasks }) + '\n```';
 
 async function setup(script: FakeScripts) {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const lead = await store.createAgent('CEO');
   const coder = await store.createAgent('Coder');
   const scribe = await store.createAgent('Scribe');
@@ -27,12 +27,12 @@ async function setup(script: FakeScripts) {
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
   });
   await service.initialize();
-  await createProjectNote(store, 'Obi-I', {
+  await createProjectNote(store, 'Mesa', {
     name: 'Sales X',
     instructions: 'Sell the product.',
   });

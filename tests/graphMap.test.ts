@@ -21,7 +21,7 @@ function vault(
   paths: string[],
   links: Record<string, Record<string, number>>,
 ): VaultFile[] {
-  const incoming = incomingLinkCounts(links, 'Obi-I', '.obsidian');
+  const incoming = incomingLinkCounts(links, 'Mesa', '.obsidian');
   return paths.map((path, index) => ({
     path,
     mtime: index + 1,
@@ -39,7 +39,7 @@ const sample = () => {
     'Ideas/b2.md',
     'Ideas/b3.md',
     'Misc/lonely.md',
-    'Obi-I/Work/x.md',
+    'Mesa/Work/x.md',
   ];
   const links = {
     'Notes/a1.md': { 'Notes/a2.md': 1, 'Notes/a3.md': 1 },
@@ -47,18 +47,18 @@ const sample = () => {
     'Notes/a3.md': { 'Ideas/b1.md': 1 },
     'Ideas/b1.md': { 'Ideas/b2.md': 1, 'Ideas/b3.md': 1 },
     'Ideas/b2.md': { 'Ideas/b3.md': 1 },
-    // Obi-I's own notes link into the vault; those links must not count.
-    'Obi-I/Work/x.md': { 'Notes/a1.md': 1 },
+    // Mesa's own notes link into the vault; those links must not count.
+    'Mesa/Work/x.md': { 'Notes/a1.md': 1 },
   };
   return { files: vault(paths, links), links };
 };
 
 describe('the link graph', () => {
-  it('leaves out Obi-I and the configuration folder, as the vault map does', () => {
+  it('leaves out Mesa and the configuration folder, as the vault map does', () => {
     const { files, links } = sample();
-    const graph = buildLinkGraph(files, links, 'Obi-I', '.obsidian');
+    const graph = buildLinkGraph(files, links, 'Mesa', '.obsidian');
     expect(graph.notes.map((note) => note.path)).not.toContain(
-      'Obi-I/Work/x.md',
+      'Mesa/Work/x.md',
     );
     expect(graph.neighbours.get('Notes/a1.md')).toEqual(
       new Set(['Notes/a2.md', 'Notes/a3.md']),
@@ -68,7 +68,7 @@ describe('the link graph', () => {
   it('finds the hubs, the two clusters, the bridges and the orphans', () => {
     const { files, links } = sample();
     const analysis = analyseLinkGraph(
-      buildLinkGraph(files, links, 'Obi-I', '.obsidian'),
+      buildLinkGraph(files, links, 'Mesa', '.obsidian'),
     );
     // Two notes have two incoming links each; the tie goes to the smaller path.
     expect(analysis.hubs[0]).toEqual({ path: 'Ideas/b3.md', incomingLinks: 2 });
@@ -96,7 +96,7 @@ describe('the link graph', () => {
   it('names each cluster by its most connected note and counts the links between clusters once', () => {
     const { files, links } = sample();
     const analysis = analyseLinkGraph(
-      buildLinkGraph(files, links, 'Obi-I', '.obsidian'),
+      buildLinkGraph(files, links, 'Mesa', '.obsidian'),
     );
     const hubs = analysis.clusters.map((cluster) => cluster.hub).sort();
     expect(hubs).toEqual(['Ideas/b1.md', 'Notes/a3.md']);
@@ -107,14 +107,14 @@ describe('the link graph', () => {
     const { files, links } = sample();
     const reversedLinks = Object.fromEntries(Object.entries(links).reverse());
     const a = renderGraphMap(
-      analyseLinkGraph(buildLinkGraph(files, links, 'Obi-I', '.obsidian')),
+      analyseLinkGraph(buildLinkGraph(files, links, 'Mesa', '.obsidian')),
     );
     const b = renderGraphMap(
       analyseLinkGraph(
         buildLinkGraph(
           [...files].reverse(),
           reversedLinks,
-          'Obi-I',
+          'Mesa',
           '.obsidian',
         ),
       ),
@@ -127,7 +127,7 @@ describe('the graph map text', () => {
   it('uses plain backticked paths, never wikilinks', () => {
     const { files, links } = sample();
     const text = renderGraphMap(
-      analyseLinkGraph(buildLinkGraph(files, links, 'Obi-I', '.obsidian')),
+      analyseLinkGraph(buildLinkGraph(files, links, 'Mesa', '.obsidian')),
     );
     expect(text).toContain('`Ideas/b1.md`');
     expect(text).toContain('## Orphans (no links)');
@@ -146,7 +146,7 @@ describe('the graph map text', () => {
     for (let index = 0; index < 100; index++) paths.push(`Lone/n${index}.md`);
     const text = renderGraphMap(
       analyseLinkGraph(
-        buildLinkGraph(vault(paths, links), links, 'Obi-I', '.obsidian'),
+        buildLinkGraph(vault(paths, links), links, 'Mesa', '.obsidian'),
       ),
     );
     expect(wordCount(text)).toBeLessThanOrEqual(GRAPH_MAP_LIMITS.maxWords + 10);
@@ -157,19 +157,19 @@ describe('the graph map text', () => {
   it('is written only when it changes', async () => {
     const { files, links } = sample();
     const body = renderGraphMap(
-      analyseLinkGraph(buildLinkGraph(files, links, 'Obi-I', '.obsidian')),
+      analyseLinkGraph(buildLinkGraph(files, links, 'Mesa', '.obsidian')),
     );
-    const store = new MemoryStore('Obi-I');
-    await syncGraphMap(store, 'Obi-I', body);
+    const store = new MemoryStore('Mesa');
+    await syncGraphMap(store, 'Mesa', body);
     expect(
-      store.notes.get(`Obi-I/${GRAPH_MAP_NAME}`)?.frontmatter,
+      store.notes.get(`Mesa/${GRAPH_MAP_NAME}`)?.frontmatter,
     ).toMatchObject({
       agenthq: 'graph-map',
     });
     const save = vi.spyOn(store, 'saveNote');
-    await syncGraphMap(store, 'Obi-I', body);
+    await syncGraphMap(store, 'Mesa', body);
     expect(save).not.toHaveBeenCalled();
-    await syncGraphMap(store, 'Obi-I', body + 'changed\n');
+    await syncGraphMap(store, 'Mesa', body + 'changed\n');
     expect(save).toHaveBeenCalledTimes(1);
   });
 });
@@ -185,12 +185,12 @@ describe('the map notes', () => {
   it('start with the do-not-delete callout, before the content', () => {
     const { files, links } = sample();
     const graph = renderGraphMap(
-      analyseLinkGraph(buildLinkGraph(files, links, 'Obi-I', '.obsidian')),
+      analyseLinkGraph(buildLinkGraph(files, links, 'Mesa', '.obsidian')),
     );
-    expect(graph).toContain('> [!info] Built by Obi-I to save AI tokens');
+    expect(graph).toContain('> [!info] Built by Mesa to save AI tokens');
     expect(graph.indexOf('[!info]')).toBeLessThan(graph.indexOf('## Hubs'));
-    const vault = renderVaultMap(files, '', 'Obi-I', '.obsidian');
-    expect(vault).toContain('> [!info] Built by Obi-I to save AI tokens');
+    const vault = renderVaultMap(files, '', 'Mesa', '.obsidian');
+    expect(vault).toContain('> [!info] Built by Mesa to save AI tokens');
     expect(vault).toContain('You can edit the "Purpose:" lines (vault map).');
     expect(graph).not.toContain('Purpose:');
   });
@@ -198,13 +198,13 @@ describe('the map notes', () => {
   it('a deleted map comes back on the next rebuild', async () => {
     const { files, links } = sample();
     const body = renderGraphMap(
-      analyseLinkGraph(buildLinkGraph(files, links, 'Obi-I', '.obsidian')),
+      analyseLinkGraph(buildLinkGraph(files, links, 'Mesa', '.obsidian')),
     );
-    const store = new MemoryStore('Obi-I');
-    await syncGraphMap(store, 'Obi-I', body);
-    store.notes.delete(`Obi-I/${GRAPH_MAP_NAME}`);
-    expect(store.notes.has(`Obi-I/${GRAPH_MAP_NAME}`)).toBe(false);
-    await syncGraphMap(store, 'Obi-I', body);
-    expect(store.notes.get(`Obi-I/${GRAPH_MAP_NAME}`)?.body).toBe(body);
+    const store = new MemoryStore('Mesa');
+    await syncGraphMap(store, 'Mesa', body);
+    store.notes.delete(`Mesa/${GRAPH_MAP_NAME}`);
+    expect(store.notes.has(`Mesa/${GRAPH_MAP_NAME}`)).toBe(false);
+    await syncGraphMap(store, 'Mesa', body);
+    expect(store.notes.get(`Mesa/${GRAPH_MAP_NAME}`)?.body).toBe(body);
   });
 });

@@ -23,7 +23,7 @@ it('applies saved access policy before an immediate next chat send', async () =>
     adapters: [runtime],
     settings: () => ({ allowedFolders: [], maxParallelRuns: 1 }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
   });
   await chat.initialize();
   const controller = new WorkspaceController({} as App, () => {});

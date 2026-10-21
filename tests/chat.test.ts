@@ -40,9 +40,9 @@ async function setup() {
   const options = {
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     agentLink: async () => '[[Coder]]',
   };
   const service = new ChatService(options);
@@ -293,7 +293,7 @@ describe('ChatService', () => {
       await sent;
       const note = (await store.loadChats())[0]!;
       expect(note.path).toBe(
-        'Obi-I/Chats/Plan the next release please — Coder — 2026-10-15 0827.md',
+        'Mesa/Chats/Plan the next release please — Coder — 2026-10-15 0827.md',
       );
       expect(note.body).toContain('### You · 08:27\n');
       expect(note.body).toContain('### Coder · 08:27\n');
@@ -318,7 +318,7 @@ describe('ChatService', () => {
     vi.setSystemTime(new Date(2026, 9, 15, 8, 27));
     try {
       const { id, service, runtime, store } = await setup();
-      const base = 'Obi-I/Chats/Same request — Coder — 2026-10-15 0827';
+      const base = 'Mesa/Chats/Same request — Coder — 2026-10-15 0827';
       await store.createNote(`${base}.md`, { keep: true }, 'Existing note');
       await store.createFolder(`${base} (2).md`);
       const sent = service.send(id, 'Same request');
@@ -357,7 +357,7 @@ describe('ChatService', () => {
       const notes = await store.loadChats();
       expect(notes).toHaveLength(1);
       expect(notes[0]!.path).toBe(
-        'Obi-I/Chats/Next task build one — Coder — 2026-10-15 0827.md',
+        'Mesa/Chats/Next task build one — Coder — 2026-10-15 0827.md',
       );
       expect(await store.exists(oldPath)).toBe(false);
       expect(notes[0]!.frontmatter).toMatchObject({ sessionId });
@@ -657,10 +657,10 @@ describe('ChatService', () => {
       adapters: [runtime],
       settings: () => ({
         maxParallelRuns: 2,
-        allowedFolders: ['Obi-I/Work'],
+        allowedFolders: ['Mesa/Work'],
       }),
       vaultBasePath: '/vault',
-      managedRoot: 'Obi-I',
+      managedRoot: 'Mesa',
     });
     await service.initialize();
     await Promise.all(ids.map((id) => service.send(id, 'Hello')));
@@ -867,8 +867,8 @@ describe('ChatService', () => {
   });
   it('closes a conversation with a runtime five-line summary and persists a fresh session across restart', async () => {
     const { id, service, runtime, store, options } = await setup();
-    await store.createNote('Obi-I/Skills/summary.md', {}, 'Keep facts.');
-    await store.patchAgent(id, { skills: ['Obi-I/Skills/summary.md'] });
+    await store.createNote('Mesa/Skills/summary.md', {}, 'Keep facts.');
+    await store.patchAgent(id, { skills: ['Mesa/Skills/summary.md'] });
     await service.refreshRuntimes();
     const sent = service.send(id, 'Remember pears');
     await tick();
@@ -909,8 +909,8 @@ describe('ChatService', () => {
   });
   it('restores history by stable ID after rename and resumes the same session with skill bodies', async () => {
     const { id, service, runtime, store, options } = await setup();
-    await store.createNote('Obi-I/Skills/safe.md', {}, 'Protect the data.');
-    await store.patchAgent(id, { skills: ['Obi-I/Skills/safe.md'] });
+    await store.createNote('Mesa/Skills/safe.md', {}, 'Protect the data.');
+    await store.patchAgent(id, { skills: ['Mesa/Skills/safe.md'] });
     const first = service.send(id, 'Remember apples');
     await tick();
     runtime.emit({ type: 'done', text: 'Apples remembered.', isError: false });

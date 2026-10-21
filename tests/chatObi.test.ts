@@ -38,9 +38,9 @@ async function setup() {
   const service = new ChatService({
     store,
     adapters: [runtime],
-    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 2, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     agentLink: async () => '[[Obi]]',
   });
   await service.initialize();
@@ -107,7 +107,7 @@ describe('Obi chat', () => {
     expect(service.getSnapshot().agents[OBI_ID]!.proposals).toEqual([]);
     await say(service, runtime, 'Try again', 'Sorry, here is a plain answer.');
     const next = runtime.requests.at(-1)!;
-    expect(next.prompt).toContain('Notes from Obi-I about your last proposal');
+    expect(next.prompt).toContain('Notes from Mesa about your last proposal');
     expect(next.prompt).toContain('not valid');
     expect(next.prompt).toContain('Try again');
   });

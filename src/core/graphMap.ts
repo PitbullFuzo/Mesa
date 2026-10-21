@@ -44,7 +44,7 @@ export interface GraphAnalysis {
 }
 
 /**
- * The link graph of searchable notes. Links from Obi-I's notes and the configuration folder are ignored, as in the
+ * The link graph of searchable notes. Links from Mesa's notes and the configuration folder are ignored, as in the
  * vault map, and so are links whose target is not a searchable markdown note (attachments, canvases).
  */
 export function buildLinkGraph(
@@ -206,7 +206,7 @@ export function renderGraphMap(
     '',
     ...dontDeleteCallout(false),
     '',
-    'Built by Obi-I from your links, with no AI. Agents read it first, start from the hub or cluster that fits the task, and open only those notes. Written only when it changes.',
+    'Built by Mesa from your links, with no AI. Agents read it first, start from the hub or cluster that fits the task, and open only those notes. Written only when it changes.',
   ].join('\n');
   const sections: string[][] = [];
   sections.push([

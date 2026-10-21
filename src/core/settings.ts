@@ -4,7 +4,7 @@ import { overviewSettingsSchema } from './overviewForce';
 import { DEFAULT_NOTE_TYPES, noteTypeSchema } from './noteTypes';
 
 const settingsSchema = z.object({
-  agenthqFolder: z.string().trim().min(1).catch('Obi-I'),
+  agenthqFolder: z.string().trim().min(1).catch('Mesa'),
   allowedFolders: z.array(z.string()).catch(() => []),
   maxParallelRuns: z.number().int().positive().catch(3),
   maxDelegationDepth: z.number().int().positive().catch(3),

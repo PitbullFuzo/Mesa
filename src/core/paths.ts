@@ -8,7 +8,7 @@ function relativePath(path: string): string {
     normalized.split('/').some((part) => !part || part === '.' || part === '..')
   ) {
     throw new Error(
-      'Obi-I paths must be non-empty vault-relative paths without traversal.',
+      'Mesa paths must be non-empty vault-relative paths without traversal.',
     );
   }
   return normalized;
@@ -20,7 +20,7 @@ export function vaultRoot(folder: string, configDir: string): string {
   const comparison = root.toLowerCase();
   if (comparison === config || comparison.startsWith(`${config}/`)) {
     throw new Error(
-      'The Obi-I folder cannot be inside the vault configuration directory.',
+      'The Mesa folder cannot be inside the vault configuration directory.',
     );
   }
   return root;
@@ -29,7 +29,7 @@ export function vaultRoot(folder: string, configDir: string): string {
 export function managedPath(root: string, path: string): string {
   const normalized = relativePath(path);
   if (normalized !== root && !normalized.startsWith(`${root}/`)) {
-    throw new Error('The note path must be inside the Obi-I folder.');
+    throw new Error('The note path must be inside the Mesa folder.');
   }
   return normalized;
 }

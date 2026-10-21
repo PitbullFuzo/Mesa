@@ -1,21 +1,21 @@
-# Obi-I para Obsidian
+# Mesa para Obsidian
 
 🇬🇧 [Read in English](README.md)
 
-## O que é o Obi-I
+## O que é o Mesa
 
-O Obi-I executa agentes de IA dentro do Obsidian. Cada agente é uma nota na pasta Obi-I. Fala com eles no Chat, e eles respondem com a ferramenta de IA que instalou (Claude Code, Codex, OpenCode ou Hermes), que usa a sua própria conta e o seu plano. Pode dar-lhes uma equipa com um organograma editável, Tasks, History, difusões e um revisor que verifica o trabalho.
+O Mesa executa agentes de IA dentro do Obsidian. Cada agente é uma nota na pasta Mesa. Fala com eles no Chat, e eles respondem com a ferramenta de IA que instalou (Claude Code, Codex, OpenCode ou Hermes), que usa a sua própria conta e o seu plano. Pode dar-lhes uma equipa com um organograma editável, Tasks, History, difusões e um revisor que verifica o trabalho.
 
 Feito por Marcio Vieira — guias, tutoriais, transferências e feedback em [trabalhoia.com](https://trabalhoia.com).
 
 ## O que precisa
 
 - Obsidian desktop, em Windows ou Mac: https://obsidian.md
-- Pelo menos uma ferramenta de IA, instalada e com sessão iniciada. Claude Code (um plano Claude ou uma chave de API): https://code.claude.com/docs/en/setup . Codex CLI (um plano ChatGPT; versão 0.160.0 ou mais recente; uma versão mais recente é verificada uma vez pelo Obi-I e depois usada): https://github.com/openai/codex . OpenCode (versão 1.19.1 ou mais recente, verificada da mesma forma): https://opencode.ai . Hermes: veja a secção Hermes no [README.md](README.md).
+- Pelo menos uma ferramenta de IA, instalada e com sessão iniciada. Claude Code (um plano Claude ou uma chave de API): https://code.claude.com/docs/en/setup . Codex CLI (um plano ChatGPT; versão 0.160.0 ou mais recente; uma versão mais recente é verificada uma vez pelo Mesa e depois usada): https://github.com/openai/codex . OpenCode (versão 1.19.1 ou mais recente, verificada da mesma forma): https://opencode.ai . Hermes: veja a secção Hermes no [README.md](README.md).
 - Node.js, apenas para o controlo do navegador: https://nodejs.org
 - O Python vem com o Hermes; não precisa de o instalar.
 - O Git é opcional, para cópias de segurança: https://git-scm.com
-- Não são necessárias linguagens de programação para usar o próprio Obi-I.
+- Não são necessárias linguagens de programação para usar o próprio Mesa.
 
 ## Instalar
 
@@ -23,11 +23,11 @@ Este repositório é privado por enquanto; as versões chegam mais tarde.
 
 **a) Loja de plugins da comunidade:** em breve.
 
-**b) Transferir do trabalhoia.com:** transfira o zip do Obi-I (contém os três ficheiros) em [trabalhoia.com](https://trabalhoia.com). Descompacte-o para a pasta `<vault>/.obsidian/plugins/obi-i/` (crie a pasta, se não existir) e depois siga os mesmos passos da instalação manual abaixo. Aqui, `<vault>` é o caminho da pasta do seu cofre (vault) do Obsidian.
+**b) Transferir do trabalhoia.com:** transfira o zip do Mesa (contém os três ficheiros) em [trabalhoia.com](https://trabalhoia.com). Descompacte-o para a pasta `.obsidian/plugins/mesa/` dentro da pasta do seu cofre (vault) (crie a pasta, se não existir) e depois siga os mesmos passos da instalação manual abaixo.
 
-**c) BRAT:** instale o plugin BRAT e depois adicione `PitbullFuzo/obi-i` como plugin beta. O BRAT instala a partir das versões no GitHub, por isso só funciona quando o repositório for público e tiver uma versão.
+**c) BRAT:** instale o plugin BRAT e depois adicione `PitbullFuzo/Mesa` como plugin beta. O BRAT instala a partir das versões no GitHub, por isso só funciona quando o repositório for público e tiver uma versão.
 
-**d) Manual:** transfira `main.js`, `manifest.json` e `styles.css` da versão mais recente no GitHub para `<vault>/.obsidian/plugins/obi-i/` (crie a pasta). Depois, abra Definições (Settings) → Community plugins e ative **Obi-I**.
+**d) Manual:** transfira `main.js`, `manifest.json` e `styles.css` da versão mais recente no GitHub para `.obsidian/plugins/mesa/` dentro da pasta do seu cofre (crie a pasta). Depois, abra Definições (Settings) → Community plugins e ative **Mesa**.
 
 **e) Peça à sua IA para o instalar:** dê este link ao seu assistente de IA (Claude Code, Codex ou semelhante) e ele seguirá os passos: [INSTALL.pt.md](INSTALL.pt.md).
 
@@ -39,22 +39,27 @@ Os tutoriais e um formulário de feedback estão em [trabalhoia.com](https://tra
 
 - **Windows** é a plataforma testada.
 - **macOS** ainda não foi testado num Mac real. O código tem ramos para macOS com testes unitários apenas; por isso, trate o macOS como não verificado.
-- O Claude Code é detetado no PATH e nas localizações de instalação conhecidas no Windows e no macOS. O Codex é procurado no PATH, na pasta bin do ambiente de trabalho do Windows, nos pacotes npm do Windows, em `~/.local/bin`, `~/.npm-global/bin`, Homebrew e `/usr/local/bin`. O OpenCode é procurado na localização npm do Windows, em `~/.opencode/bin`, `~/.local/bin`, Homebrew e `/usr/local/bin`. O Hermes é procurado no PATH, em `%LOCALAPPDATA%/hermes/bin`, no seu ambiente virtual de instalação e nas localizações comuns do macOS e da pasta pessoal.
-- Se a deteção falhar numa ferramenta, Definições (Settings) → Obi-I → Runtime path override aceita o caminho completo para o seu programa.
+- O Claude Code é detetado no PATH e nas localizações de instalação conhecidas no Windows e no macOS. O Codex é procurado no PATH, na pasta bin do ambiente de trabalho do Windows, nos pacotes npm do Windows, em `~/.local/bin`, `~/.npm-global/bin`, Homebrew e `/usr/local/bin`. O OpenCode é procurado na localização npm do Windows, em `~/.opencode/bin`, `~/.local/bin`, Homebrew e `/usr/local/bin`. O Hermes é procurado no PATH, em `AppData/Local/hermes/bin`, no seu ambiente virtual de instalação e nas localizações comuns do macOS e da pasta pessoal.
+- Se a deteção falhar numa ferramenta, Definições (Settings) → Mesa → Runtime path override aceita o caminho completo para o seu programa.
 
 ## Privacidade e rede
 
-- **O Obi-I não envia nada ao autor.** Sem telemetria, sem análises, sem conta e sem verificação de atualizações.
+- **O Mesa não envia nada ao autor.** Sem telemetria, sem análises, sem conta e sem verificação de atualizações.
 - **As ferramentas de IA falam com os seus próprios fornecedores.** Claude Code, Codex, OpenCode e Hermes são programas separados no seu computador; enviam a sua mensagem e as notas permitidas ao fornecedor com que iniciou sessão. Acesso à web e controlo do navegador estão desligados até os ativar para um agente.
 - **Microsoft 365 só quando ligado.** Contacta `login.microsoftonline.com` e `graph.microsoft.com` apenas depois de ligar a sua própria app; cada envio ou alteração espera pelo seu Aprovar.
 - **Navegador só quando ativado.** **Ligação de ajuda só quando clicada** (abre o seu navegador).
-- **Ficheiros auxiliares junto ao `main.js`:** ao carregar, o plugin escreve `browser_mcp.cjs`, `m365_mcp.cjs` e `hermes_acp.py` na sua própria pasta (`.obsidian/plugins/obi-i/`). Pastas temporárias de execução ficam na pasta temporária do sistema e são removidas no fim.
+- **Porque lista os ficheiros do cofre:** o mapa do cofre, o mapa do grafo, a visão geral, a pesquisa e o organizador precisam da lista das suas notas e ligações. É lida no seu computador e guardada em ficheiros na pasta Mesa; o Mesa não envia nada disso. Um agente só a vê se lhe der acesso ao cofre.
+- **Ficheiros auxiliares junto ao `main.js`:** ao carregar, o plugin escreve `browser_mcp.cjs`, `m365_mcp.cjs` e `hermes_acp.py` na sua própria pasta (`.obsidian/plugins/mesa/`). Pastas temporárias de execução ficam na pasta temporária do sistema e são removidas no fim.
+
+## Versões criadas pelo GitHub Actions
+
+Cada versão é criada a partir da sua etiqueta (tag) pelo fluxo `.github/workflows/release.yml`, e não no computador de um programador. O fluxo confirma que a etiqueta é igual à versão em `manifest.json`, corre os testes, cria o plugin, assina `main.js`, `styles.css` e `manifest.json` com atestados de origem (prova de que ficheiros e código os produziram), anexa-os a uma versão em rascunho e só depois publica-a. Pode verificar um ficheiro transferido com `gh attestation verify main.js --repo PitbullFuzo/Mesa`.
 
 ## Segurança em palavras simples
 
 - Os agentes escrevem apenas na sua pasta Work, mais as pastas externas que marcar para esse agente no Setup. Settings lista as pastas que permite; um agente sem nenhuma pasta marcada não tem pastas externas.
 - Um projeto pode ter uma pasta Output para o seu trabalho final. Só as execuções desse projeto podem escrever lá; os rascunhos ficam em Work.
-- As Definições (Settings) podem ocultar o Obi-I da pesquisa e do grafo (Excluded files do Obsidian). **Show again** desfaz isso.
+- As Definições (Settings) podem ocultar o Mesa da pesquisa e do grafo (Excluded files do Obsidian). **Show again** desfaz isso.
 - **"Read & write vault"** permite que um agente altere as suas notas. Ative-o apenas quando precisar.
 - O acesso ao cofre juntamente com o acesso à web pode permitir que uma página web maliciosa engane um agente para enviar as suas notas para fora. Use o acesso à web apenas quando precisar.
 - O Codex pode ler o computador inteiro, não apenas o cofre.
@@ -71,7 +76,7 @@ Os detalhes técnicos (configuração de desenvolvimento, controlo do navegador,
 
 ## Aviso legal
 
-O Obi-I permite que agentes de IA leiam e alterem os ficheiros que autorizar. É fornecido tal como está, sem garantia. Não nos responsabilizamos por perda de dados nem por custos de IA. Faça uma cópia de segurança do seu cofre (vault) antes de dar acesso de escrita aos agentes ou de reorganizar notas.
+O Mesa permite que agentes de IA leiam e alterem os ficheiros que autorizar. É fornecido tal como está, sem garantia. Não nos responsabilizamos por perda de dados nem por custos de IA. Faça uma cópia de segurança do seu cofre (vault) antes de dar acesso de escrita aos agentes ou de reorganizar notas.
 
 ## Licença
 

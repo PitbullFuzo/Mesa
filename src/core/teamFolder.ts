@@ -1,5 +1,7 @@
 /** Where a team may already live: the new default and the folder used before the rename. */
-export const TEAM_FOLDER_CANDIDATES = ['Obi-I', 'AgentHQ'];
+/** The folders earlier names used for the team, newest first. A vault that has one keeps using it. */
+export const LEGACY_TEAM_FOLDERS = ['Obi-I', 'AgentHQ'];
+export const TEAM_FOLDER_CANDIDATES = ['Mesa', ...LEGACY_TEAM_FOLDERS];
 
 /** What the plugin can ask about the vault when it decides where the team is. */
 export interface TeamFolderCheck {

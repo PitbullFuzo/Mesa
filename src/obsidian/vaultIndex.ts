@@ -8,7 +8,7 @@ import {
 } from '../core/vaultMap';
 
 /**
- * The vault's notes for the map and for vault search, outside Obi-I and the configuration folder. Passages are
+ * The vault's notes for the map and for vault search, outside Mesa and the configuration folder. Passages are
  * kept in memory and a note is read again only when its modified time changes, so searching stays cheap.
  */
 export class VaultIndex {

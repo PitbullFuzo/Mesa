@@ -52,7 +52,7 @@ function runtimeCheck(
       id,
       label,
       status: 'ready',
-      // A newer version's note ("checked by Obi-I, not yet verified") is shown with its version.
+      // A newer version's note ("checked by Mesa, not yet verified") is shown with its version.
       detail: [status.version ?? 'found', status.hint]
         .filter(Boolean)
         .join('; '),

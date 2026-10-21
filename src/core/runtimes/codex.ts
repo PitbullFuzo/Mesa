@@ -240,7 +240,7 @@ export function buildCodexArgs(request: RunRequest): string[] {
   ])
     settings['features.' + feature] = false;
   if (process.platform === 'win32') settings['windows.sandbox'] = 'unelevated';
-  // The browser run gets exactly one MCP server, Obi-I's helper; every other run keeps the empty list above.
+  // The browser run gets exactly one MCP server, Mesa's helper; every other run keeps the empty list above.
   if (request.canUseBrowser && request.browserLaunch) {
     const { command, args: serverArgs } = browserServerCommand(
       request.browserLaunch,
@@ -273,7 +273,7 @@ export interface CodexDependencies {
   rememberSelfTest: (key: string, record: SelfTestRecord) => void;
   /** The free sandbox self-test for a newer version. */
   selfTest: (file: string) => Promise<SelfTestOutcome>;
-  /** Where Obi-I's browser helper is installed; browser runs are refused without it. */
+  /** Where Mesa's browser helper is installed; browser runs are refused without it. */
   browserHelper?: string;
 }
 export class CodexRuntime implements RuntimeAdapter {
@@ -303,7 +303,7 @@ export class CodexRuntime implements RuntimeAdapter {
           file,
           join(
             process.env.LOCALAPPDATA ?? homedir(),
-            'Obi-I',
+            'Mesa',
             'selfTest',
             'codex',
           ),
@@ -344,7 +344,7 @@ export class CodexRuntime implements RuntimeAdapter {
             available: true,
             version,
             path: this.executable.path,
-            hint: `Checked by Obi-I, not yet verified by the developer (${key}).`,
+            hint: `Checked by Mesa, not yet verified by the developer (${key}).`,
           };
         this.executable = undefined;
         // A real breach is blocked; a check that could not finish is only "not ready yet" and is retried later.
@@ -354,7 +354,7 @@ export class CodexRuntime implements RuntimeAdapter {
           available: false,
           version,
           blocked: true,
-          hint: `This Codex version changed its safety settings. Use ${VERIFIED_VERSIONS.codex} or wait for an Obi-I update. (${outcome.detail})`,
+          hint: `This Codex version changed its safety settings. Use ${VERIFIED_VERSIONS.codex} or wait for an Mesa update. (${outcome.detail})`,
         };
       }
       this.executable = undefined;
@@ -489,7 +489,7 @@ export class CodexRuntime implements RuntimeAdapter {
       });
       try {
         child.stdin.end(
-          `Obi-I instructions:\n${request.systemPrompt}\n\nUser message:\n${request.prompt}`,
+          `Mesa instructions:\n${request.systemPrompt}\n\nUser message:\n${request.prompt}`,
           'utf8',
         );
       } catch (error) {

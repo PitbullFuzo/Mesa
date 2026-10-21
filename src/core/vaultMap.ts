@@ -16,7 +16,7 @@ export interface VaultFile {
   incomingLinks: number;
 }
 
-/** Obi-I's own folder and the vault configuration folder are never mapped or searched. */
+/** Mesa's own folder and the vault configuration folder are never mapped or searched. */
 export function isVaultSearchable(
   path: string,
   managedRoot: string,
@@ -29,15 +29,15 @@ export function isVaultSearchable(
 
 /**
  * The "don't delete" note at the top of each map, as an Obsidian callout. It says why the map saves tokens, and that
- * Obi-I rebuilds a deleted map. The vault map also names the purpose lines the owner may edit.
+ * Mesa rebuilds a deleted map. The vault map also names the purpose lines the owner may edit.
  */
 export function dontDeleteCallout(vaultMap: boolean): string[] {
   const purposeHint = vaultMap
     ? ' You can edit the "Purpose:" lines (vault map).'
     : '';
   return [
-    '> [!info] Built by Obi-I to save AI tokens',
-    `> Agents read this map first instead of searching your whole vault, which keeps AI costs down. It updates itself; please don't delete or move it. If it is deleted, Obi-I rebuilds it.${purposeHint}`,
+    '> [!info] Built by Mesa to save AI tokens',
+    `> Agents read this map first instead of searching your whole vault, which keeps AI costs down. It updates itself; please don't delete or move it. If it is deleted, Mesa rebuilds it.${purposeHint}`,
   ];
 }
 
@@ -63,7 +63,7 @@ const folderOf = (path: string) =>
   path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '(vault root)';
 
 /**
- * How many searchable notes link to each note. Links from Obi-I's own notes (the map included) and from the
+ * How many searchable notes link to each note. Links from Mesa's own notes (the map included) and from the
  * configuration folder are not counted, so the map cannot raise the notes it lists.
  */
 export function incomingLinkCounts(
@@ -102,7 +102,7 @@ export function renderVaultMap(
     '',
     ...dontDeleteCallout(true),
     '',
-    'Built by Obi-I from your vault, with no AI. Agents read it first. Edit the purpose lines; Obi-I keeps them when it rebuilds.',
+    'Built by Mesa from your vault, with no AI. Agents read it first. Edit the purpose lines; Mesa keeps them when it rebuilds.',
   ].join('\n');
   const blocks: string[] = [];
   let words = wordCount(header);

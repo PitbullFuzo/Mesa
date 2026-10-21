@@ -9,3 +9,6 @@ docs/STEPS.md
 docs/DECISIONS.md
 docs/PROGRESS.md
 test-vault/*.md
+release/
+test-vault/.obsidian/plugins/mesa/
+test-vault/

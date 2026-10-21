@@ -1,4 +1,4 @@
-/* eslint obsidianmd/no-global-this: off -- Core runs in plain Node tests, where there is no window; the timers only debounce memory work. */
+/* eslint obsidianmd/prefer-window-timers: off -- Core runs in plain Node tests, where there is no window; the timers only debounce memory work. */
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -193,7 +193,7 @@ export interface ChatServiceOptions {
   memoryDelayMs?: number;
   /** The setup check Obi reads when the owner asks what is missing. */
   setupCheck?: () => Promise<ToolCheck[]>;
-  /** Passages of the vault notes (outside Obi-I) for vault search; kept up to date by the plugin. */
+  /** Passages of the vault notes (outside Mesa) for vault search; kept up to date by the plugin. */
   vaultSnippets?: () => Promise<Snippet[]>;
   vaultBasePath: string;
   managedRoot: string;
@@ -351,7 +351,7 @@ export class ChatService {
   private broadcasting = false;
   private readonly memoryTimers = new Map<
     string,
-    ReturnType<typeof globalThis.setTimeout>
+    ReturnType<typeof setTimeout>
   >();
   private readonly memoryPending = new Map<
     string,
@@ -979,7 +979,7 @@ export class ChatService {
           state.status = 'working';
           this.publish();
           const notes = state.obiNotes?.length
-            ? `Notes from Obi-I about your last proposal:\n${state.obiNotes.map((note) => `- ${note}`).join('\n')}\n\n`
+            ? `Notes from Mesa about your last proposal:\n${state.obiNotes.map((note) => `- ${note}`).join('\n')}\n\n`
             : '';
           state.obiNotes = undefined;
           const prompt =
@@ -1301,8 +1301,7 @@ export class ChatService {
     this.disposed = true;
     for (const pending of [...this.pendingCommands.values()])
       pending.settle(false);
-    for (const timer of this.memoryTimers.values())
-      globalThis.clearTimeout(timer);
+    for (const timer of this.memoryTimers.values()) clearTimeout(timer);
     this.memoryTimers.clear();
     await this.stopAll();
     this.listeners.clear();
@@ -1634,10 +1633,10 @@ export class ChatService {
     });
     this.memoryPending.set(project.id, queued);
     const previous = this.memoryTimers.get(project.id);
-    if (previous) globalThis.clearTimeout(previous);
+    if (previous) clearTimeout(previous);
     this.memoryTimers.set(
       project.id,
-      globalThis.setTimeout(() => {
+      setTimeout(() => {
         this.memoryTimers.delete(project.id);
         void this.extractMemory(project.id);
       }, this.options.memoryDelayMs ?? 3000),

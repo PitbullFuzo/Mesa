@@ -13,7 +13,7 @@ it('defaults browser permission off, engine to Playwright, and persists explicit
   await store.patchAgent(id, setupPatchSchema.parse({ canUseBrowser: true }));
   expect((await store.loadAgents()).agents[0]?.canUseBrowser).toBe(true);
 });
-it('allows every runtime that can load exactly Obi-I’s browser, and refuses the rest with a reason', () => {
+it('allows every runtime that can load exactly Mesa’s browser, and refuses the rest with a reason', () => {
   for (const runtime of ['claude-code', 'opencode', 'hermes'])
     expect(browserUnavailableReason(runtime, false, 'playwright')).toBe('');
   expect(browserUnavailableReason('codex', false, 'playwright')).toBe('');

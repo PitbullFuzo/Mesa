@@ -58,7 +58,7 @@ const paid = (text: string, costUsd = 0) => [
 ];
 
 async function setup(runtimeId: 'fake' | 'claude-code') {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const coder = await store.createAgent('Coder');
   await store.patchAgent(coder, { runtime: runtimeId });
   const fake = new FakeRuntime(
@@ -77,9 +77,9 @@ async function setup(runtimeId: 'fake' | 'claude-code') {
   const service = new ChatService({
     store,
     adapters: [adapter],
-    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Obi-I/Work'] }),
+    settings: () => ({ maxParallelRuns: 1, allowedFolders: ['Mesa/Work'] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await service.initialize();

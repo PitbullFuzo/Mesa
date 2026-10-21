@@ -112,7 +112,7 @@ describe('Codex browser', () => {
     browserReadsConfirmed: true,
     browserLaunch: launch,
   };
-  it('loads exactly Obi-I’s helper for that run and nothing else', () => {
+  it('loads exactly Mesa’s helper for that run and nothing else', () => {
     const args = buildCodexArgs(browser);
     expect(args).toContain('mcp_servers={}');
     expect(args).toContain(

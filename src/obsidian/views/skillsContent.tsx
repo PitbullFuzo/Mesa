@@ -11,7 +11,7 @@ type Props = {
   importSkills: () => Promise<void>;
 };
 
-/** Every skill in Obi-I/Skills, with its size and where it is used. */
+/** Every skill in Mesa/Skills, with its size and where it is used. */
 export function SkillsContent({
   workspace,
   openCreate,

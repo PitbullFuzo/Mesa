@@ -83,11 +83,11 @@ export function openCodeEnvironment(
   request: RunRequest,
   state: string,
 ): NodeJS.ProcessEnv {
-  // The browser run gets exactly one MCP server, Obi-I's helper, and permission for only that server's tools.
+  // The browser run gets exactly one MCP server, Mesa's helper, and permission for only that server's tools.
   const browser = request.browserLaunch
     ? browserServerCommand(request.browserLaunch)
     : undefined;
-  // Microsoft 365: Obi-I's helper is the only other server, with permission for only its tools.
+  // Microsoft 365: Mesa's helper is the only other server, with permission for only its tools.
   const m365 = request.m365Launch
     ? m365ServerCommand(request.m365Launch)
     : undefined;
@@ -128,7 +128,7 @@ export function openCodeEnvironment(
     agent: {
       agenthq: {
         mode: 'primary',
-        description: 'Obi-I confined file tools',
+        description: 'Mesa confined file tools',
         permission,
       },
       title: { disable: true },
@@ -259,7 +259,7 @@ export async function approveOpenCode(
     return false;
   }
 }
-/** The problem with the effective OpenCode policy, or undefined when it matches Obi-I's policy. */
+/** The problem with the effective OpenCode policy, or undefined when it matches Mesa's policy. */
 export function openCodePolicyProblem(
   stdout: string,
   env: NodeJS.ProcessEnv,
@@ -277,12 +277,12 @@ export function openCodePolicyProblem(
     JSON.stringify(config.instructions) !== '[]' ||
     agent.mode !== 'primary' ||
     JSON.stringify(agent.permission) !== JSON.stringify(wanted)
-    ? 'OpenCode effective policy differs from Obi-I; run refused.'
+    ? 'OpenCode effective policy differs from Mesa; run refused.'
     : undefined;
 }
 
 /**
- * The free OpenCode self-test for a newer version: prints the effective policy with Obi-I's environment and
+ * The free OpenCode self-test for a newer version: prints the effective policy with Mesa's environment and
  * compares it with the policy. No model call.
  */
 async function runOpenCodeSelfTest(
@@ -301,7 +301,7 @@ async function runOpenCodeSelfTest(
   };
   const env = openCodeEnvironment(probe, state);
   // A run that fails, times out or prints nothing readable is retried later; only a readable policy that
-  // differs from Obi-I's is a real breach.
+  // differs from Mesa's is a real breach.
   let stdout: string;
   try {
     ({ stdout } = await promisify(execFile)(
@@ -334,11 +334,11 @@ async function runOpenCodeSelfTest(
   return problem
     ? {
         result: 'fail',
-        detail: 'the effective OpenCode policy differs from Obi-I',
+        detail: 'the effective OpenCode policy differs from Mesa',
       }
     : {
         result: 'pass',
-        detail: 'the effective OpenCode policy matches Obi-I',
+        detail: 'the effective OpenCode policy matches Mesa',
       };
 }
 
@@ -351,7 +351,7 @@ export interface OpenCodeOptions {
 export function createOpenCodeRuntime(options: OpenCodeOptions = {}) {
   const state = join(
     process.env.LOCALAPPDATA ?? join(homedir(), '.local', 'share'),
-    'Obi-I',
+    'Mesa',
     'opencode',
   );
   const selfTests = options.selfTests ?? {};
@@ -364,7 +364,7 @@ export function createOpenCodeRuntime(options: OpenCodeOptions = {}) {
     agentInfo: { name: 'OpenCode', version: VERIFIED_VERSIONS.opencode },
     mode: 'agenthq',
     browserHelper: options.browserHelper,
-    missingHint: `Install the OpenCode CLI separately from its desktop app (opencode-ai). Reinstall if a private Node update removed it. ${VERIFIED_VERSIONS.opencode} or newer is required; newer versions are checked once by Obi-I.`,
+    missingHint: `Install the OpenCode CLI separately from its desktop app (opencode-ai). Reinstall if a private Node update removed it. ${VERIFIED_VERSIONS.opencode} or newer is required; newer versions are checked once by Mesa.`,
     resolve: async () => {
       executable = await findOpenCode();
       if (!executable) return;
@@ -395,7 +395,7 @@ export function createOpenCodeRuntime(options: OpenCodeOptions = {}) {
           );
         if (outcome.result !== 'pass')
           throw Error(
-            `This OpenCode version changed its safety settings. Use ${VERIFIED_VERSIONS.opencode} or wait for an Obi-I update.`,
+            `This OpenCode version changed its safety settings. Use ${VERIFIED_VERSIONS.opencode} or wait for an Mesa update.`,
           );
       }
       return { ...executable, version: reported };

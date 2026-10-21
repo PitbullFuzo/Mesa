@@ -23,11 +23,11 @@ async function setup(scripts: FakeScripts, settings = {}) {
     adapters: [runtime],
     settings: () => ({
       maxParallelRuns: 1,
-      allowedFolders: ['Obi-I/Work'],
+      allowedFolders: ['Mesa/Work'],
       ...settings,
     }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
   };
   const service = new ChatService(options);
   await service.initialize();
@@ -114,7 +114,7 @@ describe('delegation through ChatService', () => {
         { maxParallelRuns: 2 },
       );
       await store.saveNote(
-        'Obi-I/Activity/2026-01.md',
+        'Mesa/Activity/2026-01.md',
         { agenthq: 'activity', custom: true },
         'Earlier entry\n',
       );
@@ -127,8 +127,8 @@ describe('delegation through ChatService', () => {
       await service.send(lead, 'Plan');
       const months = await store.loadActivity();
       expect(months.map((note) => note.path).sort()).toEqual([
-        'Obi-I/Activity/2026-01.md',
-        'Obi-I/Activity/2026-02.md',
+        'Mesa/Activity/2026-01.md',
+        'Mesa/Activity/2026-02.md',
       ]);
       const fresh = new ChatService(options);
       await fresh.initialize();

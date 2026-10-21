@@ -19,13 +19,13 @@ function analysisOf(
   paths: string[],
   links: Record<string, Record<string, number>>,
 ): GraphAnalysis {
-  const incoming = incomingLinkCounts(links, 'Obi-I', '.obsidian');
+  const incoming = incomingLinkCounts(links, 'Mesa', '.obsidian');
   const files: VaultFile[] = paths.map((path, index) => ({
     path,
     mtime: index + 1,
     incomingLinks: incoming.get(path) ?? 0,
   }));
-  return analyseLinkGraph(buildLinkGraph(files, links, 'Obi-I', '.obsidian'));
+  return analyseLinkGraph(buildLinkGraph(files, links, 'Mesa', '.obsidian'));
 }
 
 /** Two triangles joined by one link, and one note with no links. */

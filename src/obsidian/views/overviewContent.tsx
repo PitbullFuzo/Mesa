@@ -368,7 +368,7 @@ export function OverviewCanvas({
   if (!analysis || !graph)
     return (
       <p className="agenthq-overview-empty">
-        The vault overview opens once Obi-I has loaded your vault.
+        The vault overview opens once Mesa has loaded your vault.
       </p>
     );
 
@@ -465,7 +465,7 @@ export function OverviewCanvas({
         </div>
       )}
       {graph.nodes.length === 0 ? (
-        <p className="agenthq-overview-empty">No notes outside Obi-I yet.</p>
+        <p className="agenthq-overview-empty">No notes outside Mesa yet.</p>
       ) : (
         <div className="agenthq-overview-stage">
           <canvas ref={canvasRef} className="agenthq-overview-canvas" />

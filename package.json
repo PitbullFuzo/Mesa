@@ -1,9 +1,9 @@
 {
-  "name": "obi-i",
-  "version": "1.0.1",
+  "name": "mesa",
+  "version": "1.0.2",
   "private": true,
   "license": "MIT",
-  "description": "Obi-I desktop plugin for Obsidian",
+  "description": "Mesa desktop plugin for Obsidian",
   "type": "module",
   "scripts": {
     "dev": "node esbuild.config.mjs",

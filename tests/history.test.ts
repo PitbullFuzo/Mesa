@@ -9,7 +9,7 @@ function agent(id: string, group: string | null): Agent {
 
 function note(title: string, started: string | undefined): NoteDocument {
   return {
-    path: `Obi-I/Chats/${title}.md`,
+    path: `Mesa/Chats/${title}.md`,
     name: title,
     frontmatter: started === undefined ? {} : { started },
     body: '',

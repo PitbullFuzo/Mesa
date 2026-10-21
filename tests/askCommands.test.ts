@@ -201,7 +201,7 @@ function askingAdapter() {
 }
 
 async function service(runtime: string, setting: 'ask' | 'off') {
-  const store = new MemoryStore('Obi-I');
+  const store = new MemoryStore('Mesa');
   const id = await store.createAgent('Runner');
   await store.patchAgent(id, { runtime, runCommands: setting });
   const { adapter, answers, requests } = askingAdapter();
@@ -210,7 +210,7 @@ async function service(runtime: string, setting: 'ask' | 'off') {
     adapters: [{ ...adapter, id: runtime as RuntimeAdapter['id'] }],
     settings: () => ({ maxParallelRuns: 1, allowedFolders: [] }),
     vaultBasePath: '/vault',
-    managedRoot: 'Obi-I',
+    managedRoot: 'Mesa',
     memoryDelayMs: 60_000,
   });
   await chat.initialize();
