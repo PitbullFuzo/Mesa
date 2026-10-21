@@ -28,10 +28,10 @@ const temp = () => mkdtempSync(join(tmpdir(), 'mesa-'));
 describe('the store rules for the manifest', () => {
   const manifest = JSON.parse(read('manifest.json')) as Record<string, string>;
 
-  it('is called Mesa with the id mesa, and never mentions Obsidian or part of it', () => {
-    expect(manifest.id).toBe('mesa');
+  it('is called Mesa with the id obi-i, and never mentions Obsidian or part of it', () => {
+    expect(manifest.id).toBe('obi-i');
     expect(manifest.name).toBe('Mesa');
-    expect(PLUGIN_ID).toBe('mesa');
+    expect(PLUGIN_ID).toBe('obi-i');
     for (const text of [manifest.name!, manifest.description!])
       expect(text).not.toMatch(/obsidian|\bob/i);
     expect(manifest.description!.length).toBeLessThanOrEqual(250);
@@ -39,12 +39,29 @@ describe('the store rules for the manifest', () => {
     expect(manifest.fundingUrl).toBeUndefined();
   });
 
+  it('builds, packages and releases from the same plugin folder, which is named by the id', () => {
+    const folder = `plugins/${PLUGIN_ID}`;
+    for (const file of [
+      'esbuild.config.mjs',
+      'scripts/package.mjs',
+      '.github/workflows/release.yml',
+    ])
+      expect(read(file), file).toContain(folder);
+    expect(read('.gitignore')).toContain(`test-vault/.obsidian/${folder}/*`);
+    expect(read('README.md')).toContain(
+      "The plugin's folder is called obi-i (its original ID); the plugin is Mesa.",
+    );
+    expect(
+      (JSON.parse(read('manifest.json')) as { version: string }).version,
+    ).toBe('1.0.3');
+  });
+
   it('keeps the package name and the build folder in step', () => {
     expect((JSON.parse(read('package.json')) as { name: string }).name).toBe(
       'mesa',
     );
     expect(read('scripts/package.mjs')).toContain('release/mesa-');
-    expect(read('esbuild.config.mjs')).toContain('plugins/mesa');
+    expect(read('esbuild.config.mjs')).toContain('plugins/obi-i');
   });
 });
 
@@ -89,8 +106,8 @@ describe('the user-facing text', () => {
 });
 
 describe('the upgrade from the earlier names', () => {
-  it('reads settings from the Obi-I plugin folder first, then the AgentHQ one', () => {
-    expect(LEGACY_PLUGIN_IDS).toEqual(['obi-i', 'agenthq']);
+  it('reads settings from the mesa plugin folder first, then the agenthq one', () => {
+    expect(LEGACY_PLUGIN_IDS).toEqual(['mesa', 'agenthq']);
   });
 
   it('finds a team in Obi-I or AgentHQ, and offers it instead of creating one', async () => {

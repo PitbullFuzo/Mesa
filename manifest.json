@@ -1,7 +1,7 @@
 {
-  "id": "mesa",
+  "id": "obi-i",
   "name": "Mesa",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "minAppVersion": "1.7.2",
   "description": "Run a team of AI agents with chat, tasks, schedules and a graph of who does what.",
   "author": "Marcio Vieira",

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { makeZip } from './release.mjs';
 import { createsScriptElements } from './noScriptElements.mjs';
 
-const built = 'test-vault/.obsidian/plugins/mesa';
+const built = 'test-vault/.obsidian/plugins/obi-i';
 const manifest = JSON.parse(await readFile('manifest.json', 'utf8'));
 const main = await readFile(join(built, 'main.js'));
 if (main.includes('sourceMappingURL=data:'))

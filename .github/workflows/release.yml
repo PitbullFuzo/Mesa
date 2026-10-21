@@ -49,8 +49,8 @@ jobs:
       - name: Collect the three release files
         run: |
           mkdir release-files
-          cp test-vault/.obsidian/plugins/mesa/main.js release-files/main.js
-          cp test-vault/.obsidian/plugins/mesa/styles.css release-files/styles.css
+          cp test-vault/.obsidian/plugins/obi-i/main.js release-files/main.js
+          cp test-vault/.obsidian/plugins/obi-i/styles.css release-files/styles.css
           cp manifest.json release-files/manifest.json
 
       - name: Attest build provenance

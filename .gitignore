@@ -5,6 +5,8 @@ test-vault/Mesa/
 test-vault/.obsidian/plugins/agenthq/*
 !test-vault/.obsidian/plugins/agenthq/.gitkeep
 test-vault/.obsidian/plugins/mesa/*
+test-vault/.obsidian/plugins/obi-i/*
+!test-vault/.obsidian/plugins/obi-i/.gitkeep
 !test-vault/.obsidian/plugins/mesa/.gitkeep
 test-vault/.obsidian/workspace*.json
 test-vault/.obsidian/*.json

@@ -17,12 +17,12 @@ import { loadSettings } from '../src/core/settings';
 const temp = () => mkdtempSync(join(tmpdir(), 'obii-rename-'));
 
 describe('the new name', () => {
-  it('names the plugin Mesa with the id mesa', () => {
+  it('names the plugin Mesa with the id obi-i', () => {
     const manifest = JSON.parse(readFileSync('manifest.json', 'utf8')) as {
       id: string;
       name: string;
     };
-    expect(manifest).toMatchObject({ id: 'mesa', name: 'Mesa' });
+    expect(manifest).toMatchObject({ id: 'obi-i', name: 'Mesa' });
     const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as {
       name: string;
     };

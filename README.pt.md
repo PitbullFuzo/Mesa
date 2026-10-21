@@ -19,15 +19,17 @@ Feito por Marcio Vieira — guias, tutoriais, transferências e feedback em [tra
 
 ## Instalar
 
+A pasta do plugin chama-se obi-i (o seu ID original); o plugin é o Mesa.
+
 Este repositório é privado por enquanto; as versões chegam mais tarde.
 
 **a) Loja de plugins da comunidade:** em breve.
 
-**b) Transferir do trabalhoia.com:** transfira o zip do Mesa (contém os três ficheiros) em [trabalhoia.com](https://trabalhoia.com). Descompacte-o para a pasta `.obsidian/plugins/mesa/` dentro da pasta do seu cofre (vault) (crie a pasta, se não existir) e depois siga os mesmos passos da instalação manual abaixo.
+**b) Transferir do trabalhoia.com:** transfira o zip do Mesa (contém os três ficheiros) em [trabalhoia.com](https://trabalhoia.com). Descompacte-o para a pasta `.obsidian/plugins/obi-i/` dentro da pasta do seu cofre (vault) (crie a pasta, se não existir) e depois siga os mesmos passos da instalação manual abaixo.
 
 **c) BRAT:** instale o plugin BRAT e depois adicione `PitbullFuzo/Mesa` como plugin beta. O BRAT instala a partir das versões no GitHub, por isso só funciona quando o repositório for público e tiver uma versão.
 
-**d) Manual:** transfira `main.js`, `manifest.json` e `styles.css` da versão mais recente no GitHub para `.obsidian/plugins/mesa/` dentro da pasta do seu cofre (crie a pasta). Depois, abra Definições (Settings) → Community plugins e ative **Mesa**.
+**d) Manual:** transfira `main.js`, `manifest.json` e `styles.css` da versão mais recente no GitHub para `.obsidian/plugins/obi-i/` dentro da pasta do seu cofre (crie a pasta). Depois, abra Definições (Settings) → Community plugins e ative **Mesa**.
 
 **e) Peça à sua IA para o instalar:** dê este link ao seu assistente de IA (Claude Code, Codex ou semelhante) e ele seguirá os passos: [INSTALL.pt.md](INSTALL.pt.md).
 
@@ -49,7 +51,7 @@ Os tutoriais e um formulário de feedback estão em [trabalhoia.com](https://tra
 - **Microsoft 365 só quando ligado.** Contacta `login.microsoftonline.com` e `graph.microsoft.com` apenas depois de ligar a sua própria app; cada envio ou alteração espera pelo seu Aprovar.
 - **Navegador só quando ativado.** **Ligação de ajuda só quando clicada** (abre o seu navegador).
 - **Porque lista os ficheiros do cofre:** o mapa do cofre, o mapa do grafo, a visão geral, a pesquisa e o organizador precisam da lista das suas notas e ligações. É lida no seu computador e guardada em ficheiros na pasta Mesa; o Mesa não envia nada disso. Um agente só a vê se lhe der acesso ao cofre.
-- **Ficheiros auxiliares junto ao `main.js`:** ao carregar, o plugin escreve `browser_mcp.cjs`, `m365_mcp.cjs` e `hermes_acp.py` na sua própria pasta (`.obsidian/plugins/mesa/`). Pastas temporárias de execução ficam na pasta temporária do sistema e são removidas no fim.
+- **Ficheiros auxiliares junto ao `main.js`:** ao carregar, o plugin escreve `browser_mcp.cjs`, `m365_mcp.cjs` e `hermes_acp.py` na sua própria pasta (`.obsidian/plugins/obi-i/`). Pastas temporárias de execução ficam na pasta temporária do sistema e são removidas no fim.
 
 ## Versões criadas pelo GitHub Actions
 

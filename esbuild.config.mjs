@@ -5,7 +5,7 @@ import { copyFile, mkdir, readFile } from 'node:fs/promises';
 import { noScriptElementsPlugin } from './scripts/noScriptElements.mjs';
 
 const prod = process.argv[2] === 'production';
-const outdir = 'test-vault/.obsidian/plugins/mesa';
+const outdir = 'test-vault/.obsidian/plugins/obi-i';
 await mkdir(outdir, { recursive: true });
 
 // A release is only main.js, manifest.json and styles.css, so the helper programs travel inside main.js and the plugin

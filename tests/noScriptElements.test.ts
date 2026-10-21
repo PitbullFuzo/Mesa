@@ -35,11 +35,11 @@ describe('script elements', () => {
     expect(refuseScriptElements('const a = 1;')).toBe('const a = 1;');
   });
 
-  it.runIf(existsSync('test-vault/.obsidian/plugins/mesa/main.js'))(
+  it.runIf(existsSync('test-vault/.obsidian/plugins/obi-i/main.js'))(
     'are absent from the built main.js, and the plugin code has no globalThis',
     () => {
       const main = readFileSync(
-        'test-vault/.obsidian/plugins/mesa/main.js',
+        'test-vault/.obsidian/plugins/obi-i/main.js',
         'utf8',
       );
       if (main.includes('sourceMappingURL=data:')) return; // a development build: only production is checked

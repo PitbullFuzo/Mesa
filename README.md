@@ -23,13 +23,15 @@ Made by Marcio Vieira — guides, how-tos, downloads and feedback at [trabalhoia
 
 ## Install
 
+The plugin's folder is called obi-i (its original ID); the plugin is Mesa.
+
 This repository is private for now; releases come later.
 
 **a) Community plugin store:** coming soon.
 
 **b) Download from trabalhoia.com:** download the Mesa zip (it contains the three
 files) from [trabalhoia.com](https://trabalhoia.com). Unzip it into
-`.obsidian/plugins/mesa/` inside your vault folder (create the folder), then follow the same steps
+`.obsidian/plugins/obi-i/` inside your vault folder (create the folder), then follow the same steps
 as the manual route below.
 
 **c) BRAT:** install the BRAT community plugin, then add `PitbullFuzo/Mesa`
@@ -37,7 +39,7 @@ as a beta plugin. BRAT installs from GitHub releases, so this works once the
 repository is public and has a release.
 
 **d) Manual:** download `main.js`, `manifest.json` and `styles.css` from the latest
-GitHub release into `.obsidian/plugins/mesa/` inside your vault folder (create the folder). Then
+GitHub release into `.obsidian/plugins/obi-i/` inside your vault folder (create the folder). Then
 open Obsidian → Settings → Community plugins and enable **Mesa**.
 
 **e) Ask your AI to install it:** give your AI assistant (Claude Code, Codex or
@@ -87,7 +89,7 @@ Every release is built from its tag by the workflow in `.github/workflows/releas
 - **Files outside your vault.** Run folders with temporary files (including the Microsoft 365 sign-in while connected) are created in your
   system temp folder and removed when the run ends. The Microsoft sign-in is kept in a file outside the vault, not encrypted.
 - **Helper files next to `main.js`.** When the plugin loads it writes `browser_mcp.cjs`, `m365_mcp.cjs` and `hermes_acp.py` into its own folder
-  (`.obsidian/plugins/mesa/` inside your vault folder) if they are missing or changed. They are small programs the AI tools run for browser control,
+  (`.obsidian/plugins/obi-i/` inside your vault folder) if they are missing or changed. They are small programs the AI tools run for browser control,
   Microsoft 365 and Hermes; they are built from this repository's source.
 - **Why Mesa lists your vault files.** The vault map, the graph map, the vault overview, vault search and the organiser need the list of your notes and their links. It is read on your computer and kept in files in the Mesa folder; nothing about it is sent anywhere by Mesa. An agent sees it only when you give that agent vault access.
 - **Agents run programs and edit files** only where Setup allows (see Safety above). Source code is open (MIT).
@@ -120,11 +122,11 @@ npm test
 npm run build
 ```
 
-Build output: `main.js`, `manifest.json` and `styles.css` in `test-vault/.obsidian/plugins/mesa/`, plus the helper files
+Build output: `main.js`, `manifest.json` and `styles.css` in `test-vault/.obsidian/plugins/obi-i/`, plus the helper files
 (`hermes_acp.py`, `browser_mcp.cjs`, `m365_mcp.cjs`).
 
 **Release:** `npm run version:bump 0.2.0` updates `manifest.json`, `package.json` and `versions.json` together;
-`npm run package` then builds for production and writes `release/mesa-1.0.2.zip` (the number is the version) holding exactly `main.js`,
+`npm run package` then builds for production and writes `release/mesa-1.0.3.zip` (the number is the version) holding exactly `main.js`,
 `manifest.json` and `styles.css`. In a production build the helper files are inside `main.js`, and the plugin writes them
 beside it when it loads, so a three-file install is complete.
 Open **only this repository's test-vault** for development; do not put experimental

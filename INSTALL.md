@@ -12,7 +12,7 @@ whenever a step needs a decision.
 2. **Download three files.** Download `main.js`, `manifest.json` and `styles.css` from the
    latest release of https://github.com/PitbullFuzo/Mesa (or the Mesa zip from
    https://trabalhoia.com, if the user gives you that link; it holds the same three files)
-   into `.obsidian/plugins/mesa/` inside your vault folder. Create that folder if it is missing. Download
+   into `.obsidian/plugins/obi-i/` inside your vault folder (the folder is called obi-i, its original ID; the plugin is Mesa). Create that folder if it is missing. Download
    nothing else. Do not run any downloaded file.
 
 3. **Do not edit Obsidian's settings.** Do not edit `community-plugins.json`, the restricted

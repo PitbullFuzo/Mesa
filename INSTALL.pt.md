@@ -12,7 +12,7 @@ sempre que um passo exija uma decisão.
 2. **Transfira três ficheiros.** Transfira `main.js`, `manifest.json` e `styles.css` da versão
    mais recente em https://github.com/PitbullFuzo/Mesa (ou o zip do Mesa em
    https://trabalhoia.com, se o utilizador lhe der esse link; contém os mesmos três ficheiros)
-   para `.obsidian/plugins/mesa/` dentro da pasta do seu cofre. Crie essa pasta se não existir. Não transfira mais
+   para `.obsidian/plugins/obi-i/` dentro da pasta do seu cofre (a pasta chama-se obi-i, o ID original; o plugin é o Mesa). Crie essa pasta se não existir. Não transfira mais
    nada. Não execute nenhum ficheiro transferido.
 
 3. **Não altere as definições do Obsidian.** Não edite `community-plugins.json`, a definição de

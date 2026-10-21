@@ -3,9 +3,9 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 /** The plugin's id, which is also its folder in `.obsidian/plugins/` in a vault. Permanent once published. */
-export const PLUGIN_ID = 'mesa';
-/** What the plugin was called while it was tested, newest first: its plugin folder in a vault. */
-export const LEGACY_PLUGIN_IDS = ['obi-i', 'agenthq'];
+export const PLUGIN_ID = 'obi-i';
+/** The plugin folders earlier ids used in a vault, newest first. Their settings are copied once; they are never deleted. */
+export const LEGACY_PLUGIN_IDS = ['mesa', 'agenthq'];
 /** The folders next to the user's app data that earlier names used, newest first. */
 const LEGACY_APP_DATA = ['Obi-I', 'AgentHQ'];
 const APP_DATA = 'Mesa';
