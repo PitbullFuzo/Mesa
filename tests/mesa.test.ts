@@ -53,7 +53,7 @@ describe('the store rules for the manifest', () => {
     );
     expect(
       (JSON.parse(read('manifest.json')) as { version: string }).version,
-    ).toBe('1.0.3');
+    ).toBe((JSON.parse(read('package.json')) as { version: string }).version);
   });
 
   it('keeps the package name and the build folder in step', () => {

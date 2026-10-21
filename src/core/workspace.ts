@@ -5,6 +5,7 @@ import type { NoteDocument } from './notes';
 import type { BroadcastTarget } from './broadcast';
 import type { AgentCollection, Group, Skill } from './model';
 import type { AgentSetupPatch } from './setup';
+import type { MentionCandidate } from './mentions';
 
 export type Point = { x: number; y: number };
 export type Layout = Record<string, Point>;
@@ -76,7 +77,9 @@ import type { Schedule, ScheduleInput } from './schedules';
 
 /** A note the owner attached to a message. */
 export interface AttachedNote {
+  /** What the chip shows: a note path, a folder or a chat title. */
   path: string;
+  kind?: 'note' | 'folder' | 'chat';
   content: string;
   /** True when the note was longer than the cap and was cut. */
   truncated: boolean;
@@ -101,6 +104,22 @@ export interface WorkspaceActions {
   ): Promise<void>;
   /** Removes the skill from every agent and project that uses it, then trashes its note. */
   deleteSkill(path: string): Promise<void>;
+  /** A one-off, read-only question to an agent (inline edit): nothing is saved, the agent's conversation is untouched. */
+  askOnce(
+    agentId: string,
+    prompt: string,
+    signal?: AbortSignal,
+  ): Promise<{ text: string; costUsd: number; isError: boolean }>;
+  /** A side question to the agent in a fresh session with the end of its main chat as context; the main chat is untouched. */
+  askSide(
+    agentId: string,
+    question: string,
+    signal?: AbortSignal,
+  ): Promise<{ text: string; costUsd: number; isError: boolean }>;
+  /** What @ offers while typing: notes, folders and other agents' chats, best matches first. */
+  mentionCandidates(agentId: string, query: string): MentionCandidate[];
+  /** The content an @mention attaches (capped), or null when it is gone. */
+  resolveMention(candidate: MentionCandidate): Promise<AttachedNote | null>;
   /** The note open in the editor, for "Attach current note": null when no note is open. Content is capped. */
   currentNote(): Promise<AttachedNote | null>;
   /** Forks a conversation at a message into a new chat note; resolves with its path. */

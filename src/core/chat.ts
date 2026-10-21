@@ -1,6 +1,6 @@
 /* eslint obsidianmd/prefer-window-timers: off -- Core runs in plain Node tests, where there is no window; the timers only debounce memory work. */
 import { randomUUID } from 'node:crypto';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { graphAiRefusal, type GraphAiReplyOrRefusal } from './graphAi';
@@ -64,6 +64,7 @@ import {
 } from './orchestrator';
 import { chatRecallSection, isRecallRequest } from './chatRecall';
 import type { ContextUse, PlanUsage } from './context';
+import { chatExcerpt } from './mentions';
 import { chatFacts, projectSpendUsd, taskFacts } from './projectBoard';
 import {
   dueDecision,
@@ -101,6 +102,9 @@ import type {
 
 export type ChatStatus =
   'idle' | 'offline' | 'queued' | 'working' | 'needs-you' | 'error';
+/** How much of the main conversation a side chat gets as context. */
+const SIDE_CONTEXT_CHARS = 6000;
+
 /** Total tokens of a run that reported tokens, or undefined. */
 function totalTokens(tokens?: { input: number; output: number }) {
   return tokens ? tokens.input + tokens.output : undefined;
@@ -261,6 +265,14 @@ export function conversationTitle(note: NoteDocument): string {
     (message) => message.role === 'user',
   );
   return (first && chatTitle(first.content)) || note.name;
+}
+
+/** A chat note as an @mention attaches it: its title and its last messages. */
+export function chatMention(note: NoteDocument): {
+  content: string;
+  truncated: boolean;
+} {
+  return chatExcerpt(conversationTitle(note), readMessages(note.body));
 }
 
 /** Hidden per-message metadata makes arbitrary Markdown unambiguous without duplicating text in frontmatter. */
@@ -1790,6 +1802,78 @@ export class ChatService {
     }
   }
 
+  /**
+   * A one-off question to an agent, like the planning and graph runs: the agent's own runtime and model, read-only,
+   * a fresh session, no vault access and no tools needed. Nothing is saved and the agent's conversation is untouched.
+   */
+  async askOnce(
+    agentId: string,
+    prompt: string,
+    signal: AbortSignal,
+    systemPrompt = '',
+  ): Promise<{ text: string; costUsd: number; isError: boolean }> {
+    const agent = this.state(agentId).agent;
+    const adapter = this.options.adapters.find(
+      (entry) => entry.id === agent.runtime,
+    );
+    if (adapter && !this.runtimes[adapter.id])
+      await this.detectRuntime(adapter);
+    if (!adapter || !this.runtimes[adapter.id]?.available)
+      throw new Error(
+        `${agent.name}'s runtime is not available. Install and sign in to it, then try again.`,
+      );
+    // One shared scratch folder in the system temp folder; nothing is written to it and nothing is deleted.
+    const scratch = join(tmpdir(), 'agenthq-oneoff');
+    await mkdir(scratch, { recursive: true });
+    const settings = this.options.settings();
+    const request: RunRequest = {
+      prompt,
+      systemPrompt,
+      cwd: scratch,
+      sessionId: randomUUID(),
+      resume: false,
+      permission: 'read-only',
+      extraDirs: [],
+      readDirs: [],
+      protectedPaths: [],
+      webAccess: false,
+      canUseBrowser: false,
+      browserEngine: settings.browserEngine ?? 'playwright',
+      wholeComputerReadConfirmed: false,
+      ...(agent.model ? { model: agent.model } : {}),
+    };
+    const done = await this.run(adapter, request, signal, () => undefined);
+    if (!done) return { text: '', costUsd: 0, isError: true };
+    return {
+      text: done.text,
+      costUsd: done.costUsd ?? 0,
+      isError: done.isError,
+    };
+  }
+
+  /**
+   * A side question to the same agent: a fresh session whose only context is the end of the main conversation. The
+   * main conversation, its session and its history are not touched.
+   */
+  async sideChat(
+    agentId: string,
+    question: string,
+    signal: AbortSignal,
+  ): Promise<{ text: string; costUsd: number; isError: boolean }> {
+    const state = this.state(agentId);
+    const context = this.transcriptOf(
+      state.messages.slice(-6),
+      state.agent.name,
+      SIDE_CONTEXT_CHARS,
+    );
+    return this.askOnce(
+      agentId,
+      `${context ? `${context}\n\n` : ''}Side question: ${question}`,
+      signal,
+      `${state.agent.instructions}\n\nThis is a side conversation: answer the side question briefly. Nothing you say here is added to the main conversation.`,
+    );
+  }
+
   private async runExtraction(
     project: Project,
     results: { title: string; text: string }[],
@@ -2307,8 +2391,11 @@ export class ChatService {
   }
 
   /** Earlier messages, most recent kept first within the limit, written oldest first. */
-  private transcriptOf(messages: ChatEntry[], agentName: string): string {
-    const limit = 30000;
+  private transcriptOf(
+    messages: ChatEntry[],
+    agentName: string,
+    limit = 30000,
+  ): string {
     const lines: string[] = [];
     let total = 0;
     for (const message of [...messages].reverse()) {

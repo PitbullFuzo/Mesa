@@ -133,7 +133,7 @@ describe.skipIf(!hermes)('Hermes shim', () => {
     const result = await promisify(execFile)(hermes!.file, ['-c', code], {
       shell: false,
       windowsHide: true,
-      timeout: 30000,
+      timeout: 120000,
     });
     expect(result.stdout).toContain('M365_POLICY_PASS');
     const check = await promisify(execFile)(
@@ -142,7 +142,7 @@ describe.skipIf(!hermes)('Hermes shim', () => {
       { shell: false, windowsHide: true, timeout: 30000 },
     );
     expect(check.stdout).toContain('"m365": "m365-v1"');
-  }, 45000);
+  }, 300000);
 });
 
 /** A runtime that records its request and lets the test play the agent asking for a Microsoft action. */

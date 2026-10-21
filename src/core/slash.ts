@@ -25,6 +25,11 @@ export const SLASH_COMMANDS = [
     usage: '/project <name>',
     hint: 'Send this chat under a project',
   },
+  {
+    name: 'side',
+    usage: '/side <question>',
+    hint: 'Ask a side question without touching this chat (also /btw)',
+  },
   { name: 'help', usage: '/help', hint: 'List these commands' },
 ] as const;
 
@@ -48,7 +53,8 @@ export interface SlashCall {
 export function parseSlash(draft: string): SlashCall | null {
   const match = /^\/([a-z]+)(?:\s+([\s\S]*))?$/i.exec(draft.trim());
   if (!match) return null;
-  const name = match[1]!.toLowerCase();
+  const typed = match[1]!.toLowerCase();
+  const name = typed === 'btw' ? 'side' : typed;
   const known = SLASH_COMMANDS.find((command) => command.name === name);
   return known ? { name: known.name, rest: (match[2] ?? '').trim() } : null;
 }
@@ -81,3 +87,14 @@ export function skillMessage(
 export const SLASH_HELP = SLASH_COMMANDS.map(
   (command) => `${command.usage}: ${command.hint}`,
 ).join('\n');
+
+/** A side chat answer as a quoted note for the main chat's message box. */
+export function quotedSideNote(question: string, answer: string): string {
+  const quote = (text: string) =>
+    text
+      .trim()
+      .split('\n')
+      .map((line) => `> ${line}`.trimEnd())
+      .join('\n');
+  return `Side chat, ${question.trim()}\n${quote(answer)}\n\n`;
+}

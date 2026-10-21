@@ -1,7 +1,6 @@
 import { Notice, FileSystemAdapter, type App } from 'obsidian';
 import { imageMessage, type ImageAttachment } from '../core/images';
 import { saveImageAttachment } from './images';
-import type { ChatService } from '../core/chat';
 import type { BroadcastTarget } from '../core/broadcast';
 import { graphLayoutPositions } from '../core/graphLayout';
 import type { AgentSetupPatch } from '../core/setup';
@@ -23,6 +22,12 @@ import {
   type BrowserStatus,
 } from '../core/browser';
 import { NOTE_ATTACH_LIMIT } from '../core/composer';
+import { chatMention, conversationTitle, type ChatService } from '../core/chat';
+import {
+  folderListing,
+  rankMentions,
+  type MentionCandidate,
+} from '../core/mentions';
 import type {
   AttachedNote,
   AgentPlacement,
@@ -104,6 +109,8 @@ export class WorkspaceController implements WorkspaceActions {
     | 'runScheduleNow'
     | 'resumeSchedule'
     | 'forkChat'
+    | 'askOnce'
+    | 'sideChat'
     | 'continueChat'
     | 'resolveProposal'
     | 'resolveCommand'
@@ -204,6 +211,86 @@ export class WorkspaceController implements WorkspaceActions {
     if (!this.store || !this.chat || this.disposed) return;
     await this.chat.tickSchedules(new Date());
     await this.refresh();
+  }
+  askOnce(
+    agentId: string,
+    prompt: string,
+    signal: AbortSignal = new AbortController().signal,
+  ): Promise<{ text: string; costUsd: number; isError: boolean }> {
+    if (!this.chat) return Promise.reject(new Error('Chat is not ready.'));
+    return this.chat.askOnce(agentId, prompt, signal);
+  }
+  askSide(
+    agentId: string,
+    question: string,
+    signal: AbortSignal = new AbortController().signal,
+  ): Promise<{ text: string; costUsd: number; isError: boolean }> {
+    if (!this.chat) return Promise.reject(new Error('Chat is not ready.'));
+    return this.chat.sideChat(agentId, question, signal);
+  }
+  mentionCandidates(agentId: string, query: string): MentionCandidate[] {
+    const candidates: MentionCandidate[] = [];
+    for (const file of this.app.vault.getMarkdownFiles())
+      candidates.push({
+        kind: 'note',
+        label: file.basename,
+        path: file.path,
+      });
+    for (const folder of this.app.vault.getAllFolders())
+      if (folder.path !== '/')
+        candidates.push({
+          kind: 'folder',
+          label: folder.name,
+          path: folder.path,
+        });
+    const chats = this.state.chat?.agents ?? {};
+    for (const [id, entry] of Object.entries(chats)) {
+      if (id === agentId) continue;
+      for (const note of entry.history.slice(-5))
+        candidates.push({
+          kind: 'chat',
+          label: `${entry.agent.name}: ${conversationTitle(note)}`,
+          path: note.path,
+        });
+    }
+    return rankMentions(query, candidates);
+  }
+  async resolveMention(
+    candidate: MentionCandidate,
+  ): Promise<AttachedNote | null> {
+    if (candidate.kind === 'folder') {
+      const prefix = `${candidate.path}/`;
+      const paths = this.app.vault
+        .getMarkdownFiles()
+        .map((file) => file.path)
+        .filter((path) => path.startsWith(prefix))
+        .sort();
+      return {
+        path: candidate.path,
+        kind: 'folder',
+        ...folderListing(candidate.path, paths),
+      };
+    }
+    const file = this.app.vault.getFileByPath(candidate.path);
+    if (!file) return null;
+    const text = await this.app.vault.cachedRead(file);
+    if (candidate.kind === 'chat')
+      return {
+        path: candidate.label,
+        kind: 'chat',
+        ...chatMention({
+          path: file.path,
+          name: file.basename,
+          frontmatter: {},
+          body: text,
+        }),
+      };
+    return {
+      path: file.path,
+      kind: 'note',
+      content: text.slice(0, NOTE_ATTACH_LIMIT),
+      truncated: text.length > NOTE_ATTACH_LIMIT,
+    };
   }
   /** The note open in the editor, read-only, cut at NOTE_ATTACH_LIMIT characters. */
   async currentNote(): Promise<AttachedNote | null> {

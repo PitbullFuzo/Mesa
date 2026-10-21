@@ -35,12 +35,36 @@ export const NOTE_ATTACH_LIMIT = 20_000;
  */
 export function withAttachedNote(
   text: string,
-  note: { path: string; content: string; truncated: boolean },
+  note: {
+    path: string;
+    kind?: 'note' | 'folder' | 'chat';
+    content: string;
+    truncated: boolean;
+  },
 ): string {
-  return `The owner attached this note (\`${note.path}\`)${note.truncated ? ', cut because it is long' : ''}:
+  const what =
+    note.kind === 'folder'
+      ? 'this folder listing'
+      : note.kind === 'chat'
+        ? 'this chat'
+        : 'this note';
+  return `The owner attached ${what} (\`${note.path}\`)${note.truncated ? ', cut because it is long' : ''}:
 
 ${note.content}
 
 ---
 ${text}`;
+}
+
+/** The message with every attached note, folder listing and chat in front of it, in the order they were attached. */
+export function withAttachments(
+  text: string,
+  items: {
+    path: string;
+    kind?: 'note' | 'folder' | 'chat';
+    content: string;
+    truncated: boolean;
+  }[],
+): string {
+  return items.reduceRight((body, item) => withAttachedNote(body, item), text);
 }

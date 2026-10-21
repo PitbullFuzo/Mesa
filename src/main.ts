@@ -1,4 +1,5 @@
 import {
+  type Editor,
   FileSystemAdapter,
   Menu,
   Notice,
@@ -68,6 +69,7 @@ import {
   rebuildMapAfterRemoval,
   TeamFolderGuard,
 } from './core/teamFolder';
+import { editTarget, InlineEditModal } from './obsidian/inlineEditModal';
 import { M365SignInModal } from './obsidian/m365SignIn';
 import { embeddedHelpers, installHelpers } from './core/helpers';
 import {
@@ -335,6 +337,23 @@ export default class AgentHQPlugin extends Plugin {
     this.addRibbonIcon('message-circle', 'Mesa chat', (event) => {
       this.openQuickChat(event);
     });
+    this.addCommand({
+      id: 'inline-edit',
+      name: 'Edit selection with an agent',
+      editorCallback: (editor) => this.openInlineEdit(editor, true),
+    });
+    // Right-click in the editor: the same edit, when there is text to edit.
+    this.registerEvent(
+      this.app.workspace.on('editor-menu', (menu, editor) => {
+        if (!editTarget(editor)) return;
+        menu.addItem((item) =>
+          item
+            .setTitle('Edit with an agent…')
+            .setIcon('wand')
+            .onClick(() => this.openInlineEdit(editor, false)),
+        );
+      }),
+    );
     this.addCommand({
       id: 'open-quick-chat',
       name: 'Open chat',
@@ -948,6 +967,38 @@ export default class AgentHQPlugin extends Plugin {
         void this.saveSettings();
       },
     });
+  }
+
+  /** Opens "Edit with an agent" on the selection, or on the paragraph around the cursor. */
+  private openInlineEdit(editor: Editor, explain: boolean): void {
+    const target = editTarget(editor);
+    if (!target) {
+      if (explain)
+        new Notice('Select some text, or put the cursor in a paragraph.');
+      return;
+    }
+    const agents = this.workspace.getSnapshot().agents;
+    if (agents.length === 0) {
+      new Notice('There are no agents yet.');
+      return;
+    }
+    new InlineEditModal(
+      this.app,
+      this.workspace,
+      editor,
+      target,
+      agents,
+      this.settings.inlineEditAgent,
+      (agentId) => {
+        this.settings.inlineEditAgent = agentId;
+        void this.saveSettings();
+      },
+      this.settings.inlineEditLayout,
+      (layout) => {
+        this.settings.inlineEditLayout = layout;
+        void this.saveSettings();
+      },
+    ).open();
   }
 
   /** True when `<folder>/Agents` holds an agent note (frontmatter `agenthq: agent`). */

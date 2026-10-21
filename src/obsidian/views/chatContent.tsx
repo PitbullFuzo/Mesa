@@ -20,11 +20,13 @@ import type {
 import {
   enterSendsMessage,
   hasSendableContent,
-  withAttachedNote,
+  withAttachments,
 } from '../../core/composer';
+import { mentionQuery, withoutMention } from '../../core/mentions';
 import { contextView, planMeterText, planResetText } from '../../core/context';
 import {
   parseSlash,
+  quotedSideNote,
   SLASH_HELP,
   skillMessage,
   slashMatches,
@@ -56,7 +58,14 @@ export function ChatContent({
   const [error, setError] = useState('');
   const [copied, setCopied] = useState<number | null>(null);
   const [projectId, setProjectId] = useState('');
-  const [note, setNote] = useState<AttachedNote | null>(null);
+  const [notes, setNotes] = useState<AttachedNote[]>([]);
+  const [caret, setCaret] = useState(0);
+  const [side, setSide] = useState<{
+    question: string;
+    answer?: string;
+    costUsd?: number;
+    error?: string;
+  } | null>(null);
   const [info, setInfo] = useState('');
   const [showReset, setShowReset] = useState(false);
   const snapshot = workspace.getSnapshot();
@@ -220,6 +229,33 @@ export function ChatContent({
       await workspace.forkChat(id, last);
       return null;
     }
+    if (call.name === 'side') {
+      if (!call.rest) throw new Error('Add a question after /side.');
+      const question = call.rest;
+      setSide({ question });
+      // Runs beside the main chat: its session is not used and nothing is added to it.
+      void workspace
+        .askSide(id, question)
+        .then((result) =>
+          setSide({
+            question,
+            costUsd: result.costUsd,
+            ...(result.isError
+              ? { error: result.text || 'The side question failed.' }
+              : { answer: result.text }),
+          }),
+        )
+        .catch((caught: unknown) =>
+          setSide({
+            question,
+            error:
+              caught instanceof Error
+                ? caught.message
+                : 'The side question failed.',
+          }),
+        );
+      return null;
+    }
     if (call.name === 'help') {
       setInfo(SLASH_HELP);
       return null;
@@ -242,6 +278,25 @@ export function ChatContent({
     if (!found.rest)
       throw new Error(`Add a message after /skill ${found.item.name}.`);
     return skillMessage(found.item, found.rest);
+  }
+  /** An @ choice becomes a removable chip; the @word is taken out of the message. */
+  function chooseMention(
+    candidate: Parameters<WorkspaceActions['resolveMention']>[0],
+    start: number,
+  ) {
+    const end = caret;
+    void perform(async () => {
+      const resolved = await workspace.resolveMention(candidate);
+      if (!resolved) throw new Error(`${candidate.label} was not found.`);
+      setNotes((current) => [
+        ...current.filter(
+          (other) =>
+            !(other.kind === resolved.kind && other.path === resolved.path),
+        ),
+        resolved,
+      ]);
+      setDraft((current) => withoutMention(current, start, end));
+    });
   }
   async function perform(action: () => Promise<void>) {
     setError('');
@@ -289,6 +344,42 @@ export function ChatContent({
         <p className="agenthq-help agenthq-meter-resets">
           {planResetText(snapshot.chat?.planUsage)}
         </p>
+      )}
+      {side && (
+        <details className="agenthq-side" open>
+          <summary>Side chat: {side.question}</summary>
+          {side.error ? (
+            <p className="agenthq-warning" role="alert">
+              {side.error}
+            </p>
+          ) : side.answer === undefined ? (
+            <p role="status">Thinking…</p>
+          ) : (
+            <pre className="agenthq-side-answer">{side.answer}</pre>
+          )}
+          {side.costUsd !== undefined && (
+            <p className="agenthq-help">${side.costUsd.toFixed(4)}</p>
+          )}
+          <div className="agenthq-chat-actions">
+            {side.answer !== undefined && (
+              <button
+                type="button"
+                onClick={() => {
+                  setDraft(
+                    (current) =>
+                      current + quotedSideNote(side.question, side.answer!),
+                  );
+                  setSide(null);
+                }}
+              >
+                Add to main chat
+              </button>
+            )}
+            <button type="button" onClick={() => setSide(null)}>
+              Close
+            </button>
+          </div>
+        </details>
       )}
       <div className="agenthq-chat-messages" aria-live="polite">
         {chat?.messages.map((message, index) => (
@@ -448,14 +539,14 @@ export function ChatContent({
           setDraft('');
           const images = attachment.images;
           attachment.clear();
-          const attached = note;
-          setNote(null);
+          const attached = notes;
+          setNotes([]);
           void perform(async () => {
             const text = await runSlash(typed);
             if (text === null) return;
             await workspace.sendMessage(
               id,
-              attached ? withAttachedNote(text, attached) : text,
+              withAttachments(text, attached),
               images,
               projectPickerState(
                 projectId,
@@ -476,23 +567,65 @@ export function ChatContent({
             {attachment.error}
           </p>
         )}
-        {note && (
+        {notes.map((item) => (
           <span
+            key={`${item.kind ?? 'note'}:${item.path}`}
             className="agenthq-note-chip"
-            title="You attached this note. An agent without vault access gets it only because you attached it. Long notes are cut."
+            title="You attached this. An agent without vault access gets it only because you attached it. Long content is cut."
           >
-            📎 {note.path}
-            {note.truncated ? ' (cut)' : ''}{' '}
+            {item.kind === 'folder' ? '📁' : item.kind === 'chat' ? '💬' : '📎'}{' '}
+            {item.path}
+            {item.truncated ? ' (cut)' : ''}{' '}
             <button
               type="button"
-              aria-label="Remove attached note"
-              onClick={() => setNote(null)}
+              aria-label={`Remove ${item.path}`}
+              onClick={() => setNotes(notes.filter((other) => other !== item))}
             >
               ✕
             </button>
           </span>
-        )}
+        ))}
         {info && <pre className="agenthq-slash-info">{info}</pre>}
+        {(() => {
+          const wanted = mentionQuery(draft, caret);
+          const offered = wanted
+            ? workspace.mentionCandidates(id, wanted.query)
+            : [];
+          return (
+            wanted &&
+            offered.length > 0 && (
+              <ul
+                className="agenthq-slash-popup"
+                role="listbox"
+                aria-label="Mentions"
+              >
+                {offered.map((candidate) => (
+                  <li
+                    key={`${candidate.kind}:${candidate.path}`}
+                    role="option"
+                    aria-selected={false}
+                  >
+                    <button
+                      type="button"
+                      title="You choose what an agent sees: it gets this only because you attached it."
+                      onClick={() => chooseMention(candidate, wanted.start)}
+                    >
+                      {candidate.kind === 'folder'
+                        ? '📁'
+                        : candidate.kind === 'chat'
+                          ? '💬'
+                          : '📎'}{' '}
+                      <strong>{candidate.label}</strong>
+                      {candidate.label === candidate.path
+                        ? ''
+                        : ` ${candidate.path}`}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )
+          );
+        })()}
         {slashMatches(draft).length > 0 && parseSlash(draft) === null && (
           <ul
             className="agenthq-slash-popup"
@@ -516,8 +649,27 @@ export function ChatContent({
           placeholder="Message this agent…"
           value={draft}
           disabled={closing}
-          onChange={(event) => setDraft(event.target.value)}
+          onChange={(event) => {
+            setDraft(event.target.value);
+            setCaret(event.target.selectionStart);
+          }}
+          onClick={(event) => setCaret(event.currentTarget.selectionStart)}
+          onKeyUp={(event) => setCaret(event.currentTarget.selectionStart)}
           onKeyDown={(event) => {
+            const wanted = mentionQuery(draft, caret);
+            const offered = wanted
+              ? workspace.mentionCandidates(id, wanted.query)
+              : [];
+            if (
+              wanted &&
+              offered.length > 0 &&
+              (event.key === 'Tab' ||
+                enterSendsMessage(event.nativeEvent, enterToSend))
+            ) {
+              event.preventDefault();
+              chooseMention(offered[0]!, wanted.start);
+              return;
+            }
             const matches = slashMatches(draft);
             if (
               (event.key === 'Tab' ||
@@ -580,7 +732,13 @@ export function ChatContent({
                 const current = await workspace.currentNote();
                 if (!current)
                   throw new Error('Open a note in the editor first.');
-                setNote(current);
+                setNotes([
+                  ...notes.filter(
+                    (other) =>
+                      !(other.kind !== 'folder' && other.path === current.path),
+                  ),
+                  { ...current, kind: 'note' },
+                ]);
               });
             }}
           >

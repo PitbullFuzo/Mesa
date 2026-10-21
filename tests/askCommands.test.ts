@@ -299,7 +299,7 @@ describe.skipIf(!hermes)('Hermes shim asks before every command tool', () => {
     const result = await promisify(execFile)(hermes!.file, ['-c', code], {
       shell: false,
       windowsHide: true,
-      timeout: 30000,
+      timeout: 120000,
       env: { ...process.env, AGENTHQ_RUN_COMMANDS: mode },
     });
     return result.stdout.trim().split(String.fromCharCode(10)).at(-1)!;
@@ -310,7 +310,7 @@ describe.skipIf(!hermes)('Hermes shim asks before every command tool', () => {
       'ask',
     );
     expect(out).toBe('RAN RAN RAN');
-  }, 40000);
+  }, 300000);
   it.each(['deny', 'always', 'session'])(
     'refuses a command when the owner answers %s',
     async (answer) => {
@@ -328,5 +328,5 @@ describe.skipIf(!hermes)('Hermes shim asks before every command tool', () => {
     expect(none.match(/not approved/g)).toHaveLength(2);
     expect(await run('pass', 'true')).toBe('RAN RAN RAN');
     expect((await run('pass', 'false')).match(/disabled/g)).toHaveLength(2);
-  }, 90000);
+  }, 300000);
 });

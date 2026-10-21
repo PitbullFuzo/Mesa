@@ -48,6 +48,8 @@ describe('workspace layout persistence', () => {
       projectBusy: vi.fn(() => false),
       tickSchedules: vi.fn(async () => {}),
       forkChat: vi.fn(async () => ''),
+      askOnce: vi.fn(),
+      sideChat: vi.fn(),
       resolveCommand: vi.fn(),
       runScheduleNow: vi.fn(async () => {}),
       resumeSchedule: vi.fn(async () => {}),

@@ -41,6 +41,10 @@ const settingsSchema = z.object({
   graphAi: z.boolean().catch(false),
   /** Model for that pass; empty uses the runtime's default (the free OpenCode model for OpenCode). */
   graphAiModel: z.string().trim().catch(''),
+  /** The agent last used for "Edit selection with an agent". */
+  inlineEditAgent: z.string().catch(''),
+  /** How the edit preview is shown: '' decides by how much changed, or the owner's last choice. */
+  inlineEditLayout: z.enum(['', 'inline', 'blocks']).catch(''),
   /** The vault overview's "Display & forces" sliders and toggles. */
   overview: overviewSettingsSchema.catch(() =>
     overviewSettingsSchema.parse({}),

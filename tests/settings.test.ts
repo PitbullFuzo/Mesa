@@ -28,6 +28,8 @@ describe('settings', () => {
       noteTypes: DEFAULT_NOTE_TYPES,
       graphAi: false,
       graphAiModel: '',
+      inlineEditAgent: '',
+      inlineEditLayout: '',
       overview: DEFAULT_OVERVIEW,
     });
   });
@@ -69,6 +71,8 @@ describe('settings', () => {
       ],
       graphAi: true,
       graphAiModel: 'opencode/mimo-v2.6-flash-free',
+      inlineEditAgent: 'coder',
+      inlineEditLayout: 'blocks',
       overview: { ...DEFAULT_OVERVIEW, nodeSize: 2, showOrphans: false },
     };
     expect(loadSettings(JSON.parse(JSON.stringify(saved)))).toEqual(saved);

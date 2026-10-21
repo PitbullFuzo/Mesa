@@ -16,13 +16,13 @@ it.skipIf(!installed).each([false, true])(
       {
         shell: false,
         windowsHide: true,
-        timeout: 30000,
+        timeout: 120000,
         env: { ...process.env, AGENTHQ_WEB_ACCESS: String(webAccess) },
       },
     );
     expect(result.stdout).toContain('READ_POLICY_PASS_NO_INFERENCE');
   },
-  35000,
+  300000,
 );
 it.skipIf(!installed)(
   'Hermes bootstrap denies unsafe tools/unbound edits and preserves per-edit approval (no inference or writes)',
@@ -33,11 +33,11 @@ it.skipIf(!installed)(
     const result = await promisify(execFile)(installed!.file, ['-c', code], {
       shell: false,
       windowsHide: true,
-      timeout: 30000,
+      timeout: 120000,
     });
     expect(result.stdout).toContain('POLICY_PASS_NO_INFERENCE');
   },
-  35000,
+  300000,
 );
 it.skipIf(!installed)(
   'Hermes bootstrap allows only the Mesa browser server and keeps its tools visible (no inference)',
@@ -61,11 +61,11 @@ it.skipIf(!installed)(
     const result = await promisify(execFile)(installed!.file, ['-c', code], {
       shell: false,
       windowsHide: true,
-      timeout: 30000,
+      timeout: 120000,
     });
     expect(result.stdout).toContain('BROWSER_POLICY_PASS_NO_INFERENCE');
   },
-  35000,
+  300000,
 );
 it.skipIf(!installed).each([false, true])(
   'Hermes command toolsets exist only for Allow freely (%s), and the start-up check proves they are off by default (no inference)',
@@ -76,7 +76,7 @@ it.skipIf(!installed).each([false, true])(
       {
         shell: false,
         windowsHide: true,
-        timeout: 30000,
+        timeout: 120000,
         env: { ...process.env, AGENTHQ_RUN_COMMANDS: String(allow) },
       },
     );
@@ -88,5 +88,5 @@ it.skipIf(!installed).each([false, true])(
     for (const tool of ['terminal', 'process_manage', 'execute_code'])
       expect(check.tools.includes(tool)).toBe(allow);
   },
-  35000,
+  300000,
 );

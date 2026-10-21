@@ -1,9 +1,9 @@
 {
   "id": "obi-i",
   "name": "Mesa",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "minAppVersion": "1.7.2",
-  "description": "Run a team of AI agents with chat, tasks, schedules and a graph of who does what.",
+  "description": "Build your own AI team in your vault: agents that delegate, review each other, remember projects, run on schedules and loops, and act safely with approvals. Works with Claude Code, Codex, OpenCode or Hermes.",
   "author": "Marcio Vieira",
   "authorUrl": "https://trabalhoia.com",
   "isDesktopOnly": true

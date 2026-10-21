@@ -79,6 +79,7 @@ describe('slash commands', () => {
       'skill',
       'compact',
       'project',
+      'side',
       'help',
     ]);
     expect(slashMatches('/pr').map((command) => command.name)).toEqual([
