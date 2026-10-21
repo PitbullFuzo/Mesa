@@ -3,7 +3,6 @@ import {
   PluginSettingTab,
   Setting,
   type App,
-  type SettingDefinitionItem,
   type TextComponent,
 } from 'obsidian';
 import type AgentHQPlugin from '../main';
@@ -742,23 +741,10 @@ export class AgentHQSettingTab extends PluginSettingTab {
    * Obsidian 1.13+ settings search: one definition per row, built by the same code display() uses (older versions
    * only call display()). Each definition hides its own placeholder row and puts the real rows in its place.
    */
-  getSettingDefinitions(): SettingDefinitionItem[] {
-    return this.sections().map((section) => ({
-      name: section.name,
-      ...(section.desc ? { desc: section.desc } : {}),
-      aliases: section.aliases ?? [],
-      render: (setting: Setting) => {
-        const holder = createDiv();
-        section.build(holder);
-        setting.settingEl.after(...Array.from(holder.children));
-        setting.settingEl.hide();
-      },
-    }));
-  }
-
   /** Rebuilds the whole page after a change that adds or removes rows. */
   private redraw(): void {
-    // display() is deprecated from Obsidian 1.13 in favour of getSettingDefinitions(), but older versions only call it.
+    // display() is deprecated from Obsidian 1.13 in favour of getSettingDefinitions(). Its definitions only showed the section names on
+    // Obsidian 1.14 (no controls), so Mesa keeps display() until the declarative API is adopted row by row.
     this.display();
   }
 
