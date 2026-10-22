@@ -14,6 +14,17 @@ using your own accounts and plans. Nothing goes through a Mesa server, because t
 
 Made by Marcio Vieira — guides, how-tos, downloads and feedback at [trabalhoia.com](https://trabalhoia.com).
 
+## Screenshots
+
+![Your AI team as a graph](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/team-graph.png)
+*Your AI team as a graph: groups, managers and who runs on which tool.*
+
+![Projects board](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/projects-board.png)
+*A projects board with Obi, your assistant, beside it.*
+
+![Vault overview](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/vault-overview.png)
+*A live map of your vault: clusters, links and orphan notes.*
+
 ## What you can do with it
 
 ### Build a team that works together
