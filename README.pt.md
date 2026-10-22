@@ -14,17 +14,6 @@ Hermes**, com as suas próprias contas e planos. Nada passa por um servidor do M
 
 Feito por Marcio Vieira — guias, tutoriais, transferências e feedback em [trabalhoia.com](https://trabalhoia.com).
 
-## Capturas de ecrã
-
-![A sua equipa de IA em grafo](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/team-graph.png)
-*A sua equipa de IA em grafo: grupos, chefias e a ferramenta de cada agente.*
-
-![Quadro de projetos](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/projects-board.png)
-*Quadro de projetos, com o Obi, o seu assistente, ao lado.*
-
-![Visão geral do cofre](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/vault-overview.png)
-*Um mapa vivo do cofre: grupos, ligações e notas órfãs.*
-
 ## O que pode fazer com ele
 
 ### Montar uma equipa que trabalha em conjunto
@@ -145,6 +134,11 @@ Reviewer) está pronta para conversar.
 
 Tutoriais e um formulário de feedback em [trabalhoia.com](https://trabalhoia.com). Erros e ideias:
 [GitHub issues](https://github.com/PitbullFuzo/Mesa/issues).
+
+## Apoiar o Mesa AI
+
+O Mesa AI é gratuito e tem licença MIT. Se lhe poupar tempo, pode [pagar-me um café no Ko-fi](https://ko-fi.com/marciovieira).
+Obrigado!
 
 ## Detalhes técnicos
 
