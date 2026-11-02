@@ -156,6 +156,8 @@ const ALPHA_MIN = 0.005;
 const ALPHA_DECAY = 0.0228;
 /** How hot the simulation is held while a dot is dragged. */
 const DRAG_HEAT = 0.5;
+/** The furthest a dot moves in one step, so a strong pull can never fling it away. */
+const MAX_STEP = 40;
 
 /**
  * A small force simulation, written here instead of a library: links pull neighbours together, nodes push apart within
@@ -168,6 +170,8 @@ export class ForceSimulation {
   private readonly vx: Float64Array;
   private readonly vy: Float64Array;
   private readonly pinned: Uint8Array;
+  /** Links per node; a link pulls a busy note gently, so a note linked to hundreds of others cannot overshoot. */
+  private readonly links: Uint32Array;
   private alpha = 1;
 
   constructor(
@@ -180,6 +184,11 @@ export class ForceSimulation {
     this.vx = new Float64Array(n);
     this.vy = new Float64Array(n);
     this.pinned = new Uint8Array(n);
+    this.links = new Uint32Array(n);
+    for (const [a, b] of graph.edges) {
+      this.links[a]!++;
+      this.links[b]!++;
+    }
     this.placeInitially();
   }
 
@@ -225,7 +234,7 @@ export class ForceSimulation {
   tick(): void {
     if (this.settled) return;
     const { nodes, edges } = this.graph;
-    const { x, y, vx, vy, pinned } = this;
+    const { x, y, vx, vy, pinned, links } = this;
     const alpha = this.alpha;
     const { linkDistance, linkForce, repelForce, centerForce } = this.params;
     this.alpha += -this.alpha * ALPHA_DECAY;
@@ -234,14 +243,19 @@ export class ForceSimulation {
       const dx = x[b]! - x[a]!;
       const dy = y[b]! - y[a]!;
       const d = Math.sqrt(dx * dx + dy * dy) || 1e-6;
-      const pull = ((d - linkDistance) / d) * linkForce * alpha * 0.5;
+      // As in d3-force: the pull is shared out by the number of links, and the busier end moves less.
+      const la = links[a]!;
+      const lb = links[b]!;
+      const pull =
+        (((d - linkDistance) / d) * linkForce * alpha) / Math.min(la, lb);
+      const share = la / (la + lb);
       if (!pinned[a]) {
-        vx[a]! += dx * pull;
-        vy[a]! += dy * pull;
+        vx[a]! += dx * pull * (1 - share);
+        vy[a]! += dy * pull * (1 - share);
       }
       if (!pinned[b]) {
-        vx[b]! -= dx * pull;
-        vy[b]! -= dy * pull;
+        vx[b]! -= dx * pull * share;
+        vy[b]! -= dy * pull * share;
       }
     }
 
@@ -295,6 +309,11 @@ export class ForceSimulation {
       }
       vx[i]! *= VELOCITY_KEPT;
       vy[i]! *= VELOCITY_KEPT;
+      const speed = Math.hypot(vx[i]!, vy[i]!);
+      if (speed > MAX_STEP) {
+        vx[i]! *= MAX_STEP / speed;
+        vy[i]! *= MAX_STEP / speed;
+      }
       x[i]! += vx[i]!;
       y[i]! += vy[i]!;
     }

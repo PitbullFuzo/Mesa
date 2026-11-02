@@ -154,6 +154,23 @@ describe('the force simulation', () => {
       expect(Number.isFinite(value)).toBe(true);
   });
 
+  it('stays on screen when an index note links to every other note', () => {
+    // A vault index (like _index) linking to 150 notes once flung every linked dot far off screen.
+    const paths = Array.from({ length: 150 }, (_, i) => `Notes/n${i}.md`);
+    const links: Record<string, Record<string, number>> = {
+      '_index.md': Object.fromEntries(paths.map((path) => [path, 1])),
+    };
+    for (let i = 0; i < 150; i += 2) links[paths[i]!] = { [paths[i + 1]!]: 1 };
+    const sim = new ForceSimulation(
+      buildForceGraph(analysisOf(['_index.md', ...paths], links)),
+    );
+    sim.run();
+    const furthest = Math.max(
+      ...[...sim.x].map((x, i) => Math.hypot(x, sim.y[i]!)),
+    );
+    expect(furthest).toBeLessThan(2000);
+  });
+
   it('gathers linked notes together and pushes separate clusters apart', () => {
     const graph = buildForceGraph(cliques());
     const sim = new ForceSimulation(graph);
