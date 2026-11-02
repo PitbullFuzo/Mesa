@@ -17,8 +17,22 @@ const FRAME_BUDGET_MS = 8;
 const LEGEND_LIMIT = 12;
 const DRAG_TOLERANCE_PX = 4;
 const SAVE_DELAY_MS = 400;
+/** How often an overview opened too early checks again for the vault data. */
+const RETRY_MS = 1000;
 /** Labels fade in between these zoom levels, like Obsidian's graph. */
 const LABEL_FADE = [0.9, 1.8] as const;
+/** A chosen group's names are always drawn when it has at most this many notes on screen. */
+const CHOSEN_LABELS = 60;
+
+/** A cluster (or the orphans) picked in the legend: lit on the canvas and listed below the legend. */
+interface Chosen {
+  key: string;
+  name: string;
+  /** Every note in the group, shown on the canvas or not. */
+  paths: string[];
+  /** Indices of the group's notes on the canvas. */
+  nodes: number[];
+}
 
 interface Engine {
   fit(): void;
@@ -62,8 +76,10 @@ export function OverviewCanvas({
   const [panelOpen, setPanelOpen] = useState(false);
   const [clustersOpen, setClustersOpen] = useState(false);
   const [allClusters, setAllClusters] = useState(false);
+  const [chosen, setChosen] = useState<Chosen | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const searchRef = useRef('');
+  const chosenRef = useRef<Set<number> | null>(null);
   const onOpenRef = useRef(onOpen);
   const engineRef = useRef<Engine | null>(null);
 
@@ -85,10 +101,34 @@ export function OverviewCanvas({
     );
     return () => window.clearTimeout(timer);
   }, [settings]);
+  // Opened before Mesa finished loading the vault (a tab restored at start-up): keep trying until the data is there.
+  useEffect(() => {
+    if (analysis) return;
+    const timer = window.setInterval(() => {
+      const next = load();
+      if (next) setAnalysis(next);
+    }, RETRY_MS);
+    return () => window.clearInterval(timer);
+  }, [analysis, load]);
   useEffect(() => {
     searchRef.current = search.trim().toLowerCase();
     engineRef.current?.redraw();
   }, [search]);
+
+  // A refreshed graph has new indices, and a hidden cluster list leaves no way to clear a pick, so both drop it.
+  useEffect(() => {
+    chosenRef.current = null;
+    setChosen(null);
+    engineRef.current?.redraw();
+  }, [graph, settings.showClusterList]);
+
+  /** Picks a group (or clears with null): lights its notes, zooms to them and lists them. */
+  const choose = (next: Chosen | null) => {
+    setChosen(next);
+    chosenRef.current = next ? new Set(next.nodes) : null;
+    if (next && next.nodes.length > 0) engineRef.current?.focus(next.nodes);
+    else engineRef.current?.fit();
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -165,7 +205,11 @@ export function OverviewCanvas({
           if (a === hovered) around.add(b);
           if (b === hovered) around.add(a);
         }
-      const lit = (i: number) => (!around || around.has(i)) && matches(i);
+      const picked = chosenRef.current;
+      const lit = (i: number) =>
+        (!around || around.has(i)) && matches(i) && (!picked || picked.has(i));
+      const named = (i: number) =>
+        picked !== null && picked.has(i) && picked.size <= CHOSEN_LABELS;
       const { lineThickness, showLabels } = settingsRef.current;
 
       ctx.lineWidth = (0.6 * lineThickness) / view.scale;
@@ -207,7 +251,12 @@ export function OverviewCanvas({
       );
       graph.nodes.forEach((node, i) => {
         if (!visibleNode(i)) return;
-        const alpha = i === hovered ? 1 : showLabels && lit(i) ? fade : 0;
+        const alpha =
+          i === hovered || (named(i) && lit(i))
+            ? 1
+            : showLabels && lit(i)
+              ? fade
+              : 0;
         if (alpha === 0) return;
         ctx.globalAlpha = alpha;
         ctx.fillText(
@@ -425,9 +474,21 @@ export function OverviewCanvas({
               ).map((cluster) => (
                 <button
                   key={cluster.number}
-                  className="agenthq-overview-legend-item"
-                  title={cluster.hub}
-                  onClick={() => engineRef.current?.focus(cluster.nodes)}
+                  className={`agenthq-overview-legend-item${chosen?.key === `c${cluster.number}` ? ' is-active' : ''}`}
+                  title={`Show the ${cluster.count} notes in this cluster (most linked: ${cluster.hub})`}
+                  aria-pressed={chosen?.key === `c${cluster.number}`}
+                  onClick={() =>
+                    choose(
+                      chosen?.key === `c${cluster.number}`
+                        ? null
+                        : {
+                            key: `c${cluster.number}`,
+                            name: cluster.name,
+                            paths: cluster.paths,
+                            nodes: cluster.nodes,
+                          },
+                    )
+                  }
                 >
                   <span
                     className="agenthq-overview-swatch"
@@ -438,8 +499,21 @@ export function OverviewCanvas({
               ))}
               {orphans.length > 0 && (
                 <button
-                  className="agenthq-overview-legend-item"
-                  onClick={() => engineRef.current?.focus(orphans)}
+                  className={`agenthq-overview-legend-item${chosen?.key === 'orphans' ? ' is-active' : ''}`}
+                  title="Show the notes with no links"
+                  aria-pressed={chosen?.key === 'orphans'}
+                  onClick={() =>
+                    choose(
+                      chosen?.key === 'orphans'
+                        ? null
+                        : {
+                            key: 'orphans',
+                            name: 'Orphans',
+                            paths: analysis.orphans,
+                            nodes: orphans,
+                          },
+                    )
+                  }
                 >
                   <span
                     className="agenthq-overview-swatch"
@@ -460,6 +534,38 @@ export function OverviewCanvas({
                   {allClusters ? 'Show fewer' : 'Show all'}
                 </a>
               )}
+            </div>
+          )}
+          {chosen && (
+            <div className="agenthq-overview-chosen">
+              <div className="agenthq-overview-chosen-head">
+                <strong>
+                  {chosen.name} ({chosen.paths.length})
+                </strong>
+                <button onClick={() => choose(null)}>Show all notes</button>
+              </div>
+              {chosen.key === 'orphans' && !settings.showOrphans && (
+                <p className="agenthq-overview-empty">
+                  Orphans are hidden on the graph; turn on “Show orphans” under
+                  ⚙ to see them there.
+                </p>
+              )}
+              <ul className="agenthq-overview-chosen-list">
+                {chosen.paths.map((path) => (
+                  <li key={path}>
+                    <a
+                      href="#"
+                      title={path}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        onOpen(path);
+                      }}
+                    >
+                      {shortTitle(path)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>

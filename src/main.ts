@@ -13,7 +13,7 @@ import { askAboutNote, importSkills } from './core/vaultPowers';
 import { readInstalledSkills } from './core/runtimes/skills';
 import { pickAgent, confirmAction } from './obsidian/modals';
 import { pinnedAgents, statusGlyph } from './core/quickChat';
-import { agentDisplayName, ensureObi, OBI_ID } from './core/obi';
+import { agentDisplayName, ensureObi, OBI_ID, updateObiRole } from './core/obi';
 import { syncGuideNote } from './core/guide';
 import { ensureNoteSkills } from './core/noteTypes';
 import { checkSetup, setupLine, type ToolCheck } from './core/setupCheck';
@@ -1061,6 +1061,7 @@ export default class AgentHQPlugin extends Plugin {
         this.settings.obiSeeded = true;
         await this.saveSettings();
       }
+      await updateObiRole(this.store);
       await this.workspace.initialize(this.store);
       if (obiCreated) await this.workspace.setPinned(OBI_ID, true);
       // The welcome tour starts in Obi's Chat until it is finished, declined, or postponed.

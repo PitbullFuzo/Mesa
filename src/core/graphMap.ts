@@ -15,7 +15,8 @@ export const GRAPH_MAP_LIMITS = {
   orphans: 30,
   maxWords: 1500,
 } as const;
-const LABEL_ROUNDS = 20;
+const LOUVAIN_ROUNDS = 30;
+const LOUVAIN_LEVELS = 10;
 
 /** Searchable notes with their links, counted in both directions, inside the vault only. */
 export interface LinkGraph {
@@ -71,42 +72,103 @@ export function buildLinkGraph(
   return { notes, neighbours };
 }
 
+/** Weighted undirected graph on 0..n-1; `self[i]` is the weight of links inside node i (after merging). */
+interface WeightedGraph {
+  adjacency: Map<number, number>[];
+  self: number[];
+}
+
 /**
- * Groups notes that link to each other by label propagation: every note starts as its own group and takes the most
- * common group among its neighbours. Ties go to the smaller path, and rounds are capped, so the same vault always
- * gives the same clusters. Notes with no links keep their own label and are reported as orphans instead.
+ * One Louvain level: each node moves to the neighbouring group that raises modularity most, until nothing moves.
+ * Nodes are visited in index order and ties keep the current group, then the lower group number, so it is deterministic.
+ */
+function louvainLevel(graph: WeightedGraph): number[] {
+  const n = graph.adjacency.length;
+  const strength = graph.adjacency.map(
+    (around, i) =>
+      [...around.values()].reduce((sum, w) => sum + w, 0) + 2 * graph.self[i]!,
+  );
+  const twiceTotal = strength.reduce((sum, k) => sum + k, 0);
+  const group = strength.map((_, i) => i);
+  const groupStrength = [...strength];
+  if (twiceTotal === 0) return group;
+  for (let round = 0; round < LOUVAIN_ROUNDS; round++) {
+    let moved = false;
+    for (let i = 0; i < n; i++) {
+      const own = group[i]!;
+      const ki = strength[i]!;
+      const toGroup = new Map<number, number>();
+      for (const [j, w] of graph.adjacency[i]!)
+        toGroup.set(group[j]!, (toGroup.get(group[j]!) ?? 0) + w);
+      groupStrength[own]! -= ki;
+      const gain = (g: number) =>
+        (toGroup.get(g) ?? 0) - (groupStrength[g]! * ki) / twiceTotal;
+      let best = own;
+      let bestGain = gain(own);
+      for (const g of [...toGroup.keys()].sort((a, b) => a - b)) {
+        const value = gain(g);
+        if (value > bestGain + 1e-12) {
+          best = g;
+          bestGain = value;
+        }
+      }
+      groupStrength[best]! += ki;
+      if (best !== own) {
+        group[i] = best;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return group;
+}
+
+/**
+ * Groups notes that link to each other with the Louvain method (modularity): densely linked notes end up together,
+ * and an index or log note that links to everything does not pull the whole vault into one group the way simple
+ * label spreading did. The same vault always gives the same clusters. Notes with no links stay on their own and are
+ * reported as orphans instead. Returns each note's group label (the group's first path).
  */
 function labelClusters(graph: LinkGraph): Map<string, string> {
   const paths = graph.notes.map((note) => note.path).sort();
-  const labels = new Map(paths.map((path) => [path, path]));
-  for (let round = 0; round < LABEL_ROUNDS; round++) {
-    let changed = false;
-    for (const path of paths) {
-      const around = [...graph.neighbours.get(path)!];
-      if (around.length === 0) continue;
-      const counts = new Map<string, number>();
-      for (const other of around) {
-        const label = labels.get(other)!;
-        counts.set(label, (counts.get(label) ?? 0) + 1);
+  const index = new Map(paths.map((path, i) => [path, i]));
+  let level: WeightedGraph = {
+    adjacency: paths.map((path) => {
+      const around = new Map<number, number>();
+      for (const other of graph.neighbours.get(path) ?? []) {
+        const j = index.get(other);
+        if (j !== undefined) around.set(j, 1);
       }
-      let best = labels.get(path)!;
-      let bestCount = counts.get(best) ?? 0;
-      for (const [label, count] of [...counts].sort(([a], [b]) =>
-        a.localeCompare(b),
-      )) {
-        if (count > bestCount) {
-          best = label;
-          bestCount = count;
-        }
+      return around;
+    }),
+    self: paths.map(() => 0),
+  };
+  // Which level-node each note belongs to.
+  let membership = paths.map((_, i) => i);
+  for (let depth = 0; depth < LOUVAIN_LEVELS; depth++) {
+    const group = louvainLevel(level);
+    const renumber = new Map<number, number>();
+    for (const g of group) if (!renumber.has(g)) renumber.set(g, renumber.size);
+    if (renumber.size === level.adjacency.length) break;
+    membership = membership.map((node) => renumber.get(group[node]!)!);
+    const adjacency = [...renumber.keys()].map(() => new Map<number, number>());
+    const self = [...renumber.keys()].map(() => 0);
+    level.adjacency.forEach((around, i) => {
+      const a = renumber.get(group[i]!)!;
+      self[a]! += level.self[i]!;
+      for (const [j, w] of around) {
+        const b = renumber.get(group[j]!)!;
+        if (a === b) self[a]! += w / 2;
+        else adjacency[a]!.set(b, (adjacency[a]!.get(b) ?? 0) + w);
       }
-      if (best !== labels.get(path)) {
-        labels.set(path, best);
-        changed = true;
-      }
-    }
-    if (!changed) break;
+    });
+    level = { adjacency, self };
   }
-  return labels;
+  const first = new Map<number, string>();
+  paths.forEach((path, i) => {
+    if (!first.has(membership[i]!)) first.set(membership[i]!, path);
+  });
+  return new Map(paths.map((path, i) => [path, first.get(membership[i]!)!]));
 }
 
 const degree = (graph: LinkGraph, path: string) =>

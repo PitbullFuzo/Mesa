@@ -898,6 +898,7 @@ export class WorkspaceController implements WorkspaceActions {
     return this.mutate(async () => {
       if (!this.state.groups.some((group) => group.id === id))
         throw new Error('That group no longer exists.');
+      if (!name.trim()) throw new Error('Enter a group name.');
       await this.requireStore().saveGroups(
         this.state.groups.map((group) =>
           group.id === id ? { ...group, name: name.trim() } : group,

@@ -108,6 +108,32 @@ describe('the overview data', () => {
     const analysis = sample();
     expect(buildForceGraph(analysis)).toEqual(buildForceGraph(analysis));
   });
+
+  it("lists every member's path for the legend, and tells clusters in the same folder apart", () => {
+    const paths: string[] = [];
+    const links: Record<string, Record<string, number>> = {};
+    for (const hub of ['alpha', 'beta']) {
+      const group = Array.from(
+        { length: 4 },
+        (_, i) => `wiki/concepts/${hub}${i}.md`,
+      );
+      paths.push(...group);
+      for (let i = 0; i < group.length; i++)
+        for (let j = i + 1; j < group.length; j++)
+          links[group[i]!] = { ...links[group[i]!], [group[j]!]: 1 };
+    }
+    const graph = buildForceGraph(analysisOf(paths, links));
+    expect(graph.clusters).toHaveLength(2);
+    const names = graph.clusters.map((cluster) => cluster.name);
+    expect(new Set(names).size).toBe(2);
+    for (const name of names) expect(name).toMatch(/^concepts · /);
+    for (const cluster of graph.clusters) {
+      expect(cluster.paths).toHaveLength(4);
+      expect(cluster.nodes.map((i) => graph.nodes[i]!.path).sort()).toEqual(
+        [...cluster.paths].sort(),
+      );
+    }
+  });
 });
 
 describe('the force simulation', () => {

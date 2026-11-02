@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { GraphAnalysis } from './graphMap';
-import { clusterName } from './overviewLabels';
+import { clusterName, shortTitle } from './overviewLabels';
 
 /** Vault overview limits. Past the cap the most linked notes are kept, and the view says how many were left out. */
 export const FORCE_LIMITS = { nodes: 1500 } as const;
@@ -67,6 +67,8 @@ export interface ForceCluster {
   hue: number;
   /** Indices of this cluster's nodes in the graph (only the ones shown). */
   nodes: number[];
+  /** Every member's path, shown or not, most linked first. */
+  paths: string[];
 }
 
 export interface ForceGraph {
@@ -130,7 +132,17 @@ export function buildForceGraph(
     nodes: cluster.members
       .map((path) => index.get(path))
       .filter((i): i is number => i !== undefined),
+    paths: cluster.members,
   }));
+  // Two clusters in the same folder would read the same; add the hub's title to tell them apart.
+  const seen = new Map<string, number>();
+  for (const cluster of clusters)
+    seen.set(cluster.name, (seen.get(cluster.name) ?? 0) + 1);
+  for (const cluster of clusters) {
+    const hub = shortTitle(cluster.hub);
+    if (seen.get(cluster.name)! > 1 && hub !== cluster.name)
+      cluster.name = `${cluster.name} · ${hub}`;
+  }
 
   return { nodes, edges, clusters, total: graph.notes.length };
 }

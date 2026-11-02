@@ -9,6 +9,8 @@ import {
   agentDisplayName,
   applyObiAction,
   ensureObi,
+  OBI_ROLE,
+  updateObiRole,
   obiPrompt,
   parseObiProposals,
   type ObiOps,
@@ -194,6 +196,20 @@ describe('Obi prompt and note', () => {
     const creates = vi.spyOn(store, 'createNote');
     expect(await ensureObi(store, store.root)).toBe(false);
     expect(creates).not.toHaveBeenCalled();
+  });
+
+  it("replaces Obi's old default role once, and leaves a role the owner wrote alone", async () => {
+    const store = new MemoryStore();
+    await ensureObi(store, store.root);
+    const role = async () =>
+      (await store.loadAgents()).agents.find((entry) => entry.id === OBI_ID)!
+        .role;
+    await store.patchAgent(OBI_ID, { role: 'Obsidian Intelligence' });
+    expect(await updateObiRole(store)).toBe(true);
+    expect(await role()).toBe(OBI_ROLE);
+    await store.patchAgent(OBI_ID, { role: 'My helper' });
+    expect(await updateObiRole(store)).toBe(false);
+    expect(await role()).toBe('My helper');
   });
 });
 

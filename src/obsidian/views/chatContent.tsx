@@ -34,6 +34,7 @@ import {
 } from '../../core/slash';
 import { isAtBottom, scrollToLatest } from '../../core/scroll';
 import { MarkdownContent } from './markdownContent';
+import { readableReply } from '../../core/chatDisplay';
 import { useImageInput, AttachmentPreviews } from './imageInput';
 import { ProjectMenu, projectPickerState } from './projectMenu';
 import { ModelLabel } from './modelLabel';
@@ -457,7 +458,11 @@ export function ChatContent({
             </header>
             <MarkdownContent
               app={app}
-              content={message.content}
+              content={
+                message.role === 'assistant'
+                  ? readableReply(message.content)
+                  : message.content
+              }
               sourcePath={chat.session?.path ?? chat.agent.path}
               streaming={message.streaming}
             />

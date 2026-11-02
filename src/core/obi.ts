@@ -31,6 +31,8 @@ export const OBI_ID = 'obi';
 export const OBI_NAME = 'Obi';
 export const OBI_LABEL = 'Obi';
 export const OBI_ROLE = 'Your Mesa assistant';
+/** Obi's role in earlier versions; it is replaced once, and a role the owner wrote is never touched. */
+const OLD_OBI_ROLES = ['Obsidian Intelligence'];
 
 const OBI_INSTRUCTIONS =
   'You are Obi, the general assistant for this Obsidian vault and the Mesa plugin. Answer questions about notes and about how Mesa works, using the Mesa guide skill. You may propose changes to the team, but you never make them yourself: the owner approves each change. You do not delegate tasks; your job is the team.';
@@ -651,6 +653,15 @@ async function patchAgent(
       id,
       action.reportsTo === null ? null : resolveAgent(action.reportsTo, agents),
     );
+}
+
+/** Replaces Obi's old default role (from before Mesa was renamed). Runs on every start; a role the owner wrote stays. */
+export async function updateObiRole(store: Store): Promise<boolean> {
+  const { agents } = await store.loadAgents();
+  const obi = agents.find((agent) => agent.id === OBI_ID);
+  if (!obi || !OLD_OBI_ROLES.includes(obi.role.trim())) return false;
+  await store.patchAgent(OBI_ID, { role: OBI_ROLE });
+  return true;
 }
 
 /** Creates Obi and its guide skill once, if they are missing. Existing notes are never overwritten. */

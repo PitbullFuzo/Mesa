@@ -103,6 +103,39 @@ describe('the link graph', () => {
     expect([...analysis.crossLinks.values()]).toEqual([1]);
   });
 
+  it('keeps topics apart when an index note links to every note (owner report, 2026-11-02)', () => {
+    // Three tight groups of five, joined only through _index.md and _log.md, which link to everything,
+    // as in a vault with an index and a log. Label spreading used to merge it all into one cluster.
+    const topics = ['Jobs', 'Website', 'Health'];
+    const paths = ['_index.md', '_log.md'];
+    const links: Record<string, Record<string, number>> = {
+      '_index.md': {},
+      '_log.md': {},
+    };
+    for (const topic of topics)
+      for (let i = 0; i < 5; i++) {
+        const path = `${topic}/n${i}.md`;
+        paths.push(path);
+        links['_index.md']![path] = 1;
+        links['_log.md']![path] = 1;
+        links[path] = {};
+        for (let j = i + 1; j < 5; j++) links[path][`${topic}/n${j}.md`] = 1;
+      }
+    const analysis = analyseLinkGraph(
+      buildLinkGraph(vault(paths, links), links, 'Mesa', '.obsidian'),
+    );
+    expect(analysis.clusters.length).toBeGreaterThanOrEqual(3);
+    for (const topic of topics) {
+      const holding = analysis.clusters.filter((cluster) =>
+        cluster.members.some((path) => path.startsWith(`${topic}/`)),
+      );
+      expect(holding).toHaveLength(1);
+      expect(
+        holding[0]!.members.filter((path) => path.startsWith(`${topic}/`)),
+      ).toHaveLength(5);
+    }
+  });
+
   it('gives the same result however the files and links are ordered', () => {
     const { files, links } = sample();
     const reversedLinks = Object.fromEntries(Object.entries(links).reverse());
