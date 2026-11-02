@@ -11,7 +11,8 @@ export async function newAgentNote(
   notes: NoteDocument[],
   exists: (path: string) => Promise<boolean>,
 ): Promise<NoteDocument> {
-  setupPatchSchema.parse({ name });
+  name = cleanAgentName(name);
+  parseSetupPatch({ name });
   const ids = new Set(
     notes.flatMap(({ frontmatter }) =>
       frontmatter && typeof frontmatter === 'object' && 'id' in frontmatter
@@ -89,24 +90,27 @@ export type AgentSetupPatch = Partial<
   >
 >;
 
+const NAME_HELP =
+  'Agent names can\'t contain : / \\ ? * " < > | # ^ [ ] (they break wikilinks) or end with a dot. Try "SEO - Writer".';
+
+/** Drops stray spaces and trailing dots, which note names cannot carry. */
+export function cleanAgentName(name: string): string {
+  return name.replace(/[. ]+$/, '').trim();
+}
+
 const agentNameSchema = z
   .string()
-  .min(1)
+  .min(1, 'Enter an agent name.')
   .refine(
     (name) =>
-      !['#', '^', '[', ']', '|'].some((character) => name.includes(character)),
-    'Agent names cannot contain wikilink characters: # ^ [ ] |',
-  )
-  .refine(
-    (name) =>
-      name.trim() === name &&
       name !== '.' &&
       name !== '..' &&
-      !/[\\/<>:"|?*]/.test(name) &&
+      name.trim() === name &&
+      !/[\\/<>:"|?*#^[\]]/.test(name) &&
       ![...name].some((character) => character.charCodeAt(0) < 32) &&
       !/[. ]$/.test(name) &&
       !/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(name),
-    'Expected a safe, nonblank note name',
+    NAME_HELP,
   );
 
 export const setupPatchSchema = z.strictObject({
@@ -130,6 +134,18 @@ export const setupPatchSchema = z.strictObject({
   skills: z.array(z.string().min(1)).optional(),
   instructions: z.string().optional(),
 });
+
+/** Parses a setup patch, tidying the name and raising a plain message instead of raw validation JSON. */
+export function parseSetupPatch(input: AgentSetupPatch) {
+  const tidy =
+    typeof input.name === 'string'
+      ? { ...input, name: cleanAgentName(input.name) }
+      : input;
+  const result = setupPatchSchema.safeParse(tidy);
+  if (!result.success)
+    throw new Error(result.error.issues[0]?.message ?? 'Invalid setup.');
+  return result.data;
+}
 
 /** Convert only supplied fields; unresolved snapshot fallbacks never leak to disk. */
 export function agentPatchToFrontmatter(

@@ -25,7 +25,7 @@ import type { Store } from '../core/store';
 import {
   agentPatchToFrontmatter,
   newAgentNote,
-  setupPatchSchema,
+  parseSetupPatch,
   type AgentSetupPatch,
 } from '../core/setup';
 import { reparentAgent } from '../core/orgchart';
@@ -210,7 +210,7 @@ export class ObsidianStore implements Store {
   }
 
   async patchAgent(id: string, input: AgentSetupPatch): Promise<void> {
-    const patch = setupPatchSchema.parse(input);
+    const patch = parseSetupPatch(input);
     const { agents } = await this.loadAgents();
     const file = this.agentFile(agents, id);
     const agentLink = (targetId: string): string =>

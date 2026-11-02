@@ -17,13 +17,13 @@ Made by Marcio Vieira — guides, how-tos, downloads and feedback at [trabalhoia
 ## Screenshots
 
 ![Your AI team as a graph](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/team-graph.png)
-*Your AI team as a graph: groups, managers and who runs on which tool.*
+_Your AI team as a graph: groups, managers and who runs on which tool._
 
 ![Projects board](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/projects-board.png)
-*A projects board with Obi, your assistant, beside it.*
+_A projects board with Obi, your assistant, beside it._
 
 ![Vault overview](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/vault-overview.png)
-*A live map of your vault: clusters, links and orphan notes.*
+_A live map of your vault: clusters, links and orphan notes._
 
 ## What you can do with it
 

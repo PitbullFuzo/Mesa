@@ -117,6 +117,51 @@ describe('workspace layout persistence', () => {
       selectionRevision: 2,
     });
   });
+  it('creates an agent from a hand-typed name with stray spaces, as the New agent form submits it', async () => {
+    const store = new MemoryStore();
+    const workspace = controller();
+    await workspace.initialize(store);
+    const id = await workspace.createAgent('  Researcher ');
+    expect(store.notes.has('Mesa/Agents/Researcher.md')).toBe(true);
+    expect(workspace.getSnapshot().agents.map((agent) => agent.id)).toContain(
+      id,
+    );
+    await expect(workspace.createAgent('   ')).rejects.toThrow(
+      'Enter an agent name.',
+    );
+  });
+  it('explains invalid agent names in plain words and tidies trailing dots', async () => {
+    const store = new MemoryStore();
+    const workspace = controller();
+    await workspace.initialize(store);
+    for (const bad of ['SEO: Writer', 'Research/Writer', 'Who?', 'A#b'])
+      await expect(workspace.createAgent(bad)).rejects.toThrow(
+        /Agent names can't contain .*Try "SEO - Writer"/,
+      );
+    await workspace.createAgent('Agent.');
+    expect(store.notes.has('Mesa/Agents/Agent.md')).toBe(true);
+    await workspace.createAgent('SEO - Writer');
+    expect(store.notes.has('Mesa/Agents/SEO - Writer.md')).toBe(true);
+  });
+  it('gives Obi the same friendly name error, and the same note, as the manual form', async () => {
+    const store = new MemoryStore();
+    const { applyObiAction } = await import('../src/core/obi');
+    const ops = {
+      createAgent: (name: string) => store.createAgent(name),
+      snapshot: () => ({ agents: [], groups: [] }),
+    } as unknown as Parameters<typeof applyObiAction>[1];
+    await expect(
+      applyObiAction({ type: 'createAgent', name: 'SEO: Writer' }, ops),
+    ).rejects.toThrow(/Agent names can't contain/);
+    await applyObiAction({ type: 'createAgent', name: 'Obi made' }, ops);
+    await store.createAgent('By hand');
+    const fm = (name: string) => ({
+      ...(store.notes.get(`Mesa/Agents/${name}.md`)!.frontmatter as object),
+    });
+    const { id: _a, ...obi } = fm('Obi made') as Record<string, unknown>;
+    const { id: _b, ...hand } = fm('By hand') as Record<string, unknown>;
+    expect(obi).toEqual(hand);
+  });
   it('retains invalid and unknown positions through creation, repair, moves and explicit deletion', async () => {
     const store = new MemoryStore();
     const id = await store.createAgent('Temporarily broken');

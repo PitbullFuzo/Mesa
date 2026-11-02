@@ -17,13 +17,13 @@ Feito por Marcio Vieira — guias, tutoriais, transferências e feedback em [tra
 ## Capturas de ecrã
 
 ![A sua equipa de IA em grafo](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/team-graph.png)
-*A sua equipa de IA em grafo: grupos, chefias e a ferramenta de cada agente.*
+_A sua equipa de IA em grafo: grupos, chefias e a ferramenta de cada agente._
 
 ![Quadro de projetos](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/projects-board.png)
-*Quadro de projetos, com o Obi, o seu assistente, ao lado.*
+_Quadro de projetos, com o Obi, o seu assistente, ao lado._
 
 ![Visão geral do cofre](https://raw.githubusercontent.com/PitbullFuzo/Mesa/main/images/vault-overview.png)
-*Um mapa vivo do cofre: grupos, ligações e notas órfãs.*
+_Um mapa vivo do cofre: grupos, ligações e notas órfãs._
 
 ## O que pode fazer com ele
 

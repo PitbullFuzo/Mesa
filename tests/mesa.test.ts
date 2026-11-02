@@ -36,7 +36,7 @@ describe('the store rules for the manifest', () => {
       expect(text).not.toMatch(/obsidian|\bob/i);
     expect(manifest.description!.length).toBeLessThanOrEqual(250);
     expect(manifest.description!.endsWith('.')).toBe(true);
-    expect(manifest.fundingUrl).toBeUndefined();
+    expect(manifest.fundingUrl).toBe('https://ko-fi.com/marciovieira');
   });
 
   it('builds, packages and releases from the same plugin folder, which is named by the id', () => {

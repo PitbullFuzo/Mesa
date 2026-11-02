@@ -948,7 +948,10 @@ export class WorkspaceController implements WorkspaceActions {
 
   createAgent(name: string, select = true): Promise<string> {
     return this.mutate(async () => {
-      const id = await this.requireStore().createAgent(name);
+      // The form submits the raw text; the store rejects names with stray spaces.
+      const trimmed = name.trim();
+      if (!trimmed) throw new Error('Enter an agent name.');
+      const id = await this.requireStore().createAgent(trimmed);
       await this.refresh();
       await this.persistLayout(
         graphLayoutPositions(

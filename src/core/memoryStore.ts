@@ -14,7 +14,7 @@ import type { Store } from './store';
 import {
   agentPatchToFrontmatter,
   newAgentNote,
-  setupPatchSchema,
+  parseSetupPatch,
   type AgentSetupPatch,
 } from './setup';
 import { reparentAgent } from './orgchart';
@@ -48,7 +48,7 @@ export class MemoryStore implements Store {
   }
 
   async patchAgent(id: string, input: AgentSetupPatch): Promise<void> {
-    const patch = setupPatchSchema.parse(input);
+    const patch = parseSetupPatch(input);
     const note = await this.agentNote(id);
     const { agents } = await this.loadAgents();
     const fields = agentPatchToFrontmatter(
