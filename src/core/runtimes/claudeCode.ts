@@ -208,6 +208,20 @@ const defaultDependencies: RuntimeDependencies = {
     ).stdout,
   spawn: (file, args, options) => spawn(file, args, options),
 };
+/** Oldest Claude Code version the browser policy was checked on. Newer versions are allowed. */
+export const MIN_BROWSER_VERSION = [2, 1, 286] as const;
+
+/** True when `claude --version` output (e.g. "2.1.317 (Claude Code)") is the minimum version or newer. */
+export function isBrowserVerifiedVersion(output: string): boolean {
+  const match = /^(\d+)\.(\d+)\.(\d+)\b/.exec(output.trim());
+  if (!match) return false;
+  for (let i = 0; i < 3; i++) {
+    const part = Number(match[i + 1]);
+    if (part !== MIN_BROWSER_VERSION[i]) return part > MIN_BROWSER_VERSION[i]!;
+  }
+  return true;
+}
+
 const installHint =
   'Install the runtime from https://code.claude.com/docs/en/setup or set Runtime path override to its native executable.';
 export class ClaudeCodeRuntime implements RuntimeAdapter {
@@ -362,9 +376,9 @@ export class ClaudeCodeRuntime implements RuntimeAdapter {
             '--version',
           ])
         ).trim();
-        if (version !== '2.1.286 (Claude Code)')
+        if (!isBrowserVerifiedVersion(version))
           throw Error(
-            'Browser policy is verified only for Claude Code 2.1.286; refusing this version.',
+            `Browser use needs Claude Code ${MIN_BROWSER_VERSION.join('.')} or newer (found "${version}"). Update Claude Code, or turn Browser access off for this agent.`,
           );
         if (stopped) return;
       }
