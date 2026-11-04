@@ -30,6 +30,7 @@ vi.mock('obsidian', () => {
     ) {}
   }
   return {
+    AbstractInputSuggest: class {},
     FuzzySuggestModal: class {},
     Menu: class {},
     Notice: class {},

@@ -1,4 +1,5 @@
 import {
+  AbstractInputSuggest,
   Notice,
   PluginSettingTab,
   Setting,
@@ -6,6 +7,38 @@ import {
   type TextComponent,
 } from 'obsidian';
 import type AgentHQPlugin from '../main';
+
+/** Suggests the vault's existing folders while typing a note destination. */
+class FolderSuggest extends AbstractInputSuggest<string> {
+  constructor(
+    app: App,
+    private readonly input: HTMLInputElement,
+  ) {
+    super(app, input);
+  }
+  protected getSuggestions(query: string): string[] {
+    const q = query.toLowerCase();
+    return this.app.vault
+      .getAllFolders(false)
+      .map((folder) => folder.path)
+      .filter(
+        (path) =>
+          !path.split('/').some((part) => part.startsWith('.')) &&
+          path.toLowerCase().includes(q),
+      )
+      .sort((a, b) => a.localeCompare(b))
+      .slice(0, 50);
+  }
+  renderSuggestion(path: string, el: HTMLElement): void {
+    el.setText(path);
+  }
+  selectSuggestion(path: string): void {
+    this.input.value = path;
+    this.input.dispatchEvent(new Event('input'));
+    this.input.blur();
+    this.close();
+  }
+}
 import { IMPORT_SKILLS_LABEL } from '../core/runtimes/skills';
 import { browserUnavailableReason } from '../core/browser';
 
@@ -86,16 +119,42 @@ export class AgentHQSettingTab extends PluginSettingTab {
       this.plugin.settings.noteTypes.map((entry) =>
         entry.id === type.id ? type : entry,
       );
+    new Setting(containerEl)
+      .setName('Match my folders')
+      .setDesc(
+        'Points the built-in types that still use their default folder (Meetings, Research, Wiki, Permanent) at folders your vault already has, for example Wiki → wiki.',
+      )
+      .addButton((button) =>
+        button.setButtonText('Match').onClick(() => {
+          void this.plugin.matchNoteFoldersNow().then((changed) => {
+            new Notice(
+              changed.length
+                ? `Matched: ${changed.map((type) => `${type.label} → ${type.folder}/`).join(', ')}`
+                : 'No matching folders found. Type a folder for each type, or pick one from the list.',
+            );
+            this.redraw();
+          });
+        }),
+      );
     for (const type of this.plugin.settings.noteTypes) {
       const row = new Setting(containerEl).setName(type.label);
+      if (
+        type.enabled &&
+        type.folder.trim() &&
+        !this.app.vault.getFolderByPath(type.folder.replace(/\/+$/, ''))
+      )
+        row.setDesc(
+          `${type.folder.replace(/\/+$/, '')}/ is not in your vault yet. Pick an existing folder, or it will be created when an agent saves a note.`,
+        );
       row.addText((text) => {
         text.setPlaceholder('Folder in your vault').setValue(type.folder);
+        new FolderSuggest(this.app, text.inputEl);
         // Saved when the box loses focus, so a folder is not created for every letter typed.
         text.inputEl.addEventListener('blur', () => {
           const folder = text.getValue().trim();
           if (folder !== type.folder) {
             const next = { ...type, folder };
-            void save(replace(next), next);
+            void save(replace(next), next).then(() => this.redraw());
           }
         });
       });

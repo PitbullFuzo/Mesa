@@ -280,3 +280,65 @@ describe('the guide', () => {
     );
   });
 });
+
+describe('matching note destinations to the vault', () => {
+  const vault = [
+    'wiki',
+    'wiki/concepts',
+    'wiki/resources',
+    'sources',
+    'sources/clippings',
+    'daily',
+    'Mesa',
+    'Mesa/Work',
+    '.trash',
+  ];
+  it('points defaults at existing folders, case-insensitively', async () => {
+    const { matchNoteFolders } = await import('../src/core/noteTypes');
+    const { types, changed } = matchNoteFolders(
+      DEFAULT_NOTE_TYPES,
+      vault,
+      ROOT,
+      CONFIG,
+    );
+    const folder = (id: string) => types.find((type) => type.id === id)!.folder;
+    expect(folder('wiki')).toBe('wiki');
+    expect(folder('permanent')).toBe('wiki/concepts');
+    expect(folder('research')).toBe('sources');
+    expect(folder('meeting')).toBe('Meetings');
+    expect(changed.map((type) => type.id).sort()).toEqual([
+      'permanent',
+      'research',
+      'wiki',
+    ]);
+  });
+  it('keeps folders the owner chose or that already exist', async () => {
+    const { matchNoteFolders } = await import('../src/core/noteTypes');
+    const chosen = DEFAULT_NOTE_TYPES.map((type) =>
+      type.id === 'wiki' ? { ...type, folder: 'Docs' } : type,
+    );
+    const { changed } = matchNoteFolders(
+      chosen,
+      [...vault, 'Research'],
+      ROOT,
+      CONFIG,
+    );
+    expect(changed.map((type) => type.id)).toEqual(['permanent']);
+  });
+  it('never picks Mesa, config or hidden folders', async () => {
+    const { matchNoteFolders } = await import('../src/core/noteTypes');
+    const { changed } = matchNoteFolders(
+      DEFAULT_NOTE_TYPES,
+      ['Mesa/Wiki', '.obsidian/research', '.hidden/wiki'],
+      ROOT,
+      CONFIG,
+    );
+    expect(changed).toEqual([]);
+  });
+  it('remembers it already matched once', () => {
+    expect(loadSettings({}).noteFoldersMatched).toBe(false);
+    expect(loadSettings({ noteFoldersMatched: true }).noteFoldersMatched).toBe(
+      true,
+    );
+  });
+});

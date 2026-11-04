@@ -57,6 +57,87 @@ export function newNoteType(
   return { id, label: label.trim(), folder: clean(folder), enabled: true };
 }
 
+/** Folder names (lowercase, last part of the path) that mean the same thing as a built-in type, best first. */
+const FOLDER_NAMES: Record<string, string[]> = {
+  meeting: ['meetings', 'meeting notes', 'meeting-notes', 'meeting'],
+  research: [
+    'research',
+    'sources',
+    'clippings',
+    'references',
+    'literature',
+    'resources',
+  ],
+  wiki: ['wiki', 'wikis', 'knowledge base', 'kb'],
+  permanent: [
+    'permanent',
+    'permanent notes',
+    'permanent-notes',
+    'zettelkasten',
+    'zettels',
+    'evergreen',
+    'concepts',
+  ],
+};
+
+/**
+ * Points the built-in types at folders the vault already has, when the type still has its default folder and that
+ * folder does not exist (for example `Wiki` → `wiki`, `Permanent` → `wiki/concepts`). Never picks Mesa's own folder,
+ * the config folder or a hidden folder. Returns the new list and the types that changed.
+ */
+export function matchNoteFolders(
+  types: NoteType[],
+  vaultFolders: string[],
+  managedRoot: string,
+  configDir: string,
+): { types: NoteType[]; changed: NoteType[] } {
+  const folders = vaultFolders
+    .map(clean)
+    .filter(
+      (folder) =>
+        folder !== '' &&
+        !folder.split('/').some((part) => part.startsWith('.')) &&
+        folder.toLowerCase() !== clean(managedRoot).toLowerCase() &&
+        !folder
+          .toLowerCase()
+          .startsWith(`${clean(managedRoot).toLowerCase()}/`) &&
+        outputFolderProblem(folder, managedRoot, configDir) === undefined,
+    );
+  const exists = (folder: string) => folders.includes(clean(folder));
+  const taken = new Set(types.map((type) => clean(type.folder).toLowerCase()));
+  const changed: NoteType[] = [];
+  const next = types.map((type) => {
+    const fallback = DEFAULT_NOTE_TYPES.find((entry) => entry.id === type.id);
+    const names = FOLDER_NAMES[type.id];
+    if (!fallback || !names) return type;
+    if (clean(type.folder) !== fallback.folder || exists(type.folder))
+      return type;
+    const rank = (folder: string) => {
+      const last = folder.split('/').pop()!.toLowerCase();
+      const at = names.indexOf(last);
+      return at < 0 ? undefined : at * 100 + folder.split('/').length;
+    };
+    const best = folders
+      .filter(
+        (folder) =>
+          !taken.has(folder.toLowerCase()) ||
+          folder.toLowerCase() === fallback.folder.toLowerCase(),
+      )
+      .map((folder) => ({ folder, score: rank(folder) }))
+      .filter(
+        (entry): entry is { folder: string; score: number } =>
+          entry.score !== undefined,
+      )
+      .sort((a, b) => a.score - b.score || a.folder.localeCompare(b.folder))[0];
+    if (!best) return type;
+    taken.add(best.folder.toLowerCase());
+    const moved = { ...type, folder: best.folder };
+    changed.push(moved);
+    return moved;
+  });
+  return { types: next, changed };
+}
+
 /** The types this agent has ticked that are on and have a usable folder. */
 export function agentNoteTypes(
   agent: Pick<Agent, 'noteTypes'>,

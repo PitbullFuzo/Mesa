@@ -37,6 +37,8 @@ const settingsSchema = z.object({
   m365Account: z.string().catch(''),
   /** Note destinations: note type → vault folder. */
   noteTypes: z.array(noteTypeSchema).catch(() => DEFAULT_NOTE_TYPES),
+  /** The built-in note types were matched once to the vault's own folders (Wiki → wiki, and so on). */
+  noteFoldersMatched: z.boolean().catch(false),
   /** The optional AI concepts pass for the graph map. Off unless the owner turns it on. */
   graphAi: z.boolean().catch(false),
   /** Model for that pass; empty uses the runtime's default (the free OpenCode model for OpenCode). */

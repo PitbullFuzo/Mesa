@@ -15,7 +15,7 @@ import { pickAgent, confirmAction } from './obsidian/modals';
 import { pinnedAgents, statusGlyph } from './core/quickChat';
 import { agentDisplayName, ensureObi, OBI_ID, updateObiRole } from './core/obi';
 import { syncGuideNote } from './core/guide';
-import { ensureNoteSkills } from './core/noteTypes';
+import { ensureNoteSkills, matchNoteFolders } from './core/noteTypes';
 import { checkSetup, setupLine, type ToolCheck } from './core/setupCheck';
 import { clearSafetyChecks } from './core/runtimes/selfTest';
 import {
@@ -441,8 +441,39 @@ export default class AgentHQPlugin extends Plugin {
       this.workspace.dispose();
     });
     this.app.workspace.onLayoutReady(() => {
-      if (this.active) void this.initializeNotes();
+      if (!this.active) return;
+      void this.matchNoteFoldersOnce();
+      void this.initializeNotes();
     });
+  }
+
+  /** Once per vault: point the built-in note types at the vault's own folders (Wiki → wiki, and so on). */
+  async matchNoteFoldersOnce(): Promise<void> {
+    if (this.settings.noteFoldersMatched) return;
+    const changed = await this.matchNoteFoldersNow();
+    this.settings.noteFoldersMatched = true;
+    await this.saveSettings();
+    if (changed.length)
+      new Notice(
+        `Mesa matched note destinations to your folders: ${changed.map((type) => `${type.label} → ${type.folder}/`).join(', ')}. Change them in Settings → Mesa → Note destinations.`,
+        12000,
+      );
+  }
+
+  /** Matches the built-in note types to existing vault folders now; returns the types that changed. */
+  async matchNoteFoldersNow() {
+    const { types, changed } = matchNoteFolders(
+      this.settings.noteTypes,
+      this.app.vault.getAllFolders(false).map((folder) => folder.path),
+      this.settings.agenthqFolder,
+      this.app.vault.configDir,
+    );
+    if (changed.length) {
+      this.settings.noteTypes = types;
+      await this.saveSettings();
+      this.noteTypesChanged();
+    }
+    return changed;
   }
 
   private async requestAskAboutNote(file: TFile): Promise<void> {
