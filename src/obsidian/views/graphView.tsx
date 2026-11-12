@@ -1,4 +1,5 @@
 import { ItemView, type WorkspaceLeaf } from 'obsidian';
+import { t } from '../../core/i18n';
 import { createRoot, type Root } from 'react-dom/client';
 import type { WorkspaceActions } from '../../core/workspace';
 import { GraphCanvas } from './graphCanvas';
@@ -21,7 +22,7 @@ export class GraphView extends ItemView {
     return GRAPH_VIEW;
   }
   getDisplayText(): string {
-    return 'AI Graph';
+    return t('page.graph');
   }
   getIcon(): string {
     return 'network';

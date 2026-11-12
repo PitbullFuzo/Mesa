@@ -6,6 +6,7 @@ import {
   type App,
   type TextComponent,
 } from 'obsidian';
+import { t, type TextKey } from '../core/i18n';
 import type AgentHQPlugin from '../main';
 
 /** Suggests the vault's existing folders while typing a note destination. */
@@ -51,6 +52,7 @@ import {
 } from '../core/folders';
 import { GRAPH_AI_PRIVACY } from '../core/graphAi';
 import { HELP_URL } from '../core/guide';
+import { OPTIONAL_RIBBON_PAGES, toggleRibbonExtra } from '../core/ribbon';
 import {
   BUILTIN_NOTE_SKILLS,
   newNoteType,
@@ -69,6 +71,28 @@ interface VaultConfig {
   getConfig(key: string): unknown;
   setConfig(key: string, value: unknown): void;
 }
+type SettingGroup = 'Basics' | 'Permissions' | 'Connectors' | 'Advanced';
+const SETTING_GROUPS: SettingGroup[] = [
+  'Basics',
+  'Permissions',
+  'Connectors',
+  'Advanced',
+];
+/** Which heading each section sits under. A section not listed here goes under Basics. */
+const GROUP_OF: Record<string, SettingGroup> = {
+  'Folders agents may touch': 'Permissions',
+  'Note destinations': 'Permissions',
+  'Browser engine': 'Connectors',
+  'Set up browser tools': 'Connectors',
+  Connectors: 'Connectors',
+  'Max parallel runs': 'Advanced',
+  'Max delegation depth': 'Advanced',
+  'Max runs per request': 'Advanced',
+  'Default verifier attempts': 'Advanced',
+  'Runtime path override': 'Advanced',
+  'Delete all chat history': 'Advanced',
+  'Restore Obi': 'Advanced',
+};
 /** One row (or group of rows) of the settings page. */
 interface SettingSection {
   name: string;
@@ -78,6 +102,8 @@ interface SettingSection {
 }
 
 export class AgentHQSettingTab extends PluginSettingTab {
+  /** Whether the Advanced fold is open, kept while the settings page is redrawn. */
+  private advancedOpen = false;
   constructor(
     app: App,
     private readonly plugin: AgentHQPlugin,
@@ -204,7 +230,6 @@ export class AgentHQSettingTab extends PluginSettingTab {
   /** Settings → Connectors: Microsoft 365 sign-in. The owner signs in on Microsoft's page; no password is handled here. */
   private connectors(containerEl: HTMLElement): void {
     const m365 = this.plugin.workspace.getSnapshot().m365;
-    new Setting(containerEl).setName('Connectors').setHeading();
     new Setting(containerEl)
       .setName('Microsoft 365: application (client) ID')
       .setDesc(
@@ -271,14 +296,42 @@ export class AgentHQSettingTab extends PluginSettingTab {
         aliases: ['help', 'feedback', 'website'],
         build: (containerEl) => {
           new Setting(containerEl)
-            .setName('Help & feedback')
-            .setDesc(
-              'How-tos and a feedback form on trabalhoia.com. It opens in your browser; nothing is sent from here.',
-            )
+            .setName(t('set.help'))
+            .setDesc(t('set.helpDesc'))
             .addButton((button) =>
-              button.setButtonText('Open trabalhoia.com').onClick(() => {
+              button.setButtonText(t('set.helpButton')).onClick(() => {
                 window.open(HELP_URL);
               }),
+            );
+        },
+      },
+      {
+        name: 'Language',
+        desc: "The language of Mesa's pages and menus.",
+        aliases: [
+          'idioma',
+          'português',
+          'portuguese',
+          'english',
+          'translation',
+        ],
+        build: (containerEl) => {
+          new Setting(containerEl)
+            .setName(t('set.language'))
+            .setDesc(t('set.languageDesc'))
+            .addDropdown((drop) =>
+              drop
+                .addOption('auto', t('set.langAuto'))
+                .addOption('en', t('set.langEn'))
+                .addOption('pt', t('set.langPt'))
+                .setValue(this.plugin.settings.language)
+                .onChange(async (value) => {
+                  this.plugin.settings.language =
+                    value === 'en' || value === 'pt' ? value : 'auto';
+                  this.plugin.applyLanguage();
+                  await this.plugin.saveSettings();
+                  this.redraw();
+                }),
             );
         },
       },
@@ -572,10 +625,8 @@ export class AgentHQSettingTab extends PluginSettingTab {
         aliases: ['enter', 'send', 'keyboard'],
         build: (containerEl) => {
           new Setting(containerEl)
-            .setName('Press Enter to send')
-            .setDesc(
-              'On: Enter sends and Shift+Enter starts a new line. Off: Enter starts a new line and the Send button sends.',
-            )
+            .setName(t('set.enter'))
+            .setDesc(t('set.enterDesc'))
             .addToggle((toggle) =>
               toggle
                 .setValue(this.plugin.settings.enterToSend)
@@ -692,13 +743,11 @@ export class AgentHQSettingTab extends PluginSettingTab {
         aliases: ['chats', 'history', 'trash'],
         build: (containerEl) => {
           new Setting(containerEl)
-            .setName('Delete all chat history')
-            .setDesc(
-              "Moves every agent's chat notes to the trash after you confirm. Agents then start fresh conversations.",
-            )
+            .setName(t('set.deleteHistory'))
+            .setDesc(t('set.deleteHistoryDesc'))
             .addButton((button) =>
               button
-                .setButtonText('Delete all chat history')
+                .setButtonText(t('set.deleteHistory'))
                 .setClass('mod-warning')
                 .onClick(async () => {
                   button.setDisabled(true);
@@ -719,12 +768,10 @@ export class AgentHQSettingTab extends PluginSettingTab {
         aliases: ['assistant', 'obi'],
         build: (containerEl) => {
           new Setting(containerEl)
-            .setName('Restore Obi')
-            .setDesc(
-              'Recreates the built-in assistant if it was deleted. Existing notes are never overwritten.',
-            )
+            .setName(t('set.restoreObi'))
+            .setDesc(t('set.restoreObiDesc'))
             .addButton((button) =>
-              button.setButtonText('Restore Obi').onClick(async () => {
+              button.setButtonText(t('set.restoreObi')).onClick(async () => {
                 button.setDisabled(true);
                 try {
                   await this.plugin.workspace.restoreObi();
@@ -774,6 +821,33 @@ export class AgentHQSettingTab extends PluginSettingTab {
           ),
       },
       {
+        name: 'Ribbon icons',
+        desc: 'Which Mesa page icons to show in the left bar.',
+        aliases: ['ribbon', 'sidebar', 'icons', 'toolbar', 'left bar'],
+        build: (containerEl) => {
+          new Setting(containerEl)
+            .setName(t('set.ribbon'))
+            .setDesc(t('set.ribbonDesc'))
+            .setHeading();
+          for (const page of OPTIONAL_RIBBON_PAGES)
+            new Setting(containerEl)
+              .setName(t(`page.${page.id}`))
+              .addToggle((toggle) =>
+                toggle
+                  .setValue(this.plugin.settings.ribbonExtras.includes(page.id))
+                  .onChange(async (value) => {
+                    this.plugin.settings.ribbonExtras = toggleRibbonExtra(
+                      this.plugin.settings.ribbonExtras,
+                      page.id,
+                      value,
+                    );
+                    this.plugin.applyRibbonExtras();
+                    await this.plugin.saveSettings();
+                  }),
+              );
+        },
+      },
+      {
         name: 'Runtime path override',
         desc: "Optional path to the AI tool's program.",
         aliases: ['claude code', 'codex', 'opencode', 'hermes', 'path'],
@@ -810,7 +884,30 @@ export class AgentHQSettingTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    for (const section of this.sections()) section.build(containerEl);
+    const sections = this.sections();
+    for (const group of SETTING_GROUPS) {
+      const members = sections.filter(
+        (section) => (GROUP_OF[section.name] ?? 'Basics') === group,
+      );
+      if (group === 'Advanced') {
+        // Rarely needed rows sit in a closed fold so the page stays short.
+        const fold = containerEl.createEl('details', {
+          cls: 'mesa-settings-advanced',
+        });
+        // The fold stays open when the page redraws after a change.
+        fold.open = this.advancedOpen;
+        fold.ontoggle = () => {
+          this.advancedOpen = fold.open;
+        };
+        fold.createEl('summary', { text: t('set.advanced') });
+        for (const section of members) section.build(fold);
+      } else {
+        new Setting(containerEl)
+          .setName(t(`set.${group.toLowerCase()}` as TextKey))
+          .setHeading();
+        for (const section of members) section.build(containerEl);
+      }
+    }
   }
 
   private addLimit(

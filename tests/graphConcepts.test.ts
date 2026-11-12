@@ -103,7 +103,7 @@ describe('the spend in the Activity log', () => {
     await appendActivityLine(store, 'Mesa', line, new Date(2026, 9, 21, 9, 5));
     const text = [...store.notes.values()].map((note) => note.body).join('\n');
     expect(text).toContain(
-      '- 09:05 Graph map AI concepts: 2 notes read, $0.0040 this rebuild, $0.0123 in total',
+      '- 2026-10-21 09:05 Graph map AI concepts: 2 notes read, $0.0040 this rebuild, $0.0123 in total',
     );
   });
 

@@ -1,4 +1,5 @@
 import { ItemView, type WorkspaceLeaf } from 'obsidian';
+import { t } from '../../core/i18n';
 import { createRoot, type Root } from 'react-dom/client';
 import type { GraphAnalysis } from '../../core/graphMap';
 import type { OverviewSettings } from '../../core/overviewForce';
@@ -27,7 +28,7 @@ export class VaultOverviewView extends ItemView {
     return VAULT_OVERVIEW_VIEW;
   }
   getDisplayText(): string {
-    return 'Vault overview';
+    return t('page.overview');
   }
   getIcon(): string {
     return 'circle-dot';

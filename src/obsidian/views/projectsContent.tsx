@@ -1,4 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { t, type TextKey } from '../../core/i18n';
 import {
   projectAssignmentLabel,
   PROJECT_STATUSES,
@@ -29,20 +30,22 @@ type Props = {
 };
 type SortKey = 'name' | 'status' | 'progress' | 'cost' | 'activity';
 type PageTab = 'overview' | 'tasks' | 'context' | 'schedules' | 'settings';
-const PAGE_TABS: { id: PageTab; label: string }[] = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'tasks', label: 'Tasks' },
-  { id: 'context', label: 'Context' },
-  { id: 'schedules', label: 'Schedules' },
-  { id: 'settings', label: 'Settings' },
+const PAGE_TABS: PageTab[] = [
+  'overview',
+  'tasks',
+  'context',
+  'schedules',
+  'settings',
 ];
 
-const label = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+const label = (status: string) => t(`proj.status.${status}` as TextKey);
 const money = (usd: number) => `$${usd.toFixed(4)}`;
 const activityText = (stats: ProjectStats) =>
   stats.lastActivity
-    ? `last activity ${stats.lastActivity.slice(0, 16).replace('T', ' ')}`
-    : 'no activity yet';
+    ? t('proj.lastActivity', {
+        when: stats.lastActivity.slice(0, 16).replace('T', ' '),
+      })
+    : t('proj.noActivity');
 
 /** The Projects page: a board or a sortable list, and a project page for one project. */
 export function ProjectsContent({
@@ -139,30 +142,30 @@ export function ProjectsContent({
   return (
     <div className="agenthq-projects">
       <header className="agenthq-projects-header">
-        <h3>Projects</h3>
+        <h3>{t('proj.title')}</h3>
         <div>
           <button
             aria-pressed={view === 'board'}
             onClick={() => setView('board')}
           >
-            Board
+            {t('proj.board')}
           </button>{' '}
           <button
             aria-pressed={view === 'list'}
             onClick={() => setView('list')}
           >
-            List
+            {t('proj.list')}
           </button>{' '}
           <button className="mod-cta" onClick={() => openForm(null)}>
-            + Project
+            {t('proj.add')}
           </button>
         </div>
       </header>
       <div className="agenthq-projects-filter">
         <input
           type="search"
-          placeholder="Search projects"
-          aria-label="Search projects"
+          placeholder={t('proj.search')}
+          aria-label={t('proj.search')}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -172,13 +175,11 @@ export function ProjectsContent({
             checked={showArchived}
             onChange={(event) => setShowArchived(event.target.checked)}
           />{' '}
-          Show archived
+          {t('proj.showArchived')}
         </label>
       </div>
       {(state.projects ?? []).length === 0 && (
-        <p className="agenthq-projects-empty">
-          No projects yet. Choose + Project to create one.
-        </p>
+        <p className="agenthq-projects-empty">{t('proj.empty')}</p>
       )}
       {view === 'board' ? (
         <div className="agenthq-board">
@@ -221,16 +222,21 @@ export function ProjectsContent({
                         <small>{assignedOf(project)}</small>
                         <Progress value={stats.progress} />
                         <small>
-                          {stats.done}/{stats.total} tasks ·{' '}
-                          {money(stats.costUsd)} · {activityText(stats)}
+                          {t('proj.tasksCount', {
+                            done: stats.done,
+                            total: stats.total,
+                          })}{' '}
+                          · {money(stats.costUsd)} · {activityText(stats)}
                         </small>
                         {nextRunOf(project) && (
-                          <small>🔁 next {nextRunOf(project)}</small>
+                          <small>
+                            {t('proj.next', { when: nextRunOf(project)! })}
+                          </small>
                         )}
                       </button>
                       {project.archived && (
                         <button onClick={() => void unarchive(project.path)}>
-                          Unarchive
+                          {t('proj.unarchive')}
                         </button>
                       )}
                     </div>
@@ -314,11 +320,11 @@ function ProjectTable({
     return sort.ascending ? order : -order;
   });
   const headers: { key: SortKey; text: string }[] = [
-    { key: 'name', text: 'Name' },
-    { key: 'status', text: 'Status' },
-    { key: 'progress', text: 'Progress' },
-    { key: 'cost', text: 'Cost' },
-    { key: 'activity', text: 'Last activity' },
+    { key: 'name', text: t('proj.head.name') },
+    { key: 'status', text: t('proj.head.status') },
+    { key: 'progress', text: t('proj.head.progress') },
+    { key: 'cost', text: t('proj.head.cost') },
+    { key: 'activity', text: t('proj.head.activity') },
   ];
   return (
     <table className="agenthq-project-table">
@@ -345,7 +351,7 @@ function ProjectTable({
                 </button>
                 {project.archived && (
                   <button onClick={() => onUnarchive(project.path)}>
-                    Unarchive
+                    {t('proj.unarchive')}
                   </button>
                 )}
               </td>
@@ -394,19 +400,19 @@ function ProjectPage({
   return (
     <div className="agenthq-projects">
       <header className="agenthq-projects-header">
-        <button onClick={onBack}>← Projects</button>
+        <button onClick={onBack}>{t('proj.back')}</button>
         <h3>{project.name}</h3>
-        <button onClick={() => openForm(project)}>Edit</button>
+        <button onClick={() => openForm(project)}>{t('btn.edit')}</button>
       </header>
       <nav className="agenthq-tabs" role="tablist">
         {PAGE_TABS.map((entry) => (
           <button
-            key={entry.id}
+            key={entry}
             role="tab"
-            aria-selected={tab === entry.id}
-            onClick={() => setTab(entry.id)}
+            aria-selected={tab === entry}
+            onClick={() => setTab(entry)}
           >
-            {entry.label}
+            {t(`proj.tab.${entry}` as TextKey)}
           </button>
         ))}
       </nav>
@@ -419,8 +425,12 @@ function ProjectPage({
           <p>{assigned}</p>
           <Progress value={stats.progress} />
           <p>
-            {stats.done}/{stats.total} tasks done · cost to date{' '}
-            {money(stats.costUsd)} · {activityText(stats)}
+            {t('proj.tasksDone', {
+              done: stats.done,
+              total: stats.total,
+              cost: money(stats.costUsd),
+              activity: activityText(stats),
+            })}
           </p>
         </div>
       )}
@@ -430,10 +440,10 @@ function ProjectPage({
             <section
               key={column.id}
               className="agenthq-board-column"
-              aria-label={column.label}
+              aria-label={t(`proj.col.${column.id}` as TextKey)}
             >
               <h4>
-                {column.label}{' '}
+                {t(`proj.col.${column.id}` as TextKey)}{' '}
                 <small>
                   {
                     tasks.filter(
@@ -456,25 +466,24 @@ function ProjectPage({
       )}
       {tab === 'context' && (
         <div>
-          <h4>Brief</h4>
+          <h4>{t('proj.brief')}</h4>
           <pre className="agenthq-context">
-            {project.instructions || 'No brief yet.'}
+            {project.instructions || t('proj.noBrief')}
           </pre>
-          <h4>Recent log</h4>
+          <h4>{t('proj.recentLog')}</h4>
           <pre className="agenthq-context">
-            {logTail.join('\n') || 'No log yet.'}
+            {logTail.join('\n') || t('proj.noLog')}
           </pre>
-          <button onClick={() => openForm(project)}>Edit brief</button>
+          <button onClick={() => openForm(project)}>
+            {t('proj.editBrief')}
+          </button>
         </div>
       )}
       {tab === 'schedules' && (
         <div>
-          <button onClick={() => openSchedule(null)}>+ Schedule</button>
+          <button onClick={() => openSchedule(null)}>{t('sched.add')}</button>
           {schedules.length === 0 && (
-            <p className="agenthq-projects-empty">
-              No schedules for this project yet. Runs happen only while Obsidian
-              is open.
-            </p>
+            <p className="agenthq-projects-empty">{t('proj.noSchedules')}</p>
           )}
           <ul className="agenthq-schedule-list">
             {schedules.map((entry) => (
@@ -497,11 +506,10 @@ function ProjectPage({
 
       {tab === 'settings' && (
         <div>
-          <p>
-            Instructions, skills, teams, agents, context levels, memory model
-            and cost limit.
-          </p>
-          <button onClick={() => openForm(project)}>Open settings</button>
+          <p>{t('proj.settingsText')}</p>
+          <button onClick={() => openForm(project)}>
+            {t('proj.openSettings')}
+          </button>
         </div>
       )}
     </div>

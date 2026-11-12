@@ -11,14 +11,7 @@ import { join } from 'node:path';
 import { graphAiRefusal, type GraphAiReplyOrRefusal } from './graphAi';
 import { imagePrompt } from './images';
 import { commandsAsk, commandsOffered } from './runtimes/ids';
-import {
-  agentNoteTypes,
-  destinationFolders,
-  existingNoteNames,
-  noteDestinationsSection,
-  noteSkillText,
-  type NoteType,
-} from './noteTypes';
+import { agentNoteTypes, destinationFolders, type NoteType } from './noteTypes';
 import {
   m365UnavailableReason,
   prepareM365Run,
@@ -69,23 +62,34 @@ import {
 } from './orchestrator';
 import { chatRecallSection, isRecallRequest } from './chatRecall';
 import type { ContextUse, PlanUsage } from './context';
-import { chatExcerpt } from './mentions';
+import {
+  chatBasename,
+  chatMention,
+  chatTitle,
+  conversationTitle,
+  localTime,
+  readMessages,
+  record,
+} from './chatNotes';
 import { chatFacts, projectSpendUsd, taskFacts } from './projectBoard';
 import {
-  dueDecision,
-  followingRun,
+  patchScheduleNote,
+  scheduleHeldByCap,
+  startDueSchedules,
+} from './chatSchedules';
+import {
   loadValidSchedules,
   resumeSchedule as resumeScheduleNote,
   type Schedule,
   type ScheduleFields,
 } from './schedules';
+import { runLoopRounds } from './chatLoops';
+import { agentsWritingTo, buildDestinationsSection } from './chatDestinations';
 import {
   clampRounds,
   loopSummary,
-  runLoop,
   type LoopResult,
   type LoopSpec,
-  type LoopTurn,
 } from './loops';
 import type { Agent, ChatMessage, Skill } from './model';
 import type { NoteDocument } from './notes';
@@ -225,123 +229,8 @@ interface TurnResult {
   tools?: { name: string; summary: string }[];
 }
 
-function localTime(timestamp: string): string {
-  const date = new Date(timestamp);
-  const pad = (value: number) => String(value).padStart(2, '0');
-  return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-/** Claude-style title: the first eight words of the first message, no AI call. */
-export function chatTitle(text: string): string {
-  return text.trim().split(/\s+/).slice(0, 8).join(' ');
-}
-
-/** New notes are named "<title> — <agent> — YYYY-MM-DD HHMM". */
-function chatBasename(
-  started: string,
-  agentName: string,
-  title: string,
-): string {
-  const date = new Date(started);
-  const pad = (value: number) => String(value).padStart(2, '0');
-  const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-  const safe = (value: string) =>
-    Array.from(value)
-      .filter((character) => character.charCodeAt(0) >= 32)
-      .join('')
-      .replace(/[<>:"/\\|?*#^[\]]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .replace(/[. ]+$/, '')
-      .slice(0, 80);
-  return `${safe(title) || 'New conversation'} — ${safe(agentName)} — ${day} ${localTime(started).replace(':', '')}`;
-}
-
-function record(value: unknown): Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : {};
-}
-
-/** Saved title, or the first message for notes made before titles existed. */
-export function conversationTitle(note: NoteDocument): string {
-  const fm = record(note.frontmatter);
-  if (typeof fm.title === 'string' && fm.title) return fm.title;
-  const first = readMessages(note.body).find(
-    (message) => message.role === 'user',
-  );
-  return (first && chatTitle(first.content)) || note.name;
-}
-
-/** A chat note as an @mention attaches it: its title and its last messages. */
-export function chatMention(note: NoteDocument): {
-  content: string;
-  truncated: boolean;
-} {
-  return chatExcerpt(conversationTitle(note), readMessages(note.body));
-}
-
-/** Hidden per-message metadata makes arbitrary Markdown unambiguous without duplicating text in frontmatter. */
-function readMessages(body: string): ChatEntry[] {
-  const messages: ChatEntry[] = [];
-  const marker = /^<!-- agenthq-message (.+) -->\n### [^\n]*\n\n/gm;
-  let match: RegExpExecArray | null;
-  while ((match = marker.exec(body))) {
-    try {
-      const metadata = record(JSON.parse(match[1]!));
-      const length = metadata.contentLength;
-      if (
-        (metadata.role !== 'user' && metadata.role !== 'assistant') ||
-        typeof metadata.timestamp !== 'string' ||
-        typeof length !== 'number' ||
-        !Number.isInteger(length) ||
-        length < 0 ||
-        marker.lastIndex + length > body.length
-      )
-        continue;
-      const tools = Array.isArray(metadata.tools)
-        ? metadata.tools.flatMap((item: unknown) => {
-            const tool = record(item);
-            return typeof tool.name === 'string' &&
-              typeof tool.summary === 'string'
-              ? [{ name: tool.name, summary: tool.summary }]
-              : [];
-          })
-        : [];
-      messages.push({
-        role: metadata.role,
-        timestamp: metadata.timestamp,
-        content: body.slice(marker.lastIndex, marker.lastIndex + length),
-        tools,
-        ...(typeof metadata.costUsd === 'number'
-          ? { costUsd: metadata.costUsd }
-          : {}),
-        ...(typeof metadata.tokens === 'number'
-          ? { tokens: metadata.tokens }
-          : {}),
-        ...(metadata.cancelled === true ? { cancelled: true } : {}),
-      });
-      marker.lastIndex +=
-        length +
-        (typeof metadata.tailLength === 'number' && metadata.tailLength >= 0
-          ? metadata.tailLength
-          : 0);
-    } catch {
-      /* Malformed manually edited history must not prevent startup. */
-    }
-  }
-  if (messages.length) return messages;
-  return [
-    ...body.matchAll(
-      /^### (.+?) · ([^\n]+)\n\n([\s\S]*?)(?=\n\n### |\n\n## Summary|$)/gm,
-    ),
-  ].map((match) => ({
-    role: match[1] === 'You' ? 'user' : 'assistant',
-    timestamp: match[2]!,
-    content: match[3]!,
-    tools: [],
-  }));
-}
+// The chat note helpers live in chatNotes.ts; these names stay importable from here.
+export { chatMention, chatTitle, conversationTitle, readMessages };
 
 export class ChatService {
   private readonly queue: RunQueue;
@@ -1361,54 +1250,23 @@ export class ChatService {
     };
     this.loops.set(agentId, entry);
     this.publish();
-    // One turn of a chat: the reply it produced, or null when the loop was stopped or the turn did not finish.
-    const turnOf = async (
-      id: string,
-      prompt: string,
-    ): Promise<LoopTurn | null> => {
-      // A round the project cost limit refuses is reported as such, not as an error.
-      if (projectId) {
-        const refusal = await this.projectLimitRefusal(projectId);
-        if (refusal)
-          return { text: '', costUsd: 0, failed: false, limit: true };
-      }
-      const before = this.states[id]?.messages.length ?? 0;
-      try {
-        await this.send(id, prompt, projectId, true);
-      } catch {
-        return { text: '', costUsd: 0, failed: true };
-      }
-      const messages = this.states[id]?.messages ?? [];
-      const reply = [...messages].reverse().find((m) => m.role === 'assistant');
-      if (
-        entry.stopped ||
-        messages.length <= before ||
-        !reply ||
-        reply.cancelled
-      )
-        return null;
-      const status = this.states[id]?.status;
-      return {
-        text: reply.content,
-        costUsd: reply.costUsd ?? 0,
-        failed:
-          status === 'error' || status === 'offline' || status === 'needs-you',
-      };
-    };
     let result: LoopResult;
     try {
-      result = await runLoop(spec, message, {
-        run: (prompt) => turnOf(agentId, prompt),
-        judge: (prompt) =>
-          entry.verifierId
-            ? turnOf(entry.verifierId, prompt)
-            : Promise.resolve(null),
-        progress: (round, rounds) => {
-          entry.progress = { round, rounds };
-          this.publish();
+      result = await runLoopRounds(
+        {
+          send: (id, prompt) => this.send(id, prompt, projectId, true),
+          messages: (id) => this.states[id]?.messages ?? [],
+          status: (id) => this.states[id]?.status,
+          limitRefusal: projectId
+            ? () => this.projectLimitRefusal(projectId)
+            : undefined,
+          publish: () => this.publish(),
         },
-        stopped: () => entry.stopped,
-      });
+        entry,
+        agentId,
+        spec,
+        message,
+      );
     } finally {
       this.loops.delete(agentId);
       this.publish();
@@ -1427,28 +1285,12 @@ export class ChatService {
     if (this.disposed || this.ticking) return;
     this.ticking = true;
     try {
-      const notes = await this.options.store.loadNotesUnder(
-        `${this.options.managedRoot}/Schedules`,
+      await startDueSchedules(
+        this.options.store,
+        this.options.managedRoot,
+        now,
+        (schedule) => void this.runSchedule(schedule),
       );
-      for (const schedule of loadValidSchedules(notes)) {
-        const decision = dueDecision(schedule, now);
-        if (decision === 'wait') continue;
-        const nextRunAt = followingRun(schedule, now).toISOString();
-        if (decision === 'skip-missed') {
-          await this.patchSchedule(schedule.path, {
-            nextRun: nextRunAt,
-            lastStatus: 'missed: skipped',
-          });
-          continue;
-        }
-        // The next run is set before this one starts, so a slow run cannot fire the same schedule twice.
-        await this.patchSchedule(schedule.path, {
-          nextRun: nextRunAt,
-          lastRun: now.toISOString(),
-          lastStatus: 'running',
-        });
-        void this.runSchedule(schedule);
-      }
     } finally {
       this.ticking = false;
     }
@@ -1466,18 +1308,10 @@ export class ChatService {
     await this.runSchedule(schedule);
   }
 
-  /** The reason a run is refused by the per-run cap, or null when it may run. */
-  private heldByCap(schedule: Schedule): boolean {
-    return (
-      schedule.costCapUsd !== undefined &&
-      (schedule.lastCostUsd ?? 0) >= schedule.costCapUsd
-    );
-  }
-
   private async runSchedule(schedule: Schedule): Promise<void> {
     let status = 'done';
     let costUsd = 0;
-    if (this.heldByCap(schedule)) {
+    if (scheduleHeldByCap(schedule)) {
       // Held: nothing runs until the owner resumes the schedule, which the Inbox item offers.
       await this.patchSchedule(schedule.path, {
         held: true,
@@ -1521,21 +1355,11 @@ export class ChatService {
     await resumeScheduleNote(this.options.store, path, new Date());
   }
 
-  /** Writes changed fields to a Schedules note, keeping the rest of the note as it is. */
-  private async patchSchedule(
+  private patchSchedule(
     path: string,
     patch: Partial<ScheduleFields>,
   ): Promise<void> {
-    const note = await this.options.store.loadNote(path);
-    if (!note) return;
-    const merged = {
-      ...(note.frontmatter as Record<string, unknown>),
-      ...patch,
-    };
-    const frontmatter = Object.fromEntries(
-      Object.entries(merged).filter(([, value]) => value !== undefined),
-    );
-    await this.options.store.saveNote(path, frontmatter, note.body);
+    return patchScheduleNote(this.options.store, path, patch);
   }
 
   /** Project memory information for the project form: model in use, note count, last run's context size. */
@@ -2509,37 +2333,22 @@ export class ChatService {
   }
 
   /** Where this agent may save notes, the note skill per type, and the notes that already exist there. */
-  private async destinationsSection(
-    agent: Agent,
-    skills: Skill[],
-  ): Promise<string> {
-    return noteDestinationsSection(
-      await Promise.all(
-        this.destinationTypes(agent).map(async (type) => ({
-          type,
-          skill: noteSkillText(type, skills),
-          existing: await existingNoteNames(this.options.store, type.folder),
-        })),
-      ),
-      // Agents run in their Work folder, so they need the full path of each destination.
+  private destinationsSection(agent: Agent, skills: Skill[]): Promise<string> {
+    return buildDestinationsSection(
+      this.options.store,
+      this.destinationTypes(agent),
+      skills,
       this.options.vaultBasePath,
     );
   }
 
   /** The agents working right now that may write a note in this path's destination, for the Activity line. */
   writersFor(path: string): string[] {
-    const types = (this.options.settings().noteTypes ?? []).filter(
-      (type) =>
-        type.enabled &&
-        path.startsWith(`${type.folder.trim().replace(/\/+$/, '')}/`),
+    return agentsWritingTo(
+      path,
+      this.options.settings().noteTypes ?? [],
+      Object.values(this.states),
     );
-    return Object.values(this.states)
-      .filter(
-        (state) =>
-          state.status === 'working' &&
-          types.some((type) => state.agent.noteTypes?.includes(type.id)),
-      )
-      .map((state) => state.agent.name);
   }
 
   /** Passages from this agent's own earlier chats, when the message looks back at them. */

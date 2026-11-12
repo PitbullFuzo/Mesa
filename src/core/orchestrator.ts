@@ -4,6 +4,7 @@ import { taskSchema, type Agent } from './model';
 import type { NoteDocument } from './notes';
 import type { Store } from './store';
 import { parseDelegation, parseVerdict, type DelegatedTask } from './protocol';
+import { activityNotePath, appendActivityLine } from './activity';
 import { changedFiles, taskProblem, type TurnTool } from './taskOutcome';
 
 export interface OrchestrationTurn {
@@ -686,23 +687,15 @@ ${message}`;
     message: (source: string) => Promise<string>,
   ): Promise<void> {
     const timestamp = new Date();
-    const pad = (value: number) => String(value).padStart(2, '0');
-    const month = `${timestamp.getFullYear()}-${pad(timestamp.getMonth() + 1)}`;
-    const time = `${pad(timestamp.getHours())}:${pad(timestamp.getMinutes())}`;
     const write = this.writes.then(async () => {
-      const folder = `${this.options.managedRoot}/Activity`;
-      await this.folder(folder);
-      const path = `${folder}/${month}.md`;
-      const line = `- ${time} ${await message(path)}`;
-      const existing = (await this.options.store.loadActivity()).find(
-        (note) => note.path === path,
+      const text = await message(
+        activityNotePath(this.options.managedRoot, timestamp),
       );
-      await this.options.store.saveNote(
-        path,
-        (existing?.frontmatter as Record<string, unknown> | undefined) ?? {
-          agenthq: 'activity',
-        },
-        `${existing?.body ? existing.body.trimEnd() + '\n' : ''}${line}\n`,
+      await appendActivityLine(
+        this.options.store,
+        this.options.managedRoot,
+        text,
+        timestamp,
       );
     });
     this.writes = write.catch(() => {});

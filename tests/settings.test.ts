@@ -18,6 +18,8 @@ describe('settings', () => {
       enterToSend: true,
       agentPanelPlacement: 'side',
       obiSeeded: false,
+      ribbonExtras: [],
+      language: 'auto',
       tourDone: false,
       disclaimerAccepted: false,
       selfTests: {},
@@ -49,6 +51,8 @@ describe('settings', () => {
       enterToSend: false,
       agentPanelPlacement: 'main',
       obiSeeded: true,
+      ribbonExtras: [],
+      language: 'auto',
       tourDone: true,
       disclaimerAccepted: true,
       selfTests: {

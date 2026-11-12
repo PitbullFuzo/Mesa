@@ -395,7 +395,7 @@ describe('delegation through ChatService', () => {
     expect(activity).toHaveLength(1);
     const lines = activity[0]!.body.split('\n').filter(Boolean);
     expect(lines[0]).toMatch(
-      /^- \d\d:\d\d \[\[.*CEO.*\]\] delegated \[\[.*\]\] to \[\[.*Coder.*\]\]$/,
+      /^- \d{4}-\d\d-\d\d \d\d:\d\d \[\[.*CEO.*\]\] delegated \[\[.*\]\] to \[\[.*Coder.*\]\]$/,
     );
     expect(lines[1]).toContain('Reviewer');
     expect(lines.filter((line) => line.includes('completed'))).toHaveLength(2);

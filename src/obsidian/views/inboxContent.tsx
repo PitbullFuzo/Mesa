@@ -1,4 +1,5 @@
 import { useRef, useState, useSyncExternalStore } from 'react';
+import { t } from '../../core/i18n';
 import type { InboxItem } from '../../core/orchestrator';
 import type { WorkspaceActions } from '../../core/workspace';
 
@@ -22,9 +23,7 @@ function InboxRow({
       await workspace.resolveInbox(item.id, action);
     } catch (caught) {
       setError(
-        caught instanceof Error
-          ? caught.message
-          : 'Could not resolve this inbox item.',
+        caught instanceof Error ? caught.message : t('inbox.couldNotResolve'),
       );
     } finally {
       locked.current = false;
@@ -44,7 +43,7 @@ function InboxRow({
               .catch((caught: unknown) => workspace.reportError(caught));
           }}
         >
-          Open note
+          {t('inbox.openNote')}
         </button>
       )}
       <div className="agenthq-inbox-actions">
@@ -57,7 +56,7 @@ function InboxRow({
                 void resolve('retry');
               }}
             >
-              Resume schedule
+              {t('inbox.resumeSchedule')}
             </button>
             <button
               type="button"
@@ -66,7 +65,7 @@ function InboxRow({
                 void resolve('dismiss');
               }}
             >
-              Dismiss
+              {t('btn.dismiss')}
             </button>
           </>
         ) : item.kind === 'verification-exhausted' && item.path ? (
@@ -78,7 +77,7 @@ function InboxRow({
                 void resolve('accept');
               }}
             >
-              Accept anyway
+              {t('inbox.acceptAnyway')}
             </button>
             <button
               type="button"
@@ -87,7 +86,7 @@ function InboxRow({
                 void resolve('retry');
               }}
             >
-              Retry 2 more
+              {t('inbox.retry2')}
             </button>
             <button
               type="button"
@@ -96,7 +95,7 @@ function InboxRow({
                 void resolve('cancel');
               }}
             >
-              Cancel task
+              {t('inbox.cancelTask')}
             </button>
           </>
         ) : (
@@ -107,11 +106,11 @@ function InboxRow({
               void resolve('dismiss');
             }}
           >
-            Dismiss
+            {t('btn.dismiss')}
           </button>
         )}
       </div>
-      {pending && <p role="status">Updating task…</p>}
+      {pending && <p role="status">{t('inbox.updating')}</p>}
       {error && (
         <p className="agenthq-warning" role="alert">
           {error}
@@ -128,11 +127,9 @@ export function InboxContent({ workspace }: Props) {
   );
   const items = (state.chat?.inbox ?? []).filter((item) => !item.resolved);
   return (
-    <section className="agenthq-inbox" aria-label="Team inbox">
-      <h3>Inbox ({items.length})</h3>
-      {!items.length && (
-        <p className="agenthq-help">No items need your attention.</p>
-      )}
+    <section className="agenthq-inbox" aria-label={t('inbox.label')}>
+      <h3>{t('inbox.title', { n: items.length })}</h3>
+      {!items.length && <p className="agenthq-help">{t('inbox.empty')}</p>}
       {items.map((item) => (
         <InboxRow
           key={item.id}

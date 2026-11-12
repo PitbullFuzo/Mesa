@@ -19,7 +19,9 @@ vi.mock('obsidian', () => ({
     loadData = async () => ({});
     saveData = async () => {};
     registerView() {}
-    addRibbonIcon() {}
+    addRibbonIcon() {
+      return { toggle() {} };
+    }
     addCommand() {}
     addSettingTab() {}
     registerEvent() {}
@@ -65,6 +67,8 @@ vi.mock('../src/obsidian/views/panels', () => ({
   SKILLS_VIEW: 'skills',
   SkillsPanel: class {},
   TEAM_VIEW: 'team',
+  ACTIVITY_VIEW: 'activity',
+  ActivityPanel: class {},
 }));
 
 beforeEach(() => {

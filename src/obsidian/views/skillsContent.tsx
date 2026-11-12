@@ -1,4 +1,5 @@
 import { useState, useSyncExternalStore } from 'react';
+import { t } from '../../core/i18n';
 import type { Skill } from '../../core/model';
 import { skillDescription, skillSize, skillUsers } from '../../core/skills';
 import type { WorkspaceActions } from '../../core/workspace';
@@ -40,29 +41,27 @@ export function SkillsContent({
   return (
     <div className="agenthq-projects">
       <header className="agenthq-projects-header">
-        <h3>Skills</h3>
+        <h3>{t('skills.title')}</h3>
         <div>
           <button onClick={() => void run(importSkills)}>
-            Import my Claude skills
+            {t('skills.import')}
           </button>{' '}
           <button className="mod-cta" onClick={openCreate}>
-            + Skill
+            {t('skills.add')}
           </button>
         </div>
       </header>
       <div className="agenthq-projects-filter">
         <input
           type="search"
-          placeholder="Search skills"
-          aria-label="Search skills"
+          placeholder={t('skills.search')}
+          aria-label={t('skills.search')}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
       </div>
       {skills.length === 0 && (
-        <p className="agenthq-projects-empty">
-          No skills match. Choose + Skill, or import your Claude skills.
-        </p>
+        <p className="agenthq-projects-empty">{t('skills.empty')}</p>
       )}
       <ul className="agenthq-schedule-list">
         {skills.map((skill) => {
@@ -70,28 +69,35 @@ export function SkillsContent({
           const users = skillUsers(skill, state.agents, state.projects ?? []);
           const usedBy = [
             ...users.agents.map((agent) => agent.name),
-            ...users.projects.map((project) => `project ${project.name}`),
+            ...users.projects.map((project) =>
+              t('skills.project', { name: project.name }),
+            ),
           ];
           return (
             <li key={skill.path} className="agenthq-schedule-row">
               <strong>{skill.name}</strong>
               <span className="agenthq-schedule-message">
-                {skillDescription(skill) || 'No description'}
+                {skillDescription(skill) || t('skills.noDescription')}
               </span>
               <small>
-                {size.words} words · about {size.tokens} tokens added to a
-                prompt (estimate)
+                {t('skills.size', { words: size.words, tokens: size.tokens })}
               </small>
               <small>
-                Used by: {usedBy.length ? usedBy.join(', ') : 'nothing yet'}
+                {t('skills.usedBy', {
+                  names: usedBy.length
+                    ? usedBy.join(', ')
+                    : t('skills.nothingYet'),
+                })}
               </small>
               <span className="agenthq-schedule-actions">
                 <button
                   onClick={() => void run(() => workspace.openNote(skill.path))}
                 >
-                  Edit
+                  {t('btn.edit')}
                 </button>
-                <button onClick={() => openAssign(skill)}>Assign</button>
+                <button onClick={() => openAssign(skill)}>
+                  {t('skills.assign')}
+                </button>
                 <button
                   className="mod-warning"
                   onClick={() =>
@@ -101,7 +107,7 @@ export function SkillsContent({
                     })
                   }
                 >
-                  Delete
+                  {t('btn.delete')}
                 </button>
               </span>
             </li>

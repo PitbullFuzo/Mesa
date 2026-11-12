@@ -1,4 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { t } from '../../core/i18n';
 import { describeRule, nextRunText, type Schedule } from '../../core/schedules';
 import type { WorkspaceActions } from '../../core/workspace';
 
@@ -23,11 +24,11 @@ export function ScheduleRowActions({
   }
   return (
     <span className="agenthq-schedule-actions">
-      <button onClick={() => onEdit(schedule)}>Edit</button>
+      <button onClick={() => onEdit(schedule)}>{t('btn.edit')}</button>
       <button
         onClick={() => void run(() => workspace.runScheduleNow(schedule.path))}
       >
-        Run now
+        {t('sched.runNow')}
       </button>
       {schedule.held || !schedule.enabled ? (
         <button
@@ -39,7 +40,7 @@ export function ScheduleRowActions({
             )
           }
         >
-          Resume
+          {t('sched.resume')}
         </button>
       ) : (
         <button
@@ -47,7 +48,7 @@ export function ScheduleRowActions({
             void run(() => workspace.setScheduleEnabled(schedule.path, false))
           }
         >
-          Pause
+          {t('sched.pause')}
         </button>
       )}
       <button
@@ -59,7 +60,7 @@ export function ScheduleRowActions({
           })
         }
       >
-        Delete
+        {t('btn.delete')}
       </button>
     </span>
   );
@@ -108,27 +109,27 @@ export function SchedulesContent({
   const projectName = (id?: string) =>
     id
       ? ((state.projects ?? []).find((project) => project.id === id)?.name ??
-        '(deleted project)')
-      : 'No project';
+        t('sched.deletedProject'))
+      : t('sched.noProject');
   const agentName = (id: string) =>
     state.agents.find((agent) => agent.id === id)?.name ?? id;
   return (
     <div className="agenthq-projects">
       <header className="agenthq-projects-header">
-        <h3>Schedules</h3>
+        <h3>{t('sched.title')}</h3>
         <button className="mod-cta" onClick={() => openSchedule(null)}>
-          + Schedule
+          {t('sched.add')}
         </button>
       </header>
       <div className="agenthq-projects-filter">
         <label>
-          Project{' '}
+          {t('sched.project')}{' '}
           <select
             value={projectFilter}
             onChange={(event) => setProjectFilter(event.target.value)}
           >
-            <option value="">All projects</option>
-            <option value="none">No project</option>
+            <option value="">{t('sched.allProjects')}</option>
+            <option value="none">{t('sched.noProject')}</option>
             {(state.projects ?? []).map((project) => (
               <option key={project.id} value={project.id}>
                 {project.name}
@@ -137,12 +138,12 @@ export function SchedulesContent({
           </select>
         </label>
         <label>
-          Agent{' '}
+          {t('sched.agent')}{' '}
           <select
             value={agentFilter}
             onChange={(event) => setAgentFilter(event.target.value)}
           >
-            <option value="">All agents</option>
+            <option value="">{t('sched.allAgents')}</option>
             {state.agents.map((agent) => (
               <option key={agent.id} value={agent.id}>
                 {agent.name}
@@ -151,25 +152,22 @@ export function SchedulesContent({
           </select>
         </label>
         <label>
-          Status{' '}
+          {t('sched.status')}{' '}
           <select
             value={statusFilter}
             onChange={(event) =>
               setStatusFilter(event.target.value as typeof statusFilter)
             }
           >
-            <option value="all">All</option>
-            <option value="enabled">Enabled</option>
-            <option value="paused">Paused</option>
-            <option value="held">Held by cost cap</option>
+            <option value="all">{t('sched.all')}</option>
+            <option value="enabled">{t('sched.enabled')}</option>
+            <option value="paused">{t('sched.paused')}</option>
+            <option value="held">{t('sched.held')}</option>
           </select>
         </label>
       </div>
       {schedules.length === 0 ? (
-        <p className="agenthq-projects-empty">
-          No schedules match. Choose + Schedule to create one. Schedules run
-          only while Obsidian is open.
-        </p>
+        <p className="agenthq-projects-empty">{t('sched.empty')}</p>
       ) : (
         <ul className="agenthq-schedule-list">
           {schedules.map((entry) => (
@@ -183,9 +181,12 @@ export function SchedulesContent({
                 {entry.message.slice(0, 120)}
               </span>
               <small>
-                Next: {nextRunText(entry, now)}
+                {t('sched.next', { when: nextRunText(entry, now) })}
                 {entry.lastRun
-                  ? ` · last: ${entry.lastRun.slice(0, 16).replace('T', ' ')} ${entry.lastStatus ?? ''}`
+                  ? t('sched.last', {
+                      when: entry.lastRun.slice(0, 16).replace('T', ' '),
+                      status: entry.lastStatus ?? '',
+                    })
                   : ''}
               </small>
               <ScheduleRowActions

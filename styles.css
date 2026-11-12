@@ -705,3 +705,125 @@
 .agenthq-side-answer {
   white-space: pre-wrap;
 }
+
+/* Live activity */
+.agenthq-activity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-3);
+  padding: var(--size-4-3);
+}
+.agenthq-activity-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4-2);
+}
+.agenthq-activity-header h2,
+.agenthq-activity-header h3 {
+  margin: 0;
+}
+.agenthq-activity-summary,
+.agenthq-activity .agenthq-empty {
+  margin: var(--size-2-1) 0 0;
+  color: var(--text-muted);
+}
+.agenthq-activity-tools,
+.agenthq-activity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-2-3);
+}
+.agenthq-activity-actions {
+  margin-left: auto;
+}
+.agenthq-activity-list,
+.agenthq-activity-recent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+}
+.agenthq-activity-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-2);
+  padding: var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-left: 3px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+}
+.agenthq-activity-row.is-working {
+  border-left-color: var(--color-green);
+}
+.agenthq-activity-row.is-needs-you {
+  border-left-color: var(--color-orange);
+}
+.agenthq-activity-row.is-queued {
+  border-left-color: var(--color-blue);
+}
+.agenthq-activity-row.is-error {
+  border-left-color: var(--color-red);
+}
+.agenthq-activity-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-2-3);
+}
+.agenthq-activity-status {
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+.agenthq-activity-status.is-working {
+  color: var(--color-green);
+}
+.agenthq-activity-status.is-needs-you {
+  color: var(--color-orange);
+}
+.agenthq-activity-status.is-error {
+  color: var(--color-red);
+}
+.agenthq-activity-doing,
+.agenthq-activity-step,
+.agenthq-activity-hint {
+  overflow-wrap: anywhere;
+}
+.agenthq-activity-step,
+.agenthq-activity-hint {
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+.agenthq-activity-recent {
+  gap: var(--size-2-1);
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+}
+
+/* Settings → Advanced: a closed fold for the rarely needed rows. */
+.mesa-settings-advanced {
+  margin-top: var(--size-4-4);
+}
+.mesa-settings-advanced > summary {
+  cursor: pointer;
+  font-weight: var(--font-semibold);
+  font-size: var(--font-ui-large);
+  padding: var(--size-4-2) 0;
+}
+
+/* Live activity: the Costs totals sit side by side. */
+.agenthq-activity-costs {
+  list-style: none;
+  margin: 0 0 var(--size-4-2);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-4);
+}
+.agenthq-activity-costs span {
+  color: var(--text-muted);
+}

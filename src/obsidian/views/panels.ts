@@ -4,6 +4,8 @@ import {
   type ViewStateResult,
   type WorkspaceLeaf,
 } from 'obsidian';
+import { t } from '../../core/i18n';
+import type { CostSummary } from '../../core/costs';
 import { createElement, type ReactElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import type { WorkspaceActions } from '../../core/workspace';
@@ -14,6 +16,7 @@ import {
 } from './panelContent';
 import { ProjectsContent } from './projectsContent';
 import { SchedulesContent } from './schedulesContent';
+import { ActivityContent } from './activityContent';
 import { SkillsContent } from './skillsContent';
 import { openAssignSkill, openSkillForm } from '../skillModal';
 import { skillUsers } from '../../core/skills';
@@ -30,6 +33,7 @@ export const TEAM_VIEW = 'agenthq-team';
 export const PROJECTS_VIEW = 'agenthq-projects';
 export const SCHEDULES_VIEW = 'agenthq-schedules';
 export const SKILLS_VIEW = 'agenthq-skills';
+export const ACTIVITY_VIEW = 'agenthq-activity';
 
 abstract class ReactPanel extends ItemView {
   private root: Root | null = null;
@@ -157,7 +161,7 @@ export class TeamPanel extends ReactPanel {
     return TEAM_VIEW;
   }
   getDisplayText(): string {
-    return 'Team';
+    return t('page.team');
   }
   getIcon(): string {
     return 'users';
@@ -180,7 +184,7 @@ export class ProjectsPanel extends ReactPanel {
     return PROJECTS_VIEW;
   }
   getDisplayText(): string {
-    return 'Projects';
+    return t('page.projects');
   }
   getIcon(): string {
     return 'folder-kanban';
@@ -212,7 +216,7 @@ export class SchedulesPanel extends ReactPanel {
     return SCHEDULES_VIEW;
   }
   getDisplayText(): string {
-    return 'Schedules';
+    return t('page.schedules');
   }
   getIcon(): string {
     return 'calendar-clock';
@@ -224,6 +228,36 @@ export class SchedulesPanel extends ReactPanel {
         openScheduleForm(this.app, this.workspace, { existing }),
       confirmDelete: (schedule: Schedule) =>
         confirmDeleteSchedule(this.app, schedule),
+    });
+  }
+}
+
+/** Live activity: what every agent is doing now, with Open chat and Stop, and the latest Activity lines. */
+export class ActivityPanel extends ReactPanel {
+  constructor(
+    leaf: WorkspaceLeaf,
+    workspace: WorkspaceActions,
+    private readonly loadRecent: () => Promise<string[]>,
+    private readonly loadCosts: () => Promise<CostSummary | null>,
+    private readonly openActivityNote: () => void,
+  ) {
+    super(leaf, workspace);
+  }
+  getViewType(): string {
+    return ACTIVITY_VIEW;
+  }
+  getDisplayText(): string {
+    return t('page.activity');
+  }
+  getIcon(): string {
+    return 'activity';
+  }
+  protected content(): ReactElement {
+    return createElement(ActivityContent, {
+      workspace: this.workspace,
+      loadRecent: this.loadRecent,
+      loadCosts: this.loadCosts,
+      openActivityNote: this.openActivityNote,
     });
   }
 }
@@ -249,7 +283,7 @@ export class SkillsPanel extends ReactPanel {
     return SKILLS_VIEW;
   }
   getDisplayText(): string {
-    return 'Skills';
+    return t('page.skills');
   }
   getIcon(): string {
     return 'book-open';

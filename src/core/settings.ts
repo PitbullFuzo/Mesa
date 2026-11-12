@@ -16,6 +16,10 @@ const settingsSchema = z.object({
   enterToSend: z.boolean().catch(true),
   agentPanelPlacement: z.enum(['side', 'main']).catch('side'),
   obiSeeded: z.boolean().catch(false),
+  /** The language of Mesa's pages and menus. Auto follows Obsidian. */
+  language: z.enum(['auto', 'en', 'pt']).catch('auto'),
+  /** Extra page icons shown in Obsidian's left ribbon (the Mesa menu lists every page). None by default. */
+  ribbonExtras: z.array(z.string()).catch(() => []),
   /** The welcome tour was finished or declined for good ("Maybe later" does not set it). */
   /** Free sandbox self-test results for newer Codex and OpenCode versions, keyed by "tool version". */
   selfTests: z

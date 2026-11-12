@@ -4,11 +4,12 @@ import {
   Menu,
   Notice,
   Plugin,
-  requestUrl,
   TFile,
   type WorkspaceLeaf,
   type WorkspaceSplit,
 } from 'obsidian';
+import { obsidianLanguage } from './obsidian/language';
+import { resolveLanguage, setLanguage, t } from './core/i18n';
 import { askAboutNote, importSkills } from './core/vaultPowers';
 import { readInstalledSkills } from './core/runtimes/skills';
 import { pickAgent, confirmAction } from './obsidian/modals';
@@ -43,6 +44,8 @@ import {
   type GraphAiResult,
 } from './core/graphAi';
 import { appendActivityLine } from './core/activity';
+import { recentActivity } from './core/liveActivity';
+import { chatSpendEvents, costSummary, taskSpendEvents } from './core/costs';
 import { VaultIndex } from './obsidian/vaultIndex';
 import {
   openReorganiseModal,
@@ -52,7 +55,7 @@ import {
 
 /** A few minutes: the map is rebuilt once per window at most, not on every keystroke. */
 const VAULT_MAP_DELAY_MS = 3 * 60_000;
-import { openProjectForm, pickProject } from './obsidian/projectModal';
+import { openProjectForm } from './obsidian/projectModal';
 import { runtimeModelList } from './core/runtimes/modelLists';
 import type { AgentPlacement, AgentTab } from './core/workspace';
 import { openPlan, tabState } from './core/tabs';
@@ -62,7 +65,6 @@ import {
 } from './core/runtimes/browserTools';
 import { browserUnavailableReason } from './core/browser';
 import { LEGACY_PLUGIN_IDS, migrateAppData, PLUGIN_ID } from './core/appData';
-import { DEFAULT_M365_CLIENT_ID } from './core/m365/auth';
 import {
   decideTeamFolder,
   LEGACY_TEAM_FOLDERS,
@@ -70,16 +72,8 @@ import {
   TeamFolderGuard,
 } from './core/teamFolder';
 import { editTarget, InlineEditModal } from './obsidian/inlineEditModal';
-import { M365SignInModal } from './obsidian/m365SignIn';
+import { M365Connection, obsidianFetch } from './obsidian/m365Connection';
 import { embeddedHelpers, installHelpers } from './core/helpers';
-import {
-  accountLabel as m365AccountLabel,
-  disconnect as m365Disconnect,
-  finishDeviceCode,
-  isConnected as m365IsConnected,
-  needsNewPermission,
-  startDeviceCode,
-} from './core/m365/auth';
 import { registerNoteMenus } from './obsidian/menus';
 import { realpath } from 'node:fs/promises';
 import { dirname, basename, join, relative, isAbsolute } from 'node:path';
@@ -91,6 +85,9 @@ import { loadSettings, type AgentHQSettings } from './core/settings';
 import { ensureAgentHqFolders, initializeStarterTeam } from './core/starter';
 import { ObsidianStore } from './obsidian/obsidianStore';
 import { AgentHQSettingTab } from './obsidian/settings';
+import type { MesaPageId } from './core/ribbon';
+import { MesaRibbon } from './obsidian/mesaRibbon';
+import { registerPageCommands } from './obsidian/pageCommands';
 import { WorkspaceController } from './obsidian/workspaceController';
 import { GraphView, GRAPH_VIEW } from './obsidian/views/graphView';
 import {
@@ -104,29 +101,18 @@ import {
   AGENT_VIEW,
   PROJECTS_VIEW,
   SCHEDULES_VIEW,
+  ACTIVITY_VIEW,
+  ActivityPanel,
   SKILLS_VIEW,
   SchedulesPanel,
   SkillsPanel,
   TEAM_VIEW,
 } from './obsidian/views/panels';
 
-/** Microsoft calls go through Obsidian's own HTTP, as the plugin guidelines ask. */
-const obsidianFetch = (async (url: string, init?: RequestInit) => {
-  const response = await requestUrl({
-    url: String(url),
-    method: init?.method ?? 'GET',
-    headers: init?.headers as Record<string, string> | undefined,
-    body: typeof init?.body === 'string' ? init.body : undefined,
-    throw: false,
-  });
-  return new Response(response.status === 204 ? null : response.text, {
-    status: response.status,
-  });
-}) as typeof fetch;
-
 export default class AgentHQPlugin extends Plugin {
   settings: AgentHQSettings = loadSettings(null);
   private store: ObsidianStore | null = null;
+  private readonly ribbon = new MesaRibbon(this);
   workspace!: WorkspaceController;
   private dataQueue: Promise<void> = Promise.resolve();
   private refreshTimer: number | null = null;
@@ -154,6 +140,7 @@ export default class AgentHQPlugin extends Plugin {
     this.active = true;
     await this.installHelperFiles();
     this.settings = await this.startingSettings();
+    this.applyLanguage();
     void migrateAppData().catch(() => {
       // Nothing to carry over, or it cannot be read: the owner just signs in again.
     });
@@ -236,31 +223,32 @@ export default class AgentHQPlugin extends Plugin {
           this.importInstalledSkills(),
         ),
     );
-    this.addRibbonIcon('book-open', 'Skills', () => {
-      void this.openView(SKILLS_VIEW);
-    });
-    this.addRibbonIcon('calendar-clock', 'Schedules', () => {
-      void this.openView(SCHEDULES_VIEW);
-    });
-    this.addRibbonIcon('sparkles', 'Obi', () => {
-      this.openObi();
-    });
-    this.addCommand({
-      id: 'open-obi',
-      name: 'Open Obi',
-      callback: () => this.openObi(),
-    });
-    this.addCommand({
-      id: 'take-tour',
-      name: 'Take the tour again',
-      callback: () => {
-        this.workspace.restartTour();
-        this.workspace.selectAgent(OBI_ID, 'chat');
-      },
-    });
+    this.registerView(
+      ACTIVITY_VIEW,
+      (leaf) =>
+        new ActivityPanel(
+          leaf,
+          this.workspace,
+          async () =>
+            this.store ? recentActivity(await this.store.loadActivity()) : [],
+          async () => {
+            if (!this.store) return null;
+            return costSummary(
+              [
+                ...chatSpendEvents(await this.store.loadChats()),
+                ...taskSpendEvents(await this.store.loadTasks()),
+              ],
+              new Date(),
+            );
+          },
+          () => this.openActivityNote(),
+        ),
+    );
+    this.ribbon.register();
+    registerPageCommands(this);
     this.addCommand({
       id: 'rerun-safety-check',
-      name: 'Re-run safety check',
+      name: t('cmd.safety'),
       callback: () => {
         this.rerunSafetyChecks()
           .then((checks) => {
@@ -271,7 +259,7 @@ export default class AgentHQPlugin extends Plugin {
     });
     this.addCommand({
       id: 'reorganise-vault',
-      name: 'Reorganise vault…',
+      name: t('cmd.reorganise'),
       callback: () => {
         const deps = this.reorganiseDeps();
         if (deps) openReorganiseModal(deps);
@@ -279,7 +267,7 @@ export default class AgentHQPlugin extends Plugin {
     });
     this.addCommand({
       id: 'undo-reorganise',
-      name: 'Undo last reorganisation',
+      name: t('cmd.undoReorganise'),
       callback: () => {
         const deps = this.reorganiseDeps();
         if (deps)
@@ -290,7 +278,7 @@ export default class AgentHQPlugin extends Plugin {
     });
     this.addCommand({
       id: 'check-setup',
-      name: 'Check my setup',
+      name: t('cmd.checkSetup'),
       callback: () => {
         this.setupCache = null;
         this.checkSetupCached()
@@ -299,22 +287,6 @@ export default class AgentHQPlugin extends Plugin {
           })
           .catch((error: unknown) => this.workspace.reportError(error));
       },
-    });
-    this.addRibbonIcon('network', 'Open AI Graph', () => {
-      void this.openView(GRAPH_VIEW);
-    });
-    this.addCommand({
-      id: 'open-ai-graph',
-      name: 'Open AI Graph',
-      callback: () => this.openView(GRAPH_VIEW),
-    });
-    this.addRibbonIcon('circle-dot', 'Vault overview', () => {
-      void this.openView(VAULT_OVERVIEW_VIEW);
-    });
-    this.addCommand({
-      id: 'open-vault-overview',
-      name: 'Open vault overview',
-      callback: () => this.openView(VAULT_OVERVIEW_VIEW),
     });
     this.registerEvent(
       this.app.workspace.on('active-leaf-change', (leaf) => {
@@ -331,15 +303,9 @@ export default class AgentHQPlugin extends Plugin {
           .catch((error: unknown) => this.workspace.reportError(error));
       }, 60_000),
     );
-    this.addRibbonIcon('folder-kanban', 'Projects', () => {
-      void this.openView(PROJECTS_VIEW);
-    });
-    this.addRibbonIcon('message-circle', 'Mesa chat', (event) => {
-      this.openQuickChat(event);
-    });
     this.addCommand({
       id: 'inline-edit',
-      name: 'Edit selection with an agent',
+      name: t('cmd.inlineEdit'),
       editorCallback: (editor) => this.openInlineEdit(editor, true),
     });
     // Right-click in the editor: the same edit, when there is text to edit.
@@ -348,57 +314,12 @@ export default class AgentHQPlugin extends Plugin {
         if (!editTarget(editor)) return;
         menu.addItem((item) =>
           item
-            .setTitle('Edit with an agent…')
+            .setTitle(t('menu.editWithAgent'))
             .setIcon('wand')
             .onClick(() => this.openInlineEdit(editor, false)),
         );
       }),
     );
-    this.addCommand({
-      id: 'open-quick-chat',
-      name: 'Open chat',
-      callback: () => this.openQuickChat(),
-    });
-    this.addCommand({
-      id: 'open-team-panel',
-      name: 'Open Team panel',
-      callback: () => this.openView(TEAM_VIEW),
-    });
-    this.addCommand({
-      id: 'open-agent-panel',
-      name: 'Open Agent panel',
-      callback: () => this.openView(AGENT_VIEW),
-    });
-    this.addCommand({
-      id: 'open-skills',
-      name: 'Open skills',
-      callback: () => this.openView(SKILLS_VIEW),
-    });
-    this.addCommand({
-      id: 'open-schedules',
-      name: 'Open schedules',
-      callback: () => this.openView(SCHEDULES_VIEW),
-    });
-    this.addCommand({
-      id: 'open-projects',
-      name: 'Open projects',
-      callback: () => this.openView(PROJECTS_VIEW),
-    });
-    this.addCommand({
-      id: 'manage-projects',
-      name: 'Manage projects',
-      callback: () => pickProject(this.app, this.workspace),
-    });
-    this.addCommand({
-      id: 'new-agent',
-      name: 'New agent',
-      callback: () => this.workspace.requestCreateAgent(),
-    });
-    this.addCommand({
-      id: 'stop-all-agents',
-      name: 'Stop all agents',
-      callback: () => this.workspace.stopAll(),
-    });
     this.addSettingTab(new AgentHQSettingTab(this.app, this));
     registerNoteMenus(
       this,
@@ -510,6 +431,21 @@ export default class AgentHQPlugin extends Plugin {
       workspace: this.workspace,
       root: this.store.root,
     };
+  }
+
+  /** Opens one of Mesa's pages by its id (the ribbon icons and the Mesa menu use this). */
+  openMesaPage(id: MesaPageId, event?: MouseEvent): void {
+    this.ribbon.openPage(id, event);
+  }
+
+  /** Sets the interface language from Settings → Language (Auto follows Obsidian). */
+  applyLanguage(): void {
+    setLanguage(resolveLanguage(this.settings.language, obsidianLanguage()));
+  }
+
+  /** Shows the extra page icons the owner ticked and hides the rest. */
+  applyRibbonExtras(): void {
+    this.ribbon.applyExtras();
   }
 
   /** Opens Obi's Chat. If Obi was deleted, offers to restore it first. */
@@ -694,8 +630,7 @@ export default class AgentHQPlugin extends Plugin {
     await this.app.workspace.revealLeaf(leaf);
   }
 
-  private m365Connected = false;
-  private m365Signin: AbortController | null = null;
+  private readonly m365 = new M365Connection(this, () => this.active);
 
   /** Reads whether a Microsoft account is connected and tells the panels. */
   /** A release holds only main.js, manifest.json and styles.css: write the helper programs beside them. */
@@ -779,67 +714,19 @@ export default class AgentHQPlugin extends Plugin {
     }
   }
 
-  async refreshM365(): Promise<void> {
-    this.m365Connected = await m365IsConnected();
-    if (this.active)
-      this.workspace.setM365Status({
-        connected: this.m365Connected,
-        account: this.settings.m365Account || undefined,
-        needsPermission: this.m365Connected && (await needsNewPermission()),
-      });
+  refreshM365(): Promise<void> {
+    return this.m365.refresh();
   }
-  /**
-   * Starts Microsoft's device sign-in. The owner opens Microsoft's page and types the code there; this plugin never
-   * sees a password. Resolves when the sign-in is finished or cancelled.
-   */
-  async connectM365(): Promise<void> {
-    const clientId = this.settings.m365ClientId || DEFAULT_M365_CLIENT_ID;
-    if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(clientId))
-      throw Error(
-        'Enter the Application (client) ID of your Microsoft app registration first.',
-      );
-    this.m365Signin?.abort();
-    const controller = new AbortController();
-    this.m365Signin = controller;
-    const authority = this.settings.m365Authority;
-    const code = await startDeviceCode(clientId, authority, obsidianFetch);
-    const modal = new M365SignInModal(this.app, code, () => controller.abort());
-    modal.open();
-    try {
-      await finishDeviceCode(code, clientId, authority, {
-        signal: controller.signal,
-        f: obsidianFetch,
-      });
-      modal.setStatus('Approved. Reading your account name…');
-      const label = await m365AccountLabel({ f: obsidianFetch });
-      this.settings.m365Account = label;
-      await this.saveSettings();
-      modal.setStatus(
-        label ? `Connected as ${label}` : 'Connected (name unavailable)',
-        true,
-      );
-    } catch (error) {
-      // Closing the window cancels on purpose; anything else is shown in the window and reported.
-      if (controller.signal.aborted) return;
-      modal.setStatus(
-        error instanceof Error ? error.message : 'The sign-in failed.',
-        true,
-      );
-      throw error;
-    } finally {
-      if (this.m365Signin === controller) this.m365Signin = null;
-      await this.refreshM365();
-    }
+  /** Starts Microsoft's device sign-in; resolves when it is finished or cancelled. */
+  connectM365(): Promise<void> {
+    return this.m365.connect();
   }
   cancelM365Signin(): void {
-    this.m365Signin?.abort();
+    this.m365.cancel();
   }
   /** Removes the saved token. Access granted at Microsoft stays until the owner removes it in their account. */
-  async disconnectM365(): Promise<void> {
-    await m365Disconnect();
-    this.settings.m365Account = '';
-    await this.saveSettings();
-    await this.refreshM365();
+  disconnectM365(): Promise<void> {
+    return this.m365.disconnect();
   }
 
   async refreshBrowserTools(): Promise<void> {
@@ -1143,7 +1030,7 @@ export default class AgentHQPlugin extends Plugin {
             PLUGIN_ID,
             'm365_mcp.cjs',
           ),
-          connected: () => this.m365Connected,
+          connected: () => this.m365.connected,
           fetch: obsidianFetch,
         },
         vaultSnippets: () => index.passagesNow(),
@@ -1241,6 +1128,18 @@ export default class AgentHQPlugin extends Plugin {
   }
 
   /** Opens a note from the overview in a new tab. */
+  /** Opens this month's Activity note, or the newest one. */
+  private openActivityNote(): void {
+    const folder = this.app.vault.getFolderByPath(
+      `${this.settings.agenthqFolder}/Activity`,
+    );
+    const notes = (folder?.children ?? [])
+      .filter((file): file is TFile => file instanceof TFile)
+      .sort((a, b) => b.basename.localeCompare(a.basename));
+    if (notes[0]) void this.app.workspace.getLeaf('tab').openFile(notes[0]);
+    else new Notice('Nothing has been logged yet.');
+  }
+
   private openNote(path: string): void {
     const file = this.app.vault.getFileByPath(path);
     if (file) void this.app.workspace.getLeaf('tab').openFile(file);
@@ -1396,6 +1295,7 @@ export default class AgentHQPlugin extends Plugin {
       PROJECTS_VIEW,
       SCHEDULES_VIEW,
       SKILLS_VIEW,
+      ACTIVITY_VIEW,
     ]) {
       for (const leaf of this.app.workspace.getLeavesOfType(type)) {
         if (
@@ -1405,7 +1305,8 @@ export default class AgentHQPlugin extends Plugin {
           leaf.view instanceof TeamPanel ||
           leaf.view instanceof ProjectsPanel ||
           leaf.view instanceof SchedulesPanel ||
-          leaf.view instanceof SkillsPanel
+          leaf.view instanceof SkillsPanel ||
+          leaf.view instanceof ActivityPanel
         )
           leaf.view.unmount();
       }

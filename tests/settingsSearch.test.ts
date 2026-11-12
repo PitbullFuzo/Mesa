@@ -23,7 +23,10 @@ vi.mock('obsidian', () => {
     }
   }
   class PluginSettingTab {
-    containerEl = { empty: () => undefined };
+    containerEl = {
+      empty: () => undefined,
+      createEl: () => ({ createEl: () => ({}) }),
+    };
     constructor(
       public app: unknown,
       public plugin: unknown,
@@ -75,8 +78,23 @@ describe('settings page', () => {
       'Press Enter to send',
       'Runtime path override',
       'Microsoft 365',
+      'Language',
+      'Ribbon icons',
     ])
       expect(created).toContain(wanted);
+  });
+
+  it('groups the rows under Basics, Permissions and Connectors headings, in that order', () => {
+    created.length = 0;
+    const page: { display(): void } = tab();
+    page.display();
+    const at = (name: string) => created.indexOf(name);
+    expect(at('Basics')).toBeGreaterThanOrEqual(0);
+    expect(at('Basics')).toBeLessThan(at('Mesa folder'));
+    expect(at('Mesa folder')).toBeLessThan(at('Permissions'));
+    expect(at('Permissions')).toBeLessThan(at('Folders agents may touch'));
+    expect(at('Folders agents may touch')).toBeLessThan(at('Connectors'));
+    expect(at('Connectors')).toBeLessThan(at('Browser engine'));
   });
 
   it('does not offer settings definitions (they rendered without controls on Obsidian 1.14)', () => {
